@@ -1475,211 +1475,292 @@ body {
   </Carousel>
 </div>
           
-        {/* Join Membership Section */}
-<div className="bg-white rounded-3xl shadow-xl border border-gray-100 mx-4 mt-6 p-6">
-  
+       {/* MANGO Club Membership */}
+<div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mx-4 mt-6 p-6">
+
   {profileUpdateSuccess ? (
-    <div className="text-center py-6 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-      <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-black/20">
-        <Check className="w-8 h-8 text-[#BA2C2F]" />
+
+    <div className="text-center py-10 bg-[#FAFAFA] rounded-2xl border border-[#ECECEC]">
+
+      <div className="w-16 h-16 bg-[#C8A882]/15 rounded-full flex items-center justify-center mx-auto mb-5">
+        <Check className="w-7 h-7 text-[#8B6F5E]" />
       </div>
-      
-      <div className="text-sm font-bold uppercase tracking-tight text-black mb-1">
-        Membership Activated
+
+      <div className="text-[18px] font-medium text-[#1A1A1A]">
+        Welcome to MANGO Club
       </div>
-      
-      <div className="text-[11px] text-gray-500 font-medium uppercase tracking-widest px-6">
-        Registration complete. Your profile has been updated successfully.
+
+      <div className="text-[12px] text-[#8B6F5E] mt-2 max-w-[260px] mx-auto leading-relaxed">
+        Your membership has been activated successfully.
       </div>
+
     </div>
+
   ) : (
+
     <>
       {/* Header */}
-      <div className="flex items-center mb-6">
-        <div className="bg-black p-2.5 rounded-xl mr-4 shadow-lg shadow-black/10">
-          <User2 className="h-5 w-5 text-white" />
+      <div className="flex items-start mb-7">
+
+        <div className="w-11 h-11 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-4 flex-shrink-0">
+          <User2 className="h-5 w-5 text-[#8B6F5E]" />
         </div>
+
         <div>
-          <div className="text-sm font-bold uppercase tracking-tight text-black">
-            Complete Your Profile
-          </div>
-          <div className="text-[10px] font-medium text-gray-400 uppercase tracking-widest leading-relaxed">
-            Get personalized updates, exclusive access, and faster checkout
-          </div>
+
+          <h3 className="text-[15px] font-medium text-[#1A1A1A]">
+            Join MANGO Club
+          </h3>
+
+          <p className="text-[11px] text-[#8B6F5E] mt-1 leading-relaxed">
+            Enjoy member-only benefits, curated recommendations and faster checkout.
+          </p>
+
         </div>
+
+      </div>
+
+      {/* Benefits */}
+      <div className="grid grid-cols-2 gap-2 mb-6">
+
+        {[
+          "Early Access",
+          "Exclusive Offers",
+          "Style Updates",
+          "Faster Checkout",
+        ].map((benefit) => (
+
+          <div
+            key={benefit}
+            className="bg-[#F8F8F8] border border-[#ECECEC] rounded-xl px-3 py-2 text-[11px] text-[#8B6F5E]"
+          >
+            {benefit}
+          </div>
+
+        ))}
+
       </div>
 
       {/* Form */}
       <div className="space-y-4">
-        <div className="space-y-1.5">
-          <label className="text-[9px] font-bold text-gray-400 uppercase tracking-[0.1em] ml-1">
+
+        <div>
+
+          <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-2">
             Full Name
           </label>
+
           <input
             type="text"
-            placeholder="Athlete Name"
+            placeholder="Enter your full name"
             value={profile.name}
-            onChange={(e) => setProfile((prev) => ({ ...prev, name: e.target.value }))}
-            className="w-full h-12 px-4 text-xs font-semibold bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:border-[#BA2C2F] focus:bg-white transition-all placeholder:text-gray-300 uppercase"
+            onChange={(e) =>
+              setProfile((prev) => ({
+                ...prev,
+                name: e.target.value,
+              }))
+            }
+            className="w-full h-12 px-4 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:outline-none focus:border-[#C8A882] focus:bg-white transition-all placeholder:text-[#B8B8B8]"
           />
+
         </div>
 
-        <div className="grid grid-cols-1 gap-4">
-          <div className="space-y-1.5">
-            <label className="text-[9px] font-bold text-gray-400 uppercase tracking-[0.1em] ml-1">
-              Email Address
-            </label>
-            <input
-              type="email"
-              placeholder="name@email.com"
-              value={profile.email}
-              onChange={(e) => setProfile((prev) => ({ ...prev, email: e.target.value }))}
-              className="w-full h-12 px-4 text-xs font-semibold bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:border-[#BA2C2F] focus:bg-white transition-all placeholder:text-gray-300"
-            />
-          </div>
+        <div>
 
-          <div className="space-y-1.5">
-            <label className="text-[9px] font-bold text-gray-400 uppercase tracking-[0.1em] ml-1">
-              Mobile Number
-            </label>
-            <input
-              type="tel"
-              placeholder="+91"
-              value={profile.mobile}
-              onChange={(e) => setProfile((prev) => ({ ...prev, mobile: e.target.value }))}
-              className="w-full h-12 px-4 text-xs font-semibold bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:border-[#BA2C2F] focus:bg-white transition-all placeholder:text-gray-300"
-            />
-          </div>
+          <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-2">
+            Email Address
+          </label>
+
+          <input
+            type="email"
+            placeholder="name@email.com"
+            value={profile.email}
+            onChange={(e) =>
+              setProfile((prev) => ({
+                ...prev,
+                email: e.target.value,
+              }))
+            }
+            className="w-full h-12 px-4 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:outline-none focus:border-[#C8A882] focus:bg-white transition-all placeholder:text-[#B8B8B8]"
+          />
+
         </div>
+
+        <div>
+
+          <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-2">
+            Mobile Number
+          </label>
+
+          <input
+            type="tel"
+            placeholder="+91"
+            value={profile.mobile}
+            onChange={(e) =>
+              setProfile((prev) => ({
+                ...prev,
+                mobile: e.target.value,
+              }))
+            }
+            className="w-full h-12 px-4 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:outline-none focus:border-[#C8A882] focus:bg-white transition-all placeholder:text-[#B8B8B8]"
+          />
+
+        </div>
+
       </div>
 
+      {/* CTA */}
       <button
-        className="w-full mt-8 bg-black text-white h-14 text-[11px] font-bold uppercase tracking-[0.2em] rounded-xl shadow-xl hover:bg-[#BA2C2F] transition-all active:scale-[0.98]"
+        className="w-full mt-7 h-12 bg-[#1A1A1A] text-white rounded-2xl text-[12px] uppercase tracking-[0.18em] hover:bg-black transition-all"
         onClick={handleProfileUpdate}
       >
-        Update Profile
+        Join MANGO Club
       </button>
 
-      <div className="text-[9px] font-medium text-gray-400 text-center mt-4 px-4 leading-relaxed uppercase tracking-tighter">
-        By continuing, you agree to PUMA's <span className="underline text-black">Terms of Service</span> and Privacy Policy.
+      {/* Legal */}
+      <div className="text-[10px] text-[#8B6F5E] text-center mt-4 leading-relaxed">
+        By continuing, you agree to MANGO's Terms & Conditions and Privacy Policy.
       </div>
+
     </>
+
   )}
+
 </div>
           
-         {/* Purchase Rewards Section */}
-<div className="bg-white rounded-3xl shadow-xl border border-gray-100 mt-6 mx-4 p-6">
-  
+      {/* MANGO Account Benefits */}
+<div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mt-6 mx-4 p-6">
+
   {/* Header */}
   <div className="flex items-center justify-between mb-6">
+
     <div className="flex items-center">
-      <div className="w-8 h-8 bg-[#BA2C2F] rounded-lg flex items-center justify-center mr-3 shadow-lg shadow-[#BA2C2F]/20">
-        <Trophy className="h-4 w-4 text-white" />
+
+      <div className="w-10 h-10 bg-[#C8A882]/15 rounded-xl flex items-center justify-center mr-3">
+        <Heart className="h-5 w-5 text-[#8B6F5E]" />
       </div>
+
       <div>
-        <h3 className="text-sm font-bold uppercase tracking-tight text-black">My Rewards</h3>
-        <p className="text-[10px] font-medium text-gray-400 uppercase tracking-widest">Active Status</p>
+        <h3 className="text-[15px] font-medium text-[#1A1A1A]">
+          My MANGO
+        </h3>
+
+        <p className="text-[11px] text-[#8B6F5E] mt-1">
+          Save favourites and enjoy a personalised shopping experience
+        </p>
       </div>
+
     </div>
-    <div className="text-right">
-      <span className="text-[10px] font-bold bg-black text-white px-3 py-1 rounded-full uppercase">
-        Member
+
+    <div>
+      <span className="text-[10px] uppercase tracking-[0.12em] bg-[#F5F5F5] border border-[#ECECEC] text-[#8B6F5E] px-3 py-1 rounded-full">
+        Active
       </span>
     </div>
+
   </div>
 
-  {/* Points Overview */}
-  <div className="grid grid-cols-2 gap-4 mb-6">
-    <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
-      <div className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter mb-1">Points Earned</div>
-      <div className="flex items-baseline">
-        <span className="text-xl font-bold text-black">+1,418</span>
-        <span className="ml-1 text-[10px] font-bold text-[#BA2C2F]">Pending</span>
+  {/* Benefits Grid */}
+
+  <div className="grid grid-cols-2 gap-3 mb-6">
+
+    <div className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl p-4">
+      <div className="text-[10px] uppercase tracking-[0.12em] text-[#8B6F5E] mb-2">
+        Saved Items
+      </div>
+      <div className="text-[22px] font-light text-[#1A1A1A]">
+        24
       </div>
     </div>
 
-    <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
-      <div className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter mb-1">Total Balance</div>
-      <div className="text-xl font-bold text-black">8,450</div>
+    <div className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl p-4">
+      <div className="text-[10px] uppercase tracking-[0.12em] text-[#8B6F5E] mb-2">
+        Purchases
+      </div>
+      <div className="text-[22px] font-light text-[#1A1A1A]">
+        8
+      </div>
     </div>
+
   </div>
 
-  {/* Progress Bar */}
-  <div className="bg-black rounded-2xl p-5 shadow-xl shadow-black/10">
-    <div className="flex justify-between items-end mb-3">
-      <div>
-        <div className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Next Goal</div>
-        <div className="text-sm font-bold text-white uppercase">Unlocked Benefits</div>
-      </div>
-      <div className="text-right">
-        <span className="text-xs font-bold text-white tracking-tighter">₹15,000 / ₹25,000</span>
-      </div>
-    </div>
+  {/* Features */}
 
-    <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden mb-3">
-      <div 
-        className="h-full bg-[#BA2C2F] rounded-full relative"
-        style={{ width: "60%" }}
-      >
-        <div className="absolute top-0 right-0 h-full w-4 bg-white/20 skew-x-12 transform translate-x-2" />
-      </div>
-    </div>
+  <div className="bg-[#1A1A1A] rounded-2xl p-5">
 
-    <p className="text-[10px] font-medium text-white/60 leading-relaxed uppercase tracking-tight">
-      Reach <span className="text-white font-bold">₹25,000</span> total spend to unlock additional multipliers and event access.
-    </p>
-  </div>
-
-  {/* Perks */}
-  <div className="mt-6">
-    <div className="text-[11px] font-bold text-black uppercase tracking-widest mb-4 flex items-center">
-      <Zap className="h-3 w-3 mr-2 text-[#BA2C2F]" />
-      Active Perks
+    <div className="text-[11px] uppercase tracking-[0.15em] text-[#C8A882] mb-4">
+      Account Benefits
     </div>
 
     <div className="space-y-3">
-      <div className="flex items-center justify-between p-3 border border-dashed border-gray-200 rounded-xl bg-gray-50/50">
-        <div className="flex items-center">
-          <div className="w-10 h-10 bg-white border border-gray-100 rounded-lg flex items-center justify-center mr-3">
-            <Ticket className="h-5 w-5 text-gray-400" />
-          </div>
-          <div>
-            <div className="text-[11px] font-bold text-black uppercase">₹500 Off Voucher</div>
-            <div className="text-[9px] font-medium text-gray-400 uppercase tracking-tighter">Expires in 12 Days</div>
-          </div>
-        </div>
-        <button className="text-[10px] font-bold text-[#BA2C2F] uppercase tracking-tighter hover:underline">
-          Redeem
-        </button>
+
+      <div className="flex items-center text-white text-sm">
+        <Check className="h-4 w-4 mr-3 text-[#C8A882]" />
+        Save favourites and create collections
       </div>
 
-      <div className="flex items-center justify-between p-3 border border-gray-100 rounded-xl">
-        <div className="flex items-center opacity-50">
-          <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center mr-3">
-            <Gift className="h-5 w-5 text-gray-400" />
-          </div>
-          <div>
-            <div className="text-[11px] font-bold text-black uppercase">Birthday Surprise</div>
-            <div className="text-[9px] font-medium text-gray-400 uppercase tracking-tighter">Available in June</div>
-          </div>
-        </div>
-        <Lock className="h-3 w-3 text-gray-300 mr-2" />
+      <div className="flex items-center text-white text-sm">
+        <Check className="h-4 w-4 mr-3 text-[#C8A882]" />
+        Faster checkout on future purchases
       </div>
+
+      <div className="flex items-center text-white text-sm">
+        <Check className="h-4 w-4 mr-3 text-[#C8A882]" />
+        Track orders and returns
+      </div>
+
+      <div className="flex items-center text-white text-sm">
+        <Check className="h-4 w-4 mr-3 text-[#C8A882]" />
+        Receive new collection updates
+      </div>
+
     </div>
+
+  </div>
+
+  {/* Registry Card */}
+
+  <div className="mt-5 border border-[#ECECEC] rounded-2xl p-4 bg-[#FAFAFA]">
+
+    <div className="flex items-start justify-between">
+
+      <div>
+
+        <div className="text-[13px] font-medium text-[#1A1A1A]">
+          Wishlist & Registry
+        </div>
+
+        <div className="text-[11px] text-[#8B6F5E] mt-1 leading-relaxed">
+          Create and manage your favourite items for future purchases.
+        </div>
+
+      </div>
+
+      <Gift className="h-5 w-5 text-[#C8A882]" />
+
+    </div>
+
   </div>
 
   {/* CTA */}
-  <div className="mt-6 pt-6 border-t border-gray-100">
+
+  <div className="mt-6 pt-6 border-t border-[#ECECEC]">
+
     <a
-      href="https://in.puma.com/in/en/account/"
+      href="https://shop.mango.com/in/en/registry"
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex items-center justify-center w-full bg-gray-50 hover:bg-black hover:text-white border border-gray-200 rounded-xl py-3 transition-all duration-300"
+      className="group flex items-center justify-center w-full bg-[#F8F8F8] hover:bg-[#1A1A1A] hover:text-white border border-[#ECECEC] rounded-2xl py-3 transition-all duration-300"
     >
-      <span className="text-xs font-bold uppercase tracking-widest mr-2">Account Portal</span>
+      <span className="text-[12px] uppercase tracking-[0.15em] mr-2">
+        Open Registry
+      </span>
+
       <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
     </a>
+
   </div>
+
 </div>
           
 {/* Featured Categories Section */}
