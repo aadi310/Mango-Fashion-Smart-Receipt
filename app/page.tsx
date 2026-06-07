@@ -1206,80 +1206,114 @@ body {
 
 </div>
           
-          {/* Feedback Section */}
-<div className="bg-white rounded-3xl border border-gray-100 shadow-xl mx-4 mt-6 p-6">
+          {/* MANGO Feedback Section */}
+<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-6">
 
   {feedbackSubmitted ? (
-    <div className="text-center py-8 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-      <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-black/20">
-        <Check className="w-8 h-8 text-[#BA2C2F]" />
-      </div>
-      <div className="text-sm font-bold uppercase tracking-tight text-black mb-1">
-        Review Submitted
-      </div>
-      <div className="text-[11px] text-gray-400 font-medium uppercase tracking-widest px-6 leading-relaxed">
-        Thank you for sharing your experience with PUMA.
-      </div>
-    </div>
-  ) : (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center">
-        <div className="bg-black p-2.5 rounded-xl mr-4 shadow-lg shadow-black/10">
-          <MessageSquare className="h-4 w-4 text-white" />
-        </div>
-        <h3 className="text-sm font-bold uppercase tracking-tight text-black">
-          Rate Your Experience
-        </h3>
+
+    <div className="text-center py-10 bg-[#FAFAFA] rounded-2xl border border-[#ECECEC]">
+
+      <div className="w-16 h-16 bg-[#C8A882]/15 rounded-full flex items-center justify-center mx-auto mb-5">
+        <Check className="w-7 h-7 text-[#8B6F5E]" />
       </div>
 
-      {/* Golden Star Rating */}
-      <div className="flex justify-center gap-4 py-2">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <button
-            key={star}
-            onClick={() => {
-              setRating(star);
-              setSelectedTags([]);
-            }}
-            className="transition-all duration-200 active:scale-90"
-          >
-            <Star
-              className={`h-8 w-8 transition-colors ${
-                star <= rating 
-                  ? "fill-[#FFB800] text-[#FFB800]" 
-                  : "text-gray-200"
-              }`}
-            />
-          </button>
-        ))}
+      <div className="text-[18px] font-medium text-[#1A1A1A]">
+        Thank You
+      </div>
+
+      <div className="text-[12px] text-[#8B6F5E] mt-2 max-w-[260px] mx-auto leading-relaxed">
+        Your feedback helps us create a better shopping experience.
+      </div>
+
+    </div>
+
+  ) : (
+
+    <div className="space-y-7">
+
+      {/* Header */}
+      <div className="flex items-center">
+
+        <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-4">
+          <MessageSquare className="h-4 w-4 text-[#8B6F5E]" />
+        </div>
+
+        <div>
+          <h3 className="text-[15px] font-medium text-[#1A1A1A]">
+            Share Your Experience
+          </h3>
+
+          <p className="text-[11px] text-[#8B6F5E] mt-1">
+            We'd love to hear about your recent purchase.
+          </p>
+        </div>
+
+      </div>
+
+      {/* Rating */}
+      <div>
+
+        <div className="flex justify-center gap-4 py-2">
+
+          {[1, 2, 3, 4, 5].map((star) => (
+
+            <button
+              key={star}
+              onClick={() => {
+                setRating(star)
+                setSelectedTags([])
+              }}
+              className="transition-all duration-200 hover:scale-105"
+            >
+
+              <Star
+                className={`h-7 w-7 transition-colors ${
+                  star <= rating
+                    ? "fill-[#C8A882] text-[#C8A882]"
+                    : "text-[#D8D8D8]"
+                }`}
+              />
+
+            </button>
+
+          ))}
+
+        </div>
+
       </div>
 
       {/* Feedback Chips */}
       {rating > 0 && (
+
         <div className="space-y-3">
-          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">
-            What did you like most?
+
+          <div className="text-[11px] uppercase tracking-[0.15em] text-[#8B6F5E]">
+            {rating >= 4
+              ? "What stood out most?"
+              : "How can we improve?"}
           </div>
+
           <div className="flex flex-wrap gap-2">
+
             {(rating >= 4
               ? [
-                  "Product Quality",
-                  "Fast Checkout",
-                  "Store Staff",
-                  "Great Selection",
-                  "Easy Returns",
-                  "Design",
+                  "Style",
+                  "Fit",
+                  "Fabric Quality",
+                  "Store Experience",
+                  "Collection",
+                  "Easy Checkout",
                 ]
               : [
-                  "Stock Issues",
-                  "Long Queues",
-                  "Sizing Help",
-                  "Quality Concern",
-                  "App Experience",
+                  "Sizing",
+                  "Availability",
+                  "Checkout Time",
+                  "Product Quality",
+                  "Store Support",
                   "Pricing",
                 ]
             ).map((item) => (
+
               <button
                 key={item}
                 onClick={() =>
@@ -1289,53 +1323,61 @@ body {
                       : [...prev, item]
                   )
                 }
-                className={`text-[10px] px-4 py-2 rounded-full border-2 font-bold uppercase tracking-tighter transition-all ${
+                className={`text-[11px] px-4 py-2 rounded-full border transition-all ${
                   selectedTags.includes(item)
-                    ? "bg-black text-white border-black"
-                    : "border-gray-50 bg-gray-50 text-gray-400 hover:border-gray-100"
+                    ? "bg-[#C8A882] border-[#C8A882] text-black"
+                    : "bg-[#F8F8F8] border-[#ECECEC] text-[#8B6F5E]"
                 }`}
               >
                 {item}
               </button>
+
             ))}
+
           </div>
+
         </div>
+
       )}
 
-      {/* Optional Comment */}
-      <div className="space-y-2">
-        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">
-          Additional Comments (Optional)
+      {/* Comment Box */}
+      <div>
+
+        <label className="block text-[11px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-3">
+          Additional Comments
         </label>
+
         <textarea
-          rows={3}
-          placeholder="Tell us about your visit..."
-          className="w-full p-4 text-xs font-medium bg-gray-50 border border-gray-100 rounded-2xl focus:bg-white focus:border-[#BA2C2F] outline-none resize-none transition-all placeholder:text-gray-300"
+          rows={4}
+          placeholder="Tell us about your experience..."
+          className="w-full p-4 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:bg-white focus:border-[#C8A882] outline-none resize-none transition-all text-[#1A1A1A] placeholder:text-[#B5B5B5]"
           value={feedbackText}
           onChange={(e) => setFeedbackText(e.target.value)}
         />
+
       </div>
 
-      {/* Submit Button with Design Quirk */}
-      <div className="pt-2">
-        <button
-          className={`w-full h-14 text-[11px] font-bold uppercase tracking-[0.2em] rounded-xl transition-all shadow-xl active:scale-[0.98] ${
-            rating 
-              ? "bg-black text-white shadow-black/20 hover:bg-[#BA2C2F]" 
-              : "bg-transparent border-2 border-dashed border-gray-200 text-gray-300 cursor-not-allowed"
-          }`}
-          onClick={handleFeedbackSubmit}
-          disabled={!rating}
-        >
-          {rating ? "Submit Review" : "Select a Rating"}
-        </button>
-      </div>
+      {/* Submit Button */}
+      <button
+        className={`w-full h-12 rounded-2xl text-[12px] uppercase tracking-[0.18em] transition-all ${
+          rating
+            ? "bg-[#1A1A1A] text-white hover:bg-black"
+            : "bg-[#F5F5F5] text-[#B5B5B5] cursor-not-allowed"
+        }`}
+        onClick={handleFeedbackSubmit}
+        disabled={!rating}
+      >
+        {rating ? "Submit Feedback" : "Select Rating"}
+      </button>
 
-      <p className="text-[9px] font-bold text-center text-gray-300 uppercase tracking-tighter">
-        Your feedback helps PUMA improve every day.
+      <p className="text-center text-[10px] text-[#8B6F5E]">
+        Your feedback helps us refine every collection and experience.
       </p>
+
     </div>
+
   )}
+
 </div>
           
 {/* Promo Banner Carousel */}
