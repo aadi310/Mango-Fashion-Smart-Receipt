@@ -1864,7 +1864,7 @@ body {
         <div className="relative aspect-[539/754]">
 
           <Image
-            src="/images/design-mode/dress.png"
+            src="/images/design-mode/Dress.png"
             alt="Women's Dresses"
             fill
             className="object-contain transition-transform duration-500 group-hover:scale-[1.03]"
