@@ -50,26 +50,35 @@ interface Receipt {
   date: string
   time: string
   associate: string
+  branch?: string
+
   items: Array<{
     id: number
     name: string
-    description: string
+
+    // Fashion-specific details
+    color?: string
+    size?: string
+    material?: string
+
+    // Product information
+    category?: string
+    itemCode?: string
+
+    // Pricing
     price: number
     quantity: number
-    category?: string
-    taxApplicable?: boolean
     baseAmount?: number
     tax?: number
-    itemCode?: string
-    size?: string
-    color?: string
-    material?: string
+
+    // Optional merchandising fields
+    description?: string
   }>
+
   subtotal: number
   tax: number
   total: number
 }
-
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [showTerms, setShowTerms] = useState(false)
@@ -208,164 +217,182 @@ const [expandedItemFeedback, setExpandedItemFeedback] = useState([])
 
  const receipts = {
   current: {
-    id: "PMIN-BR7891XQ12",
+    id: "MNG-IN7845KD21",
     date: "05-04-2026",
     time: "19:22:18",
-    associate: "Rahul Kumar",
-    branch: "Brigade Road, BLR",
+    associate: "Priya Mehta",
+    branch: "Phoenix Mall, BLR",
     items: [
       {
         id: 0,
-        name: "Velocity NITRO 4",
-        color: "Warm White-Gold",
-        price: 11999,
+        name: "Long Satin Dress",
+        color: "Burnt Orange",
+        size: "M",
+        material: "Silk Mix Satin",
+        price: 11990,
         quantity: 1,
-        category: "Running",
-        itemCode: "P-377745-01",
-        baseAmount: 10713.39,
-        tax: 1285.61, // 12% GST
+        category: "Women > Dresses",
+        itemCode: "27034440",
+        baseAmount: 10161.02,
+        tax: 1828.98
       },
       {
         id: 1,
-        name: "Train All Day Tee",
-        color: "PUMA White",
-        price: 1079, // Sale price from screenshot
-        originalPrice: 1799,
+        name: "Boat-Neck Ruched Dress",
+        color: "Red",
+        size: "M",
+        material: "Poly Blend",
+        price: 5990,
         quantity: 1,
-        category: "Training",
-        itemCode: "P-524872-02",
-        baseAmount: 963.39,
-        tax: 115.61,
+        category: "Women > Dresses",
+        itemCode: "27014089",
+        baseAmount: 5076.27,
+        tax: 913.73
       },
       {
         id: 2,
-        name: "CR Cricket Shorts",
-        color: "PUMA Black",
-        price: 1099,
-        originalPrice: 1999,
+        name: "Satin Dress with Gathered V-Neckline",
+        color: "Orange",
+        size: "S",
+        material: "Satin",
+        price: 7990,
         quantity: 1,
-        category: "Cricket",
-        itemCode: "P-678234-01",
-        baseAmount: 981.25,
-        tax: 117.75,
-      },
+        category: "Women > Dresses",
+        itemCode: "27009090",
+        baseAmount: 6771.19,
+        tax: 1218.81
+      }
     ],
-    subtotal: 12658.03,
-    tax: 1518.97,
-    total: 14177,
+    subtotal: 22008.48,
+    tax: 3961.52,
+    total: 25970
   },
 
   hist1: {
-    id: "PMIN-IN6719YT92",
+    id: "MNG-IN5638WR94",
     date: "20-03-2026",
     time: "14:22:18",
-    associate: "Anita Sharma",
-    branch: "Indiranagar, BLR",
+    associate: "Anjali Kapoor",
+    branch: "UB City, BLR",
     items: [
       {
         id: 0,
-        name: "Ferrari Neo Cat 2.0",
-        color: "PUMA Black-White",
-        price: 4124,
-        originalPrice: 7499,
+        name: "Slim Fit T-Shirt 180gsm",
+        color: "Dark Green",
+        size: "M",
+        material: "100% Organic Cotton",
+        price: 1290,
         quantity: 1,
-        category: "Motorsport",
-        itemCode: "P-307239-02",
-        baseAmount: 3682.14,
-        tax: 441.86,
+        category: "Men > T-Shirts",
+        itemCode: "37011432",
+        baseAmount: 1093.22,
+        tax: 196.78
       },
       {
         id: 1,
-        name: "PUMA x RCB Jacket",
-        color: "Navy-Red",
-        price: 5499,
+        name: "Henley Linen-Blend T-Shirt",
+        color: "Navy",
+        size: "L",
+        material: "Linen Blend",
+        price: 4290,
         quantity: 1,
-        category: "Fanwear",
-        itemCode: "P-625890-01",
-        baseAmount: 4909.82,
-        tax: 589.18,
+        category: "Men > T-Shirts",
+        itemCode: "27035965",
+        baseAmount: 3635.59,
+        tax: 654.41
       },
       {
         id: 2,
-        name: "Essentials Track Suit",
-        color: "Medium Gray",
-        price: 3949,
-        originalPrice: 5266,
+        name: "Moby Straight-Fit Dark-Wash Jeans",
+        color: "Dark Blue",
+        size: "42",
+        material: "Denim",
+        price: 4990,
         quantity: 1,
-        category: "Lifestyle",
-        itemCode: "P-586747-03",
-        baseAmount: 3525.89,
-        tax: 423.11,
-      },
+        category: "Men > Jeans",
+        itemCode: "27041249",
+        baseAmount: 4228.81,
+        tax: 761.19
+      }
     ],
-    subtotal: 12117.85,
-    tax: 1454.15,
-    total: 13572,
+    subtotal: 8957.62,
+    tax: 1612.38,
+    total: 10570
   },
 
   hist2: {
-    id: "PMIN-KM5590LP33",
+    id: "MNG-IN9274QP11",
     date: "15-02-2026",
     time: "12:45:33",
-    associate: "Sanjay Reddy",
-    branch: "Koramangala, BLR",
+    associate: "Rohit Nair",
+    branch: "Forum South Mall, BLR",
     items: [
       {
         id: 0,
-        name: "Court Shatter Low",
-        color: "PUMA White",
-        price: 2819,
-        originalPrice: 5999,
+        name: "Floral Linen-Blend Dress",
+        color: "Pink",
+        size: "10 Years",
+        material: "Linen Blend",
+        price: 3590,
         quantity: 1,
-        category: "Lifestyle",
-        itemCode: "P-384123-05",
-        baseAmount: 2516.96,
-        tax: 302.04,
+        category: "Kids > Girls",
+        itemCode: "27076746",
+        baseAmount: 3042.37,
+        tax: 547.63
       },
       {
         id: 1,
-        name: "PUMA x POKEMON Jacket",
-        color: "Strong Gray",
-        price: 7499,
+        name: "Long Printed Jumpsuit",
+        color: "Pink",
+        size: "11 Years",
+        material: "Printed Fabric",
+        price: 3890,
         quantity: 1,
-        category: "Collab",
-        itemCode: "P-536547-01",
-        baseAmount: 6695.54,
-        tax: 803.46,
+        category: "Kids > Girls",
+        itemCode: "27086748",
+        baseAmount: 3296.61,
+        tax: 593.39
       },
       {
         id: 2,
-        name: "Train All Day Pants",
-        color: "PUMA Black",
-        price: 3799,
+        name: "Tropical Print Dress",
+        color: "Green",
+        size: "9 Years",
+        material: "Cotton Blend",
+        price: 3290,
         quantity: 1,
-        category: "Training",
-        itemCode: "P-523120-01",
-        baseAmount: 3391.96,
-        tax: 407.04,
-      },
+        category: "Kids > Girls",
+        itemCode: "27027948",
+        baseAmount: 2788.14,
+        tax: 501.86
+      }
     ],
-    subtotal: 12604.46,
-    tax: 1512.54,
-    total: 14117,
+    subtotal: 9127.12,
+    tax: 1642.88,
+    total: 10770
+  }
+}
+
+const transactionHistory = [
+  {
+    id: "current",
+    date: "05-04-2026",
+    branch: "MANGO",
+    amount: 25970.00
   },
-};
-  
-  const currentReceipt = receipts[currentReceiptId]
-
-  const totalSlides = 2
-
-  const transactionHistory = [
-    {
-      id: "current",
-      date: "05-03-2026",
-      branch: "PUMA",
-      amount: currentReceiptId === "current" ? receipts.current.subtotal + receipts.current.tax : 14177.00,
-    },
-    { id: "hist1", date: "20-01-2026", branch: "PUMA", amount: 13572.00 },
-    { id: "hist2", date: "15-12-2025", branch: "PUMA", amount: 14117.00 },
-  ]
-
+  {
+    id: "hist1",
+    date: "20-03-2026",
+    branch: "MANGO",
+    amount: 10570.00
+  },
+  {
+    id: "hist2",
+    date: "15-02-2026",
+    branch: "MANGO",
+    amount: 10770.00
+  }
+]
   const toggleProductExpansion = (productId: number) => {
     setExpandedProducts((prev) =>
       prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId],
