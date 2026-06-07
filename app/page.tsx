@@ -493,7 +493,7 @@ const transactionHistory = [
   }
 
   const handleEmailReceipt = () => {
-    window.open(`mailto:?subject=Receipt from PUMA Bangalore&body=Receipt ID: ${currentReceipt.id}`)
+    window.open(`mailto:?subject=Receipt from Mango Bangalore&body=Receipt ID: ${currentReceipt.id}`)
   }
 
   const handleDownloadReceipt = () => {
@@ -981,7 +981,7 @@ body{
     const url = URL.createObjectURL(blob)
     const link = document.createElement("a")
     link.href = url
-    link.download = "PUMA_Receipt_SK251107001.html"
+    link.download = "Mango_Receipt_S001.html"
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
