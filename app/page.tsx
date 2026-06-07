@@ -1629,7 +1629,7 @@ body {
 
 </div>
           
-      {/* MANGO Account Benefits */}
+      {/* MANGO Club Status */}
 <div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mt-6 mx-4 p-6">
 
   {/* Header */}
@@ -1638,127 +1638,189 @@ body {
     <div className="flex items-center">
 
       <div className="w-10 h-10 bg-[#C8A882]/15 rounded-xl flex items-center justify-center mr-3">
-        <Heart className="h-5 w-5 text-[#8B6F5E]" />
+        <Crown className="h-5 w-5 text-[#8B6F5E]" />
       </div>
 
       <div>
         <h3 className="text-[15px] font-medium text-[#1A1A1A]">
-          My MANGO
+          MANGO Club
         </h3>
 
         <p className="text-[11px] text-[#8B6F5E] mt-1">
-          Save favourites and enjoy a personalised shopping experience
+          Member benefits and exclusive fashion access
         </p>
       </div>
 
     </div>
 
     <div>
-      <span className="text-[10px] uppercase tracking-[0.12em] bg-[#F5F5F5] border border-[#ECECEC] text-[#8B6F5E] px-3 py-1 rounded-full">
-        Active
+      <span className="bg-[#C8A882] text-black text-[10px] uppercase tracking-[0.12em] px-3 py-1 rounded-full">
+        Premium
       </span>
     </div>
 
   </div>
 
-  {/* Benefits Grid */}
+  {/* Membership Overview */}
 
   <div className="grid grid-cols-2 gap-3 mb-6">
 
     <div className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl p-4">
+
       <div className="text-[10px] uppercase tracking-[0.12em] text-[#8B6F5E] mb-2">
-        Saved Items
+        Annual Spend
       </div>
-      <div className="text-[22px] font-light text-[#1A1A1A]">
-        24
+
+      <div className="text-[24px] font-light text-[#1A1A1A]">
+        ₹18,420
       </div>
+
     </div>
 
     <div className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl p-4">
+
       <div className="text-[10px] uppercase tracking-[0.12em] text-[#8B6F5E] mb-2">
         Purchases
       </div>
-      <div className="text-[22px] font-light text-[#1A1A1A]">
-        8
+
+      <div className="text-[24px] font-light text-[#1A1A1A]">
+        12
       </div>
+
     </div>
 
   </div>
 
-  {/* Features */}
+  {/* Tier Progress */}
 
-  <div className="bg-[#1A1A1A] rounded-2xl p-5">
+  <div className="bg-[#1A1A1A] rounded-2xl p-5 mb-6">
 
-    <div className="text-[11px] uppercase tracking-[0.15em] text-[#C8A882] mb-4">
-      Account Benefits
+    <div className="flex justify-between items-center mb-4">
+
+      <div>
+
+        <div className="text-[10px] uppercase tracking-[0.15em] text-[#C8A882]">
+          Current Tier
+        </div>
+
+        <div className="text-white text-lg font-medium mt-1">
+          Premium Member
+        </div>
+
+      </div>
+
+      <div className="text-right">
+
+        <div className="text-white text-sm">
+          ₹18,420 / ₹25,000
+        </div>
+
+      </div>
+
+    </div>
+
+    <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+
+      <div
+        className="h-full bg-[#C8A882] rounded-full"
+        style={{ width: "74%" }}
+      />
+
+    </div>
+
+    <div className="mt-3 text-[11px] text-white/70 leading-relaxed">
+      Spend another <span className="text-white">₹6,580</span> to unlock
+      Signature status and receive priority access to selected collections.
+    </div>
+
+  </div>
+
+  {/* Tiers */}
+
+  <div className="mb-6">
+
+    <div className="text-[11px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-4">
+      Membership Levels
     </div>
 
     <div className="space-y-3">
 
-      <div className="flex items-center text-white text-sm">
-        <Check className="h-4 w-4 mr-3 text-[#C8A882]" />
-        Save favourites and create collections
+      <div className="flex items-center justify-between p-3 rounded-xl border border-[#ECECEC] bg-[#FAFAFA]">
+
+        <div>
+          <div className="text-sm text-[#1A1A1A]">
+            Essential
+          </div>
+          <div className="text-[11px] text-[#8B6F5E]">
+            Welcome benefits
+          </div>
+        </div>
+
+        <Check className="h-4 w-4 text-[#C8A882]" />
+
       </div>
 
-      <div className="flex items-center text-white text-sm">
-        <Check className="h-4 w-4 mr-3 text-[#C8A882]" />
-        Faster checkout on future purchases
+      <div className="flex items-center justify-between p-3 rounded-xl border border-[#C8A882] bg-[#C8A882]/10">
+
+        <div>
+          <div className="text-sm text-[#1A1A1A] font-medium">
+            Premium
+          </div>
+          <div className="text-[11px] text-[#8B6F5E]">
+            Current Membership
+          </div>
+        </div>
+
+        <Crown className="h-4 w-4 text-[#8B6F5E]" />
+
       </div>
 
-      <div className="flex items-center text-white text-sm">
-        <Check className="h-4 w-4 mr-3 text-[#C8A882]" />
-        Track orders and returns
-      </div>
+      <div className="flex items-center justify-between p-3 rounded-xl border border-[#ECECEC]">
 
-      <div className="flex items-center text-white text-sm">
-        <Check className="h-4 w-4 mr-3 text-[#C8A882]" />
-        Receive new collection updates
+        <div>
+          <div className="text-sm text-[#1A1A1A]">
+            Signature
+          </div>
+          <div className="text-[11px] text-[#8B6F5E]">
+            Exclusive access tier
+          </div>
+        </div>
+
+        <Lock className="h-4 w-4 text-[#BDBDBD]" />
+
       </div>
 
     </div>
 
   </div>
 
-  {/* Registry Card */}
+  {/* Active Benefits */}
 
-  <div className="mt-5 border border-[#ECECEC] rounded-2xl p-4 bg-[#FAFAFA]">
+  <div>
 
-    <div className="flex items-start justify-between">
-
-      <div>
-
-        <div className="text-[13px] font-medium text-[#1A1A1A]">
-          Wishlist & Registry
-        </div>
-
-        <div className="text-[11px] text-[#8B6F5E] mt-1 leading-relaxed">
-          Create and manage your favourite items for future purchases.
-        </div>
-
-      </div>
-
-      <Gift className="h-5 w-5 text-[#C8A882]" />
-
+    <div className="text-[11px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-4">
+      Active Benefits
     </div>
 
-  </div>
+    <div className="grid grid-cols-2 gap-3">
 
-  {/* CTA */}
+      <div className="bg-[#F8F8F8] rounded-xl p-3 border border-[#ECECEC] text-[12px] text-[#1A1A1A]">
+        Early Collection Access
+      </div>
 
-  <div className="mt-6 pt-6 border-t border-[#ECECEC]">
+      <div className="bg-[#F8F8F8] rounded-xl p-3 border border-[#ECECEC] text-[12px] text-[#1A1A1A]">
+        Priority Sale Access
+      </div>
 
-    <a
-      href="https://shop.mango.com/in/en/registry"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group flex items-center justify-center w-full bg-[#F8F8F8] hover:bg-[#1A1A1A] hover:text-white border border-[#ECECEC] rounded-2xl py-3 transition-all duration-300"
-    >
-      <span className="text-[12px] uppercase tracking-[0.15em] mr-2">
-        Open Registry
-      </span>
+      <div className="bg-[#F8F8F8] rounded-xl p-3 border border-[#ECECEC] text-[12px] text-[#1A1A1A]">
+        Personalised Picks
+      </div>
 
-      <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-    </a>
+      <div className="bg-[#F8F8F8] rounded-xl p-3 border border-[#ECECEC] text-[12px] text-[#1A1A1A]">
+        Express Checkout
+      </div>
+
+    </div>
 
   </div>
 
