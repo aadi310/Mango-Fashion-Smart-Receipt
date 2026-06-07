@@ -215,9 +215,9 @@ const [expandedItemFeedback, setExpandedItemFeedback] = useState([])
     })
   }, [promoApi])
 
- const receipts = {
+const receipts = {
   current: {
-    id: "MNG-IN7845KD21",
+    id: "MNG-BR7891XQ12",
     date: "05-04-2026",
     time: "19:22:18",
     associate: "Priya Mehta",
@@ -229,25 +229,27 @@ const [expandedItemFeedback, setExpandedItemFeedback] = useState([])
         color: "Burnt Orange",
         size: "M",
         material: "Silk Mix Satin",
+        fit: "Fitted",
         price: 11990,
         quantity: 1,
         category: "Women > Dresses",
         itemCode: "27034440",
         baseAmount: 10161.02,
-        tax: 1828.98
+        tax: 1828.98,
       },
       {
         id: 1,
         name: "Boat-Neck Ruched Dress",
         color: "Red",
         size: "M",
-        material: "Poly Blend",
+        material: "Woven Fabric",
+        fit: "Regular Fit",
         price: 5990,
         quantity: 1,
         category: "Women > Dresses",
         itemCode: "27014089",
         baseAmount: 5076.27,
-        tax: 913.73
+        tax: 913.73,
       },
       {
         id: 2,
@@ -255,25 +257,26 @@ const [expandedItemFeedback, setExpandedItemFeedback] = useState([])
         color: "Orange",
         size: "S",
         material: "Satin",
+        fit: "Regular Fit",
         price: 7990,
         quantity: 1,
         category: "Women > Dresses",
         itemCode: "27009090",
         baseAmount: 6771.19,
-        tax: 1218.81
-      }
+        tax: 1218.81,
+      },
     ],
     subtotal: 22008.48,
     tax: 3961.52,
-    total: 25970
+    total: 25970,
   },
 
   hist1: {
-    id: "MNG-IN5638WR94",
+    id: "MNG-IN6719YT92",
     date: "20-03-2026",
     time: "14:22:18",
     associate: "Anjali Kapoor",
-    branch: "UB City, BLR",
+    branch: "Indiranagar, BLR",
     items: [
       {
         id: 0,
@@ -281,12 +284,13 @@ const [expandedItemFeedback, setExpandedItemFeedback] = useState([])
         color: "Dark Green",
         size: "M",
         material: "100% Organic Cotton",
+        fit: "Slim Fit",
         price: 1290,
         quantity: 1,
         category: "Men > T-Shirts",
         itemCode: "37011432",
         baseAmount: 1093.22,
-        tax: 196.78
+        tax: 196.78,
       },
       {
         id: 1,
@@ -294,12 +298,13 @@ const [expandedItemFeedback, setExpandedItemFeedback] = useState([])
         color: "Navy",
         size: "L",
         material: "Linen Blend",
+        fit: "Slim Fit",
         price: 4290,
         quantity: 1,
         category: "Men > T-Shirts",
         itemCode: "27035965",
         baseAmount: 3635.59,
-        tax: 654.41
+        tax: 654.41,
       },
       {
         id: 2,
@@ -307,25 +312,26 @@ const [expandedItemFeedback, setExpandedItemFeedback] = useState([])
         color: "Dark Blue",
         size: "42",
         material: "Denim",
+        fit: "Straight Fit",
         price: 4990,
         quantity: 1,
         category: "Men > Jeans",
         itemCode: "27041249",
         baseAmount: 4228.81,
-        tax: 761.19
-      }
+        tax: 761.19,
+      },
     ],
     subtotal: 8957.62,
     tax: 1612.38,
-    total: 10570
+    total: 10570,
   },
 
   hist2: {
-    id: "MNG-IN9274QP11",
+    id: "MNG-KM5590LP33",
     date: "15-02-2026",
     time: "12:45:33",
     associate: "Rohit Nair",
-    branch: "Forum South Mall, BLR",
+    branch: "Koramangala, BLR",
     items: [
       {
         id: 0,
@@ -333,12 +339,13 @@ const [expandedItemFeedback, setExpandedItemFeedback] = useState([])
         color: "Pink",
         size: "10 Years",
         material: "Linen Blend",
+        fit: "A-Line",
         price: 3590,
         quantity: 1,
         category: "Kids > Girls",
         itemCode: "27076746",
         baseAmount: 3042.37,
-        tax: 547.63
+        tax: 547.63,
       },
       {
         id: 1,
@@ -346,12 +353,13 @@ const [expandedItemFeedback, setExpandedItemFeedback] = useState([])
         color: "Pink",
         size: "11 Years",
         material: "Printed Fabric",
+        fit: "Regular Fit",
         price: 3890,
         quantity: 1,
         category: "Kids > Girls",
         itemCode: "27086748",
         baseAmount: 3296.61,
-        tax: 593.39
+        tax: 593.39,
       },
       {
         id: 2,
@@ -359,40 +367,49 @@ const [expandedItemFeedback, setExpandedItemFeedback] = useState([])
         color: "Green",
         size: "9 Years",
         material: "Cotton Blend",
+        fit: "Regular Fit",
         price: 3290,
         quantity: 1,
         category: "Kids > Girls",
         itemCode: "27027948",
         baseAmount: 2788.14,
-        tax: 501.86
-      }
+        tax: 501.86,
+      },
     ],
     subtotal: 9127.12,
     tax: 1642.88,
-    total: 10770
-  }
+    total: 10770,
+  },
 }
+
+const currentReceipt = receipts[currentReceiptId]
+
+const totalSlides = 2
 
 const transactionHistory = [
   {
     id: "current",
     date: "05-04-2026",
     branch: "MANGO",
-    amount: 25970.00
+    amount:
+      currentReceiptId === "current"
+        ? receipts.current.subtotal + receipts.current.tax
+        : 25970.0,
   },
   {
     id: "hist1",
     date: "20-03-2026",
     branch: "MANGO",
-    amount: 10570.00
+    amount: 10570.0,
   },
   {
     id: "hist2",
     date: "15-02-2026",
     branch: "MANGO",
-    amount: 10770.00
-  }
+    amount: 10770.0,
+  },
 ]
+  
   const toggleProductExpansion = (productId: number) => {
     setExpandedProducts((prev) =>
       prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId],
