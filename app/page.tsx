@@ -891,7 +891,7 @@ body {
           Receipt ID
         </div>
 
-        <div className="mt-2 text-[15px] font-medium text-[#1A1A1A]">
+        <div className="mt-2 text-[12px] font-medium text-[#1A1A1A]">
           #{currentReceipt.id.slice(-8)}
         </div>
       </div>
@@ -901,7 +901,7 @@ body {
           Date & Time
         </div>
 
-        <div className="mt-2 text-[15px] font-medium text-[#1A1A1A]">
+        <div className="mt-2 text-[12px] font-medium text-[#1A1A1A]">
           {currentReceipt.date}
           <span className="mx-2 text-[#C8A882]">•</span>
           {currentReceipt.time}
