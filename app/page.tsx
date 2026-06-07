@@ -914,166 +914,296 @@ body {
 
 </div>
           
-         {/* Purchase Details Section */}
-<div className="bg-white rounded-3xl shadow-xl border border-gray-100 mt-6 mx-4 p-6">
+         {/* MANGO Purchase Details Section */}
+<div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mt-6 mx-4 p-6">
 
   {/* Header */}
   <div className="flex items-center justify-between mb-6">
-    <h3 className="text-sm font-bold uppercase tracking-wider flex items-center text-black">
-      <Package className="mr-2 h-4 w-4 text-[#BA2C2F]" />
+
+    <h3 className="text-[13px] font-medium uppercase tracking-[0.18em] flex items-center text-[#1A1A1A]">
+      <Package className="mr-2 h-4 w-4 text-[#C8A882]" />
       Purchase Summary
     </h3>
-    <span className="text-[10px] font-semibold bg-black text-white px-3 py-1 rounded-full uppercase">
-      {currentReceipt.items.length} Units
+
+    <span className="text-[10px] font-medium bg-[#F5F5F5] text-[#8B6F5E] border border-[#E7E7E7] px-3 py-1 rounded-full uppercase tracking-[0.12em]">
+      {currentReceipt.items.length} Items
     </span>
+
   </div>
 
-  {/* Items List */}
+  {/* Items */}
   <div className="space-y-4">
+
     {currentReceipt.items.map((product) => (
+
       <div
         key={product.id}
-        className="border-l-2 border-[#BA2C2F] bg-gray-50/80 rounded-r-xl p-4"
+        className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl p-5 transition-all duration-200"
       >
-        {/* Item Header */}
+
+        {/* Product Header */}
         <div
           className="flex items-start justify-between cursor-pointer"
           onClick={() => toggleProductExpansion(product.id)}
         >
+
           <div className="flex items-start flex-1">
+
             <ChevronRight
-              className={`h-4 w-4 mt-1 mr-2 text-black transition-transform duration-200 ${
-                expandedProducts.includes(product.id) ? "rotate-90" : ""
+              className={`h-4 w-4 mt-1 mr-2 text-[#8B6F5E] transition-transform duration-200 ${
+                expandedProducts.includes(product.id)
+                  ? "rotate-90"
+                  : ""
               }`}
             />
+
             <div>
-              <div className="font-bold text-sm uppercase tracking-tight text-black">
+
+              <div className="font-medium text-[15px] text-[#1A1A1A] tracking-[-0.01em]">
                 {product.name}
               </div>
-              <div className="text-[10px] font-medium text-gray-500 uppercase tracking-widest mt-0.5">
+
+              <div className="text-[11px] text-[#8B6F5E] uppercase tracking-[0.12em] mt-1">
                 {product.category}
               </div>
+
             </div>
+
           </div>
 
           <div className="text-right">
-            <div className="text-[10px] font-semibold text-gray-400 uppercase">
-              QTY {product.quantity}
+
+            <div className="text-[10px] uppercase tracking-[0.12em] text-[#8B6F5E]">
+              Qty {product.quantity}
             </div>
-            <div className="font-bold text-sm text-black mt-1">
-              ₹{product.price.toLocaleString('en-IN')}
+
+            <div className="font-semibold text-[15px] text-[#1A1A1A] mt-1">
+              ₹{product.price.toLocaleString("en-IN")}
             </div>
+
           </div>
+
         </div>
 
-        {/* Expanded Section: SKU and Color */}
+        {/* Expanded Product Details */}
         {expandedProducts.includes(product.id) && (
-          <div className="mt-4 pt-3 border-t border-gray-200 grid grid-cols-2 gap-y-2">
-            <div className="flex flex-col">
-              <span className="text-[9px] font-bold text-gray-400 uppercase">SKU</span>
-              <span className="text-[11px] font-medium text-black uppercase">{product.itemCode}</span>
+
+          <div className="mt-4 pt-4 border-t border-[#E5E5E5]">
+
+            <div className="grid grid-cols-2 gap-y-4">
+
+              <div>
+                <div className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">
+                  Reference
+                </div>
+                <div className="text-[12px] text-[#1A1A1A] mt-1">
+                  {product.itemCode}
+                </div>
+              </div>
+
+              <div className="text-right">
+                <div className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">
+                  Colour
+                </div>
+                <div className="text-[12px] text-[#1A1A1A] mt-1">
+                  {product.color}
+                </div>
+              </div>
+
+              <div>
+                <div className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">
+                  Size
+                </div>
+                <div className="text-[12px] text-[#1A1A1A] mt-1">
+                  {product.size}
+                </div>
+              </div>
+
+              <div className="text-right">
+                <div className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">
+                  Fit
+                </div>
+                <div className="text-[12px] text-[#1A1A1A] mt-1">
+                  {product.fit}
+                </div>
+              </div>
+
+              <div className="col-span-2">
+                <div className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">
+                  Material
+                </div>
+                <div className="text-[12px] text-[#1A1A1A] mt-1">
+                  {product.material}
+                </div>
+              </div>
+
             </div>
-            <div className="flex flex-col text-right">
-              <span className="text-[9px] font-bold text-gray-400 uppercase">Color</span>
-              <span className="text-[11px] font-bold text-black uppercase">{product.color}</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[9px] font-bold text-gray-400 uppercase">Tax (GST)</span>
-              <span className="text-[11px] font-medium text-black">₹{product.tax.toFixed(2)}</span>
-            </div>
+
           </div>
+
         )}
 
         {/* Feedback Toggle */}
-        <div className="mt-3">
+        <div className="mt-4">
+
           <button
             onClick={() => toggleItemFeedback(product.id)}
-            className="flex items-center text-[10px] font-bold uppercase tracking-wider text-[#BA2C2F]"
+            className="flex items-center text-[10px] font-medium uppercase tracking-[0.15em] text-[#8B6F5E]"
           >
-            {expandedItemFeedback.includes(product.id) ? "Close Review" : "Rate Product"}
-            <Star className={`ml-1 h-3 w-3 ${expandedItemFeedback.includes(product.id) ? "fill-[#BA2C2F]" : ""}`} />
+
+            {expandedItemFeedback.includes(product.id)
+              ? "Close Review"
+              : "Rate Product"}
+
+            <Star
+              className={`ml-2 h-3.5 w-3.5 ${
+                expandedItemFeedback.includes(product.id)
+                  ? "fill-[#C8A882] text-[#C8A882]"
+                  : "text-[#8B6F5E]"
+              }`}
+            />
+
           </button>
+
         </div>
 
-        {/* Feedback Panel */}
+        {/* Review Panel */}
         {expandedItemFeedback.includes(product.id) && (
-          <div className="mt-3 bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+
+          <div className="mt-4 bg-white rounded-2xl border border-[#ECECEC] p-4">
+
             <div className="flex justify-center gap-2 mb-4">
+
               {[1, 2, 3, 4, 5].map((star) => (
-                <button key={star} onClick={() => setItemRating(product.id, star)}>
+
+                <button
+                  key={star}
+                  onClick={() =>
+                    setItemRating(product.id, star)
+                  }
+                >
+
                   <Star
                     className={`h-5 w-5 ${
                       star <= (itemFeedback[product.id]?.rating || 0)
-                        ? "fill-black text-black"
-                        : "text-gray-200"
+                        ? "fill-[#C8A882] text-[#C8A882]"
+                        : "text-[#D8D8D8]"
                     }`}
                   />
+
                 </button>
+
               ))}
+
             </div>
+
             <div className="flex flex-wrap gap-2 justify-center">
+
               {["Comfort", "Fit", "Style", "Quality"].map((tag) => {
-                const isActive = itemFeedback[product.id]?.tags?.includes(tag);
+
+                const isActive =
+                  itemFeedback[product.id]?.tags?.includes(tag)
+
                 return (
+
                   <button
                     key={tag}
-                    onClick={() => toggleItemTag(product.id, tag)}
-                    className={`text-[9px] font-semibold uppercase px-3 py-1 rounded-full border transition-colors ${
+                    onClick={() =>
+                      toggleItemTag(product.id, tag)
+                    }
+                    className={`text-[10px] uppercase tracking-[0.08em] px-3 py-1.5 rounded-full border transition-colors ${
                       isActive
-                        ? "bg-black text-white border-black"
-                        : "border-gray-200 text-gray-500 hover:bg-gray-50"
+                        ? "bg-[#C8A882] border-[#C8A882] text-black"
+                        : "border-[#E5E5E5] text-[#8B6F5E] hover:bg-[#F8F8F8]"
                     }`}
                   >
                     {tag}
                   </button>
-                );
+
+                )
+
               })}
+
             </div>
+
           </div>
+
         )}
+
       </div>
+
     ))}
+
   </div>
 
-  {/* Totals Section */}
-  <div className="mt-8 pt-6 border-t border-gray-100 space-y-2">
-    <div className="flex justify-between text-[11px] font-semibold text-gray-500 uppercase">
+  {/* Totals */}
+  <div className="mt-8 pt-6 border-t border-[#ECECEC] space-y-3">
+
+    <div className="flex justify-between text-[11px] uppercase tracking-[0.08em] text-[#8B6F5E]">
       <span>Subtotal</span>
-      <span className="text-black">₹{currentReceipt.subtotal.toLocaleString('en-IN')}</span>
-    </div>
-    <div className="flex justify-between text-[11px] font-semibold text-gray-500 uppercase">
-      <span>GST (12%)</span>
-      <span className="text-black">₹{currentReceipt.tax.toLocaleString('en-IN')}</span>
-    </div>
-    <div className="flex justify-between items-center pt-4 mt-2 border-t border-gray-200">
-      <span className="text-sm font-bold uppercase text-black">Total Paid</span>
-      <span className="text-xl font-bold text-black tracking-tighter">
-        ₹{currentReceipt.total.toLocaleString('en-IN')}
+      <span className="text-[#1A1A1A]">
+        ₹{currentReceipt.subtotal.toLocaleString("en-IN")}
       </span>
     </div>
+
+    <div className="flex justify-between text-[11px] uppercase tracking-[0.08em] text-[#8B6F5E]">
+      <span>GST</span>
+      <span className="text-[#1A1A1A]">
+        ₹{currentReceipt.tax.toLocaleString("en-IN")}
+      </span>
+    </div>
+
+    <div className="flex justify-between items-end pt-4 border-t border-[#E5E5E5]">
+
+      <span className="text-[13px] uppercase tracking-[0.12em] text-[#8B6F5E]">
+        Total Paid
+      </span>
+
+      <span className="text-[26px] leading-none font-light tracking-[-0.02em] text-[#000000]">
+        ₹{currentReceipt.total.toLocaleString("en-IN")}
+      </span>
+
+    </div>
+
   </div>
 
-  {/* Payment Section */}
+  {/* Payment */}
   <div className="mt-6">
-    <div className="bg-black rounded-2xl p-4 flex items-center justify-between">
+
+    <div className="bg-[#1A1A1A] rounded-2xl p-4 flex items-center justify-between">
+
       <div className="flex items-center">
-        <div className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center mr-3">
-          <CreditCard className="w-5 h-5 text-white" />
+
+        <div className="w-10 h-10 bg-[#C8A882]/15 rounded-xl flex items-center justify-center mr-3">
+          <CreditCard className="w-5 h-5 text-[#C8A882]" />
         </div>
+
         <div>
-          <div className="text-[10px] font-semibold text-white/50 uppercase">Payment Method</div>
-          <div className="text-xs font-bold text-white uppercase tracking-wider">
+
+          <div className="text-[10px] uppercase tracking-[0.12em] text-[#C8A882]">
+            Payment Method
+          </div>
+
+          <div className="text-sm text-white mt-1">
             Card •••• 4532
           </div>
+
         </div>
+
       </div>
+
       <div className="text-right">
-        <div className="text-sm font-bold text-white">
-          ₹{currentReceipt.total.toLocaleString('en-IN')}
+
+        <div className="text-[18px] font-medium text-white">
+          ₹{currentReceipt.total.toLocaleString("en-IN")}
         </div>
+
       </div>
+
     </div>
+
   </div>
+
 </div>
           
           {/* Feedback Section */}
