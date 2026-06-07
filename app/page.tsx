@@ -1382,8 +1382,9 @@ body {
 
 </div>
           
-{/* Promo Banner Carousel */}
-<div className="bg-white rounded-3xl overflow-hidden mx-4 mt-6 relative shadow-xl border border-gray-100">
+{/* MANGO Editorial Carousel */}
+<div className="bg-white rounded-3xl overflow-hidden mx-4 mt-6 relative shadow-xl border border-[#ECECEC]">
+
   <Carousel
     className="w-full"
     setApi={setPromoApi}
@@ -1391,90 +1392,162 @@ body {
       loop: true,
     }}
   >
+
     <CarouselContent>
-      {/* Banner 1: RCB Launch */}
+
+      {/* Banner 1 - Kids World Cup Collection */}
       <CarouselItem>
-        <div className="relative w-full aspect-[1893/667]">
+
+        <div className="relative w-full aspect-[5/3]">
+
           <a
-            href="https://in.puma.com/in/en/rcb-launch"
+            href="https://shop.mango.com/in/en/i/kids/boys/world-cup-collection/c948a54e"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full h-full block"
+            className="block w-full h-full"
           >
+
             <Image
-              src="/images/design-mode/puma-banner-1.png"
-              alt="PUMA RCB Launch"
+              src="/images/design-mode/mango-banner-1.png"
+              alt="MANGO Kids World Cup Collection"
               fill
               className="object-cover"
               priority
             />
-            {/* Overlay for CTA visibility if needed */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent" />
+
+            <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-black/5 to-transparent" />
+
           </a>
 
-          {/* Sharp PUMA CTA */}
           <div className="absolute bottom-6 left-6">
+
             <a
-              href="https://in.puma.com/in/en/rcb-launch"
+              href="https://shop.mango.com/in/en/i/kids/boys/world-cup-collection/c948a54e"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <button className="bg-white text-black text-[10px] font-bold uppercase italic tracking-widest px-6 py-2.5 rounded-sm shadow-lg hover:bg-[#BA2C2F] hover:text-white transition-colors">
-                Shop Collection
+
+              <button className="bg-white/95 backdrop-blur text-[#1A1A1A] text-[11px] px-5 py-2 rounded-full border border-white/50 hover:bg-white transition-all">
+                Explore Collection
               </button>
+
             </a>
+
           </div>
+
         </div>
+
       </CarouselItem>
 
-      {/* Banner 2: Pokémon Collaboration */}
+      {/* Banner 2 - Total White */}
       <CarouselItem>
-        <div className="relative w-full aspect-[1893/667]">
+
+        <div className="relative w-full aspect-[5/3]">
+
           <a
-            href="https://in.puma.com/in/en/collaborations/collaborations-select/collaborations-select-pokemon"
+            href="https://shop.mango.com/in/en/i/women/total-white/f1e2d25c"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full h-full block"
+            className="block w-full h-full"
           >
+
             <Image
-              src="/images/design-mode/puma-banner-2.png"
-              alt="PUMA x Pokémon"
+              src="/images/design-mode/mango-banner-2.png"
+              alt="MANGO Total White"
               fill
               className="object-cover"
             />
+
+            <div className="absolute inset-0 bg-gradient-to-r from-black/15 via-transparent to-transparent" />
+
           </a>
 
-          {/* Sharp PUMA CTA */}
           <div className="absolute bottom-6 left-6">
+
             <a
-              href="https://in.puma.com/in/en/collaborations/collaborations-select/collaborations-select-pokemon"
+              href="https://shop.mango.com/in/en/i/women/total-white/f1e2d25c"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <button className="bg-white text-black text-[10px] font-bold uppercase italic tracking-widest px-6 py-2.5 rounded-sm shadow-lg hover:bg-[#BA2C2F] hover:text-white transition-colors">
-                Explore Collab
+
+              <button className="bg-white/95 backdrop-blur text-[#1A1A1A] text-[11px] px-5 py-2 rounded-full border border-white/50 hover:bg-white transition-all">
+                Shop The Edit
               </button>
+
             </a>
+
           </div>
+
         </div>
+
       </CarouselItem>
+
+      {/* Banner 3 - Suit Guide */}
+      <CarouselItem>
+
+        <div className="relative w-full aspect-[5/3]">
+
+          <a
+            href="https://shop.mango.com/in/en/i/men/suit-guide/5162340e"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full h-full"
+          >
+
+            <Image
+              src="/images/design-mode/mango-banner-3.png"
+              alt="MANGO Suit Guide"
+              fill
+              className="object-cover"
+            />
+
+            <div className="absolute inset-0 bg-gradient-to-r from-black/15 via-transparent to-transparent" />
+
+          </a>
+
+          <div className="absolute bottom-6 left-6">
+
+            <a
+              href="https://shop.mango.com/in/en/i/men/suit-guide/5162340e"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+
+              <button className="bg-white/95 backdrop-blur text-[#1A1A1A] text-[11px] px-5 py-2 rounded-full border border-white/50 hover:bg-white transition-all">
+                View Guide
+              </button>
+
+            </a>
+
+          </div>
+
+        </div>
+
+      </CarouselItem>
+
     </CarouselContent>
 
-    {/* Pagination Dots: PUMA Red Style */}
-    <div className="absolute bottom-4 right-6 flex gap-1.5 z-10">
-      {[0, 1].map((index) => (
+    {/* Mango Style Indicators */}
+    <div className="absolute bottom-4 right-5 flex gap-2 z-10">
+
+      {[0, 1, 2].map((index) => (
+
         <button
           key={index}
           onClick={() => promoApi?.scrollTo(index)}
-          className={`h-1 rounded-full transition-all duration-300 ${
+          className={`transition-all duration-300 rounded-full ${
             currentSlide === index
-              ? "w-8 bg-[#BA2C2F]"
-              : "w-2 bg-white/50 hover:bg-white"
+              ? "w-8 h-2 bg-[#C8A882]"
+              : "w-2 h-2 bg-white/60"
           }`}
         />
+
       ))}
+
     </div>
+
   </Carousel>
+
 </div>
           
        {/* MANGO Club Membership */}
@@ -2172,113 +2245,217 @@ body {
 
 </div>
           
-      {/* Social Media & Store Details */}
-<div className="bg-white rounded-3xl border border-gray-100 shadow-xl mx-4 mt-6 p-6 mb-8">
+      {/* Social Media & Store Information */}
+<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-6 mb-8">
 
   {/* Header */}
   <div className="flex items-center mb-6">
-    <div className="bg-black p-2.5 rounded-xl mr-4 shadow-lg shadow-black/10">
-      <Share2 className="h-4 w-4 text-white" />
+
+    <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-4">
+      <Share2 className="h-5 w-5 text-[#8B6F5E]" />
     </div>
-    <h3 className="text-sm font-bold uppercase tracking-tight text-black">
-      Stay Connected
-    </h3>
+
+    <div>
+      <h3 className="text-[15px] font-medium text-[#1A1A1A]">
+        Follow MANGO
+      </h3>
+
+      <p className="text-[11px] text-[#8B6F5E] mt-1">
+        Discover new collections and fashion inspiration.
+      </p>
+    </div>
+
   </div>
 
   {/* Social Links */}
+
   <div className="flex justify-center space-x-8 mb-8">
+
     {/* Instagram */}
     <button
-      onClick={() => handleSocialLink("https://www.instagram.com/pumaindia/")}
+      onClick={() =>
+        handleSocialLink(
+          "https://www.instagram.com/mango/?hl=en"
+        )
+      }
       className="flex flex-col items-center group"
     >
-      <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center mb-2 transition-all group-hover:bg-black group-hover:text-white">
-        <Instagram className="h-5 w-5" />
+
+      <div className="w-12 h-12 rounded-2xl bg-[#F8F8F8] border border-[#ECECEC] flex items-center justify-center mb-2 transition-all group-hover:border-[#C8A882]">
+
+        <Instagram className="h-5 w-5 text-[#8B6F5E]" />
+
       </div>
-      <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 group-hover:text-black">Instagram</span>
+
+      <span className="text-[10px] text-[#8B6F5E]">
+        Instagram
+      </span>
+
     </button>
 
     {/* Facebook */}
     <button
-      onClick={() => handleSocialLink("https://www.instagram.com/pumaindia/")}
+      onClick={() =>
+        handleSocialLink(
+          "https://www.facebook.com/mango.com/"
+        )
+      }
       className="flex flex-col items-center group"
     >
-      <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center mb-2 transition-all group-hover:bg-black group-hover:text-white">
-        <Facebook className="h-5 w-5" />
+
+      <div className="w-12 h-12 rounded-2xl bg-[#F8F8F8] border border-[#ECECEC] flex items-center justify-center mb-2 transition-all group-hover:border-[#C8A882]">
+
+        <Facebook className="h-5 w-5 text-[#8B6F5E]" />
+
       </div>
-      <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 group-hover:text-black">Facebook</span>
+
+      <span className="text-[10px] text-[#8B6F5E]">
+        Facebook
+      </span>
+
     </button>
 
     {/* Website */}
     <button
-      onClick={() => handleSocialLink("https://in.puma.com/in/en")}
+      onClick={() =>
+        handleSocialLink(
+          "https://shop.mango.com/in/en"
+        )
+      }
       className="flex flex-col items-center group"
     >
-      <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center mb-2 transition-all group-hover:bg-black group-hover:text-white">
-        <ExternalLink className="h-5 w-5" />
+
+      <div className="w-12 h-12 rounded-2xl bg-[#F8F8F8] border border-[#ECECEC] flex items-center justify-center mb-2 transition-all group-hover:border-[#C8A882]">
+
+        <ExternalLink className="h-5 w-5 text-[#8B6F5E]" />
+
       </div>
-      <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 group-hover:text-black">Website</span>
+
+      <span className="text-[10px] text-[#8B6F5E]">
+        Website
+      </span>
+
     </button>
+
   </div>
 
-  {/* Store Location */}
-  <div className="text-[11px] text-gray-600 text-center mb-4 bg-gray-50 p-4 rounded-2xl border border-gray-100">
+  {/* Store Information */}
+
+  <div className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl p-4 mb-4">
+
     <button
       onClick={() => setShowStoreLocation(!showStoreLocation)}
-      className="w-full flex items-center justify-center mb-2 hover:text-[#BA2C2F] transition-colors"
+      className="w-full flex items-center justify-center"
     >
-      <MapPin className="h-4 w-4 mr-2 text-[#BA2C2F]" />
-      <span className="font-bold uppercase tracking-tight text-black">
-        PUMA Indiranagar {showStoreLocation ? "▲" : "▼"}
+
+      <MapPin className="h-4 w-4 mr-2 text-[#C8A882]" />
+
+      <span className="text-[13px] font-medium text-[#1A1A1A]">
+        MANGO UB City
       </span>
+
+      <span className="ml-2 text-[#8B6F5E]">
+        {showStoreLocation ? "▲" : "▼"}
+      </span>
+
     </button>
 
     {showStoreLocation && (
-      <div className="mt-3 space-y-1 font-medium border-t border-gray-200 pt-3">
-        <p className="font-bold text-black uppercase">PUMA Store</p>
-        <p>No 777/H, 100 Feet Rd, HAL 2nd Stage</p>
-        <p>Doopanahalli, Indiranagar</p>
-        <p>Bengaluru, Karnataka 560008</p>
-        
-        <div className="mt-3 pt-3 flex flex-col gap-1 border-t border-gray-200/50">
-          <p className="text-[9px] font-bold uppercase text-gray-400">GSTIN: 29AAACP3423F1Z5</p>
-          <p className="text-[10px] text-black font-bold uppercase tracking-tighter">
-            Store Lead: {currentReceipt.associate}
+
+      <div className="mt-4 pt-4 border-t border-[#E5E5E5] text-center">
+
+        <div className="space-y-1 text-[12px] text-[#1A1A1A]">
+
+          <p className="font-medium">
+            MANGO Store
           </p>
+
+          <p>
+            UB City
+          </p>
+
+          <p>
+            24 Vittal Mallya Road
+          </p>
+
+          <p>
+            Ashok Nagar
+          </p>
+
+          <p>
+            Bengaluru, Karnataka 560001
+          </p>
+
         </div>
+
+        <div className="mt-4 pt-4 border-t border-[#E5E5E5]">
+
+          <p className="text-[10px] uppercase tracking-[0.12em] text-[#8B6F5E]">
+            Store Associate
+          </p>
+
+          <p className="text-[12px] text-[#1A1A1A] mt-1">
+            {currentReceipt.associate}
+          </p>
+
+        </div>
+
       </div>
+
     )}
+
   </div>
 
   {/* Terms */}
+
   <button
-    className="w-full text-[10px] text-gray-400 hover:text-black h-8 font-bold uppercase tracking-widest transition-colors"
+    className="w-full text-[11px] text-[#8B6F5E] py-2 transition-colors"
     onClick={() => setShowTerms(!showTerms)}
   >
     Terms & Conditions {showTerms ? "▲" : "▼"}
   </button>
 
   {showTerms && (
-    <div className="text-[10px] text-gray-500 mt-3 space-y-2 px-4 font-medium leading-relaxed uppercase tracking-tighter border-l-2 border-gray-100">
-      <p>• Returns accepted within 14 days with original tags and receipt.</p>
-      <p>• Warranty on footwear is limited to manufacturing defects only.</p>
-      <p>• PUMA AdvoCAT points are credited after the 14-day cooling period.</p>
-      <p>• For online support visit in.puma.com/support.</p>
+
+    <div className="mt-4 bg-[#FAFAFA] border border-[#ECECEC] rounded-2xl p-4 text-[11px] text-[#8B6F5E] leading-relaxed space-y-3">
+
+      <p>
+        • Returns are accepted within 30 days with proof of purchase and original tags attached.
+      </p>
+
+      <p>
+        • Items must be unused and returned in their original condition.
+      </p>
+
+      <p>
+        • Certain products may be excluded from exchange or return according to local policy.
+      </p>
+
+      <p>
+        • Visit shop.mango.com for complete terms and customer support information.
+      </p>
+
     </div>
+
   )}
 
-  {/* Powered by RDEP */}
-  <div className="text-center mt-6 pt-6 border-t border-gray-100">
+  {/* Powered by */}
+
+  <div className="text-center mt-6 pt-6 border-t border-[#ECECEC]">
+
     <div className="flex items-center justify-center space-x-2">
-      <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+
+      <span className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E]">
         Powered by
       </span>
+
       <a
         href="https://www.rdep.io"
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center opacity-80 hover:opacity-100 transition-opacity"
+        className="opacity-80 hover:opacity-100 transition-opacity"
       >
+
         <Image
           src="/images/design-mode/RDEP%20cropped.png"
           alt="RDEP"
@@ -2286,9 +2463,13 @@ body {
           height={14}
           className="object-contain"
         />
+
       </a>
+
     </div>
+
   </div>
+
 </div>
           <div id="height-marker" style={{ height: "1px" }} />
         </div>
@@ -2389,41 +2570,54 @@ body {
     />
 
     {/* Modal */}
-    <div className="relative bg-white rounded-2xl w-full max-w-sm mx-4 shadow-2xl border border-gray-200 font-poppins overflow-hidden">
+    <div className="relative bg-white rounded-3xl w-full max-w-sm mx-4 shadow-2xl border border-[#ECECEC] overflow-hidden">
 
       {/* Header */}
-      <div className="flex justify-between items-center p-4 border-b border-gray-100">
+      <div className="flex justify-between items-center p-5 border-b border-[#ECECEC]">
 
         <div className="flex items-center">
 
-          <div className="bg-[#BA2C2F] p-2 rounded-lg mr-3">
-            <History className="h-4 w-4 text-white" />
+          <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-3">
+            <History className="h-5 w-5 text-[#8B6F5E]" />
           </div>
 
-          <h3 className="text-sm font-semibold text-gray-900">
-            Order History
-          </h3>
+          <div>
+
+            <h3 className="text-[15px] font-medium text-[#1A1A1A]">
+              Purchase History
+            </h3>
+
+            <p className="text-[11px] text-[#8B6F5E] mt-0.5">
+              View previous purchases
+            </p>
+
+          </div>
 
         </div>
 
         <button
-          className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
+          className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F8F8F8]"
           onClick={() => setShowTransactionHistory(false)}
         >
+
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
-            className="h-4 w-4 text-gray-500"
+            className="h-4 w-4 text-[#8B6F5E]"
           >
-            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2"/>
+            <path
+              d="M18 6L6 18M6 6l12 12"
+              stroke="currentColor"
+              strokeWidth="2"
+            />
           </svg>
+
         </button>
 
       </div>
 
-
-      {/* Transaction List */}
-      <div className="max-h-80 overflow-y-auto p-4 space-y-3">
+      {/* Purchase List */}
+      <div className="max-h-96 overflow-y-auto p-4 space-y-3">
 
         {transactionHistory.map((transaction) => (
 
@@ -2434,32 +2628,47 @@ body {
               setShowTransactionHistory(false)
               window.scrollTo({ top: 0, behavior: "smooth" })
             }}
-            className="w-full flex items-center p-3 bg-gray-50 border border-gray-200 rounded-xl hover:border-[#BA2C2F] transition"
+            className="w-full flex items-center p-4 bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl hover:border-[#C8A882] transition-all"
           >
 
-            <div className="bg-white border border-gray-200 p-2 rounded-lg mr-3">
-              <FileText className="h-4 w-4 text-black" />
+            <div className="w-11 h-11 rounded-xl bg-white border border-[#ECECEC] flex items-center justify-center mr-4 flex-shrink-0">
+
+              <FileText className="h-5 w-5 text-[#8B6F5E]" />
+
             </div>
 
             <div className="flex-grow text-left">
 
-              <div className="text-sm font-semibold text-gray-900">
-                PUMA Store
+              <div className="text-[14px] font-medium text-[#1A1A1A]">
+                MANGO
               </div>
 
-              <div className="text-[11px] text-gray-500">
+              <div className="text-[11px] text-[#8B6F5E] mt-1">
                 {transaction.date}
               </div>
 
             </div>
 
-            <div className="text-sm font-semibold text-black">
-              ₹{transaction.amount.toFixed(2)}
+            <div className="text-right">
+
+              <div className="text-[15px] font-medium text-[#1A1A1A]">
+                ₹{transaction.amount.toLocaleString("en-IN")}
+              </div>
+
             </div>
 
           </button>
 
         ))}
+
+      </div>
+
+      {/* Footer */}
+      <div className="px-5 py-4 border-t border-[#ECECEC] bg-[#FAFAFA]">
+
+        <p className="text-[10px] text-center text-[#8B6F5E]">
+          Select a purchase to view the full receipt.
+        </p>
 
       </div>
 
