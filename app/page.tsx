@@ -1827,230 +1827,351 @@ body {
 
 </div>
           
-{/* Featured Categories Section */}
-<div className="bg-white rounded-3xl shadow-xl border border-gray-100 mx-4 mt-6 p-6">
-  
-  {/* Section Header */}
-  <div className="flex items-center justify-between mb-6">
-    <div className="flex items-center">
-      <div className="bg-black p-2.5 rounded-xl mr-4 shadow-lg shadow-black/10">
-        <LayoutGrid className="h-4 w-4 text-white" />
-      </div>
-      <h3 className="text-sm font-bold uppercase tracking-tight text-black">
-        Explore More Gear
-      </h3>
-    </div>
-  </div>
-
-  {/* Category Grid */}
-  <div className="grid grid-cols-2 gap-4">
-    
-    {/* Backpacks */}
-    <a 
-      href="https://in.puma.com/in/en/mens/mens-accessories/mens-accessories-bags"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group relative aspect-square rounded-2xl overflow-hidden border border-gray-100 shadow-sm transition-transform active:scale-[0.98]"
-    >
-      <Image 
-        src="/images/design-mode/backpack.png" 
-        alt="Backpacks" 
-        fill 
-        className="object-cover transition-transform duration-500 group-hover:scale-110"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-      <div className="absolute bottom-4 left-4">
-        <span className="text-[10px] font-bold text-white uppercase tracking-widest bg-[#BA2C2F] px-2 py-1 rounded-sm">
-          Backpacks
-        </span>
-      </div>
-    </a>
-
-    {/* Jackets */}
-    <a 
-      href="https://in.puma.com/in/en/mens/mens-clothing/mens-clothing-jackets"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group relative aspect-square rounded-2xl overflow-hidden border border-gray-100 shadow-sm transition-transform active:scale-[0.98]"
-    >
-      <Image 
-        src="/images/design-mode/Jacket.png" 
-        alt="Jackets" 
-        fill 
-        className="object-cover transition-transform duration-500 group-hover:scale-110"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-      <div className="absolute bottom-4 left-4">
-        <span className="text-[10px] font-bold text-white uppercase tracking-widest bg-[#BA2C2F] px-2 py-1 rounded-sm">
-          Jackets
-        </span>
-      </div>
-    </a>
-
-    {/* Shoes */}
-    <a 
-      href="https://in.puma.com/in/en/mens/mens-shoes"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group relative aspect-square rounded-2xl overflow-hidden border border-gray-100 shadow-sm transition-transform active:scale-[0.98]"
-    >
-      <Image 
-        src="/images/design-mode/shoes.png" 
-        alt="Shoes" 
-        fill 
-        className="object-cover transition-transform duration-500 group-hover:scale-110"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-      <div className="absolute bottom-4 left-4">
-        <span className="text-[10px] font-bold text-white uppercase tracking-widest bg-[#BA2C2F] px-2 py-1 rounded-sm">
-          Shoes
-        </span>
-      </div>
-    </a>
-
-    {/* Gym Wear */}
-    <a 
-      href="https://in.puma.com/in/en/mens/mens-clothing/mens-clothing-t-shirts-and-tops"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group relative aspect-square rounded-2xl overflow-hidden border border-gray-100 shadow-sm transition-transform active:scale-[0.98]"
-    >
-      <Image 
-        src="/images/design-mode/gym-wear.png" 
-        alt="Gym Wear" 
-        fill 
-        className="object-cover transition-transform duration-500 group-hover:scale-110"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-      <div className="absolute bottom-4 left-4">
-        <span className="text-[10px] font-bold text-white uppercase tracking-widest bg-[#BA2C2F] px-2 py-1 rounded-sm">
-          Training
-        </span>
-      </div>
-    </a>
-  </div>
-
-  {/* Overall Website Link */}
-  <div className="mt-8 pt-6 border-t border-gray-100">
-    <a 
-      href="https://in.puma.com/in/en/" 
-      target="_blank" 
-      rel="noopener noreferrer"
-      className="flex items-center justify-between w-full h-14 px-6 bg-black text-white rounded-xl shadow-xl shadow-black/20 hover:bg-[#BA2C2F] transition-all group active:scale-[0.98]"
-    >
-      <span className="text-xs font-bold uppercase tracking-[0.2em]">Visit PUMA Store</span>
-      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-    </a>
-  </div>
-
-  <p className="text-[9px] font-bold text-center text-gray-500 uppercase tracking-tighter mt-4">
-    Exclusive drops and collections available online.
-  </p>
-</div>
-          
-         {/* Receipt Actions Section */}
-<div className="bg-white rounded-3xl border border-gray-100 shadow-xl mx-4 mt-6 p-6">
-  <div className="grid grid-cols-3 gap-4">
-
-    {/* Order History */}
-    <button
-      ref={historyButtonRef}
-      onClick={handleTransactionHistoryOpen}
-      className="flex flex-col items-center justify-center bg-gray-50 border border-gray-100 rounded-2xl py-4 transition-all hover:bg-black hover:text-white group active:scale-[0.95]"
-    >
-      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mb-2 shadow-sm group-hover:bg-white/10">
-        <History className="h-5 w-5 text-black group-hover:text-[#BA2C2F]" />
-      </div>
-      <span className="text-[10px] font-bold uppercase tracking-wider">
-        History
-      </span>
-    </button>
-
-    {/* Email Receipt */}
-    <button
-      onClick={handleEmailReceipt}
-      className="flex flex-col items-center justify-center bg-gray-50 border border-gray-100 rounded-2xl py-4 transition-all hover:bg-black hover:text-white group active:scale-[0.95]"
-    >
-      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mb-2 shadow-sm group-hover:bg-white/10">
-        <Mail className="h-5 w-5 text-black group-hover:text-[#BA2C2F]" />
-      </div>
-      <span className="text-[10px] font-bold uppercase tracking-wider">
-        Email
-      </span>
-    </button>
-
-    {/* Download Receipt */}
-    <button
-      onClick={handleDownloadReceipt}
-      className="flex flex-col items-center justify-center bg-gray-50 border border-gray-100 rounded-2xl py-4 transition-all hover:bg-black hover:text-white group active:scale-[0.95]"
-    >
-      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mb-2 shadow-sm group-hover:bg-white/10">
-        <Download className="h-5 w-5 text-black group-hover:text-[#BA2C2F]" />
-      </div>
-      <span className="text-[10px] font-bold uppercase tracking-wider">
-        PDF
-      </span>
-    </button>
-
-  </div>
-</div>
-          
-       {/* Need Help Section */}
-<div className="bg-white rounded-3xl border border-gray-100 shadow-xl mx-4 mt-6 p-6">
+{/* Discover More From MANGO */}
+<div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mx-4 mt-6 p-6">
 
   {/* Header */}
   <div className="flex items-center mb-6">
-    <div className="bg-black p-2.5 rounded-xl mr-4 shadow-lg shadow-black/10">
-      <Headset className="h-5 w-5 text-white" />
+
+    <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-4">
+      <LayoutGrid className="h-5 w-5 text-[#8B6F5E]" />
     </div>
+
     <div>
-      <h3 className="text-sm font-bold uppercase tracking-tight text-black">
-        PUMA Support
+      <h3 className="text-[15px] font-medium text-[#1A1A1A]">
+        Discover More
       </h3>
-      <p className="text-[10px] font-medium text-gray-400 uppercase tracking-widest">
-        Available 24/7 for Gear Assistance
+
+      <p className="text-[11px] text-[#8B6F5E] mt-1">
+        Explore curated collections from MANGO
       </p>
     </div>
+
+  </div>
+
+  {/* Categories */}
+  <div className="grid grid-cols-2 gap-4">
+
+    {/* Dresses */}
+    <a
+      href="https://shop.mango.com/in/en/c/women/dresses-and-jumpsuits/e6bb8705"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group"
+    >
+      <div className="overflow-hidden rounded-2xl border border-[#ECECEC] bg-[#F8F8F8]">
+
+        <div className="relative aspect-[539/754]">
+
+          <Image
+            src="/images/design-mode/dress.png"
+            alt="Women's Dresses"
+            fill
+            className="object-contain transition-transform duration-500 group-hover:scale-[1.03]"
+          />
+
+        </div>
+
+        <div className="p-4 border-t border-[#ECECEC]">
+
+          <div className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1">
+            Women
+          </div>
+
+          <div className="text-[14px] text-[#1A1A1A]">
+            Dresses
+          </div>
+
+        </div>
+
+      </div>
+    </a>
+
+    {/* Bags */}
+    <a
+      href="https://shop.mango.com/in/en/c/women/bags/8dff98e6"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group"
+    >
+      <div className="overflow-hidden rounded-2xl border border-[#ECECEC] bg-[#F8F8F8]">
+
+        <div className="relative aspect-[539/754]">
+
+          <Image
+            src="/images/design-mode/bag.png"
+            alt="Women's Bags"
+            fill
+            className="object-contain transition-transform duration-500 group-hover:scale-[1.03]"
+          />
+
+        </div>
+
+        <div className="p-4 border-t border-[#ECECEC]">
+
+          <div className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1">
+            Women
+          </div>
+
+          <div className="text-[14px] text-[#1A1A1A]">
+            Bags
+          </div>
+
+        </div>
+
+      </div>
+    </a>
+
+    {/* Teen Trousers */}
+    <a
+      href="https://shop.mango.com/in/en/c/teen/teena/trousers/ab68c0bd"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group"
+    >
+      <div className="overflow-hidden rounded-2xl border border-[#ECECEC] bg-[#F8F8F8]">
+
+        <div className="relative aspect-[539/754]">
+
+          <Image
+            src="/images/design-mode/trouser.png"
+            alt="Teen Trousers"
+            fill
+            className="object-contain transition-transform duration-500 group-hover:scale-[1.03]"
+          />
+
+        </div>
+
+        <div className="p-4 border-t border-[#ECECEC]">
+
+          <div className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1">
+            Teen
+          </div>
+
+          <div className="text-[14px] text-[#1A1A1A]">
+            Trousers
+          </div>
+
+        </div>
+
+      </div>
+    </a>
+
+    {/* Blazers */}
+    <a
+      href="https://shop.mango.com/in/en/c/men/blazers/34c56468"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group"
+    >
+      <div className="overflow-hidden rounded-2xl border border-[#ECECEC] bg-[#F8F8F8]">
+
+        <div className="relative aspect-[539/754]">
+
+          <Image
+            src="/images/design-mode/blazer.png"
+            alt="Men's Blazers"
+            fill
+            className="object-contain transition-transform duration-500 group-hover:scale-[1.03]"
+          />
+
+        </div>
+
+        <div className="p-4 border-t border-[#ECECEC]">
+
+          <div className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1">
+            Men
+          </div>
+
+          <div className="text-[14px] text-[#1A1A1A]">
+            Blazers
+          </div>
+
+        </div>
+
+      </div>
+    </a>
+
+  </div>
+
+  {/* Main CTA */}
+
+  <div className="mt-8 pt-6 border-t border-[#ECECEC]">
+
+    <a
+      href="https://shop.mango.com/in/en"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex items-center justify-between w-full h-14 px-5 bg-[#1A1A1A] text-white rounded-2xl transition-all duration-300 hover:bg-black"
+    >
+
+      <span className="text-[12px] uppercase tracking-[0.18em]">
+        Explore Mango
+      </span>
+
+      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+
+    </a>
+
+  </div>
+
+  <p className="text-[10px] text-center text-[#8B6F5E] mt-4 leading-relaxed">
+    Discover new arrivals, seasonal collections and timeless wardrobe essentials.
+  </p>
+
+</div>
+          
+         {/* Receipt Actions */}
+<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-6">
+
+  <div className="mb-5">
+    <h3 className="text-[15px] font-medium text-[#1A1A1A]">
+      Receipt Services
+    </h3>
+
+    <p className="text-[11px] text-[#8B6F5E] mt-1">
+      Access and manage your purchase documents.
+    </p>
   </div>
 
   <div className="grid grid-cols-3 gap-4">
 
-    {/* WhatsApp Chat */}
+    {/* History */}
     <button
-      onClick={handleWhatsApp}
-      className="flex flex-col items-center justify-center bg-gray-50 border border-gray-100 rounded-2xl py-4 transition-all hover:border-[#BA2C2F] active:scale-[0.95]"
+      ref={historyButtonRef}
+      onClick={handleTransactionHistoryOpen}
+      className="group flex flex-col items-center justify-center bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl py-4 transition-all hover:border-[#C8A882] active:scale-[0.97]"
     >
-      <MessageSquare className="h-5 w-5 text-black mb-2" />
-      <span className="text-[10px] font-bold uppercase tracking-wider text-gray-700">
-        WhatsApp
+
+      <div className="w-10 h-10 rounded-full bg-white border border-[#ECECEC] flex items-center justify-center mb-3">
+        <History className="h-5 w-5 text-[#8B6F5E]" />
+      </div>
+
+      <span className="text-[11px] text-[#1A1A1A]">
+        History
       </span>
+
     </button>
 
-    {/* Call Support */}
+    {/* Email */}
     <button
-      onClick={handleCall}
-      className="flex flex-col items-center justify-center bg-gray-50 border border-gray-100 rounded-2xl py-4 transition-all hover:border-[#BA2C2F] active:scale-[0.95]"
+      onClick={handleEmailReceipt}
+      className="group flex flex-col items-center justify-center bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl py-4 transition-all hover:border-[#C8A882] active:scale-[0.97]"
     >
-      <Phone className="h-5 w-5 text-black mb-2" />
-      <span className="text-[10px] font-bold uppercase tracking-wider text-gray-700">
-        Call
-      </span>
-    </button>
 
-    {/* Email Support */}
-    <button
-      onClick={handleEmail}
-      className="flex flex-col items-center justify-center bg-gray-50 border border-gray-100 rounded-2xl py-4 transition-all hover:border-[#BA2C2F] active:scale-[0.95]"
-    >
-      <Mail className="h-5 w-5 text-black mb-2" />
-      <span className="text-[10px] font-bold uppercase tracking-wider text-gray-700">
+      <div className="w-10 h-10 rounded-full bg-white border border-[#ECECEC] flex items-center justify-center mb-3">
+        <Mail className="h-5 w-5 text-[#8B6F5E]" />
+      </div>
+
+      <span className="text-[11px] text-[#1A1A1A]">
         Email
       </span>
+
+    </button>
+
+    {/* Download */}
+    <button
+      onClick={handleDownloadReceipt}
+      className="group flex flex-col items-center justify-center bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl py-4 transition-all hover:border-[#C8A882] active:scale-[0.97]"
+    >
+
+      <div className="w-10 h-10 rounded-full bg-white border border-[#ECECEC] flex items-center justify-center mb-3">
+        <Download className="h-5 w-5 text-[#8B6F5E]" />
+      </div>
+
+      <span className="text-[11px] text-[#1A1A1A]">
+        Download
+      </span>
+
     </button>
 
   </div>
+
 </div>
 
+{/* Customer Care */}
+<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-6">
+
+  {/* Header */}
+  <div className="flex items-center mb-6">
+
+    <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-4">
+      <Headset className="h-5 w-5 text-[#8B6F5E]" />
+    </div>
+
+    <div>
+
+      <h3 className="text-[15px] font-medium text-[#1A1A1A]">
+        Customer Care
+      </h3>
+
+      <p className="text-[11px] text-[#8B6F5E] mt-1">
+        Assistance for orders, returns and product enquiries.
+      </p>
+
+    </div>
+
+  </div>
+
+  {/* Contact Options */}
+  <div className="grid grid-cols-3 gap-4">
+
+    {/* WhatsApp */}
+    <button
+      onClick={handleWhatsApp}
+      className="flex flex-col items-center justify-center bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl py-4 transition-all hover:border-[#C8A882] active:scale-[0.97]"
+    >
+
+      <MessageSquare className="h-5 w-5 text-[#8B6F5E] mb-3" />
+
+      <span className="text-[11px] text-[#1A1A1A]">
+        WhatsApp
+      </span>
+
+    </button>
+
+    {/* Call */}
+    <button
+      onClick={handleCall}
+      className="flex flex-col items-center justify-center bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl py-4 transition-all hover:border-[#C8A882] active:scale-[0.97]"
+    >
+
+      <Phone className="h-5 w-5 text-[#8B6F5E] mb-3" />
+
+      <span className="text-[11px] text-[#1A1A1A]">
+        Call
+      </span>
+
+    </button>
+
+    {/* Email */}
+    <button
+      onClick={handleEmail}
+      className="flex flex-col items-center justify-center bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl py-4 transition-all hover:border-[#C8A882] active:scale-[0.97]"
+    >
+
+      <Mail className="h-5 w-5 text-[#8B6F5E] mb-3" />
+
+      <span className="text-[11px] text-[#1A1A1A]">
+        Email
+      </span>
+
+    </button>
+
+  </div>
+
+  {/* Footer Note */}
+
+  <div className="mt-6 pt-5 border-t border-[#ECECEC] text-center">
+
+    <p className="text-[10px] text-[#8B6F5E] leading-relaxed">
+      Need help with sizing, returns or your recent order? Our team is here to assist.
+    </p>
+
+  </div>
+
+</div>
+          
       {/* Social Media & Store Details */}
 <div className="bg-white rounded-3xl border border-gray-100 shadow-xl mx-4 mt-6 p-6 mb-8">
 
