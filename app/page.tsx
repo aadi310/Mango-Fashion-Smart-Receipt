@@ -502,283 +502,475 @@ const transactionHistory = [
 <html>
 <head>
 <meta charset="UTF-8">
-<title>PUMA Official Digital Receipt</title>
+<title>MANGO Official Digital Receipt</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-body {
-    font-family: 'Poppins', sans-serif;
-    font-size: 14px;
-    color: #000;
-    background: #fff;
-    width: 800px;
-    margin: 0 auto;
-    padding: 40px;
+body{
+    font-family:'Poppins',sans-serif;
+    background:#ffffff;
+    color:#1A1A1A;
+    width:800px;
+    margin:0 auto;
+    padding:40px;
 }
 
 /* Header */
-.receipt-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 40px;
-    padding-bottom: 20px;
-    border-bottom: 4px solid #000;
+
+.receipt-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    padding-bottom:24px;
+    border-bottom:1px solid #E8E8E8;
+    margin-bottom:30px;
 }
 
-.company-info h1 {
-    font-size: 36px;
-    color: #000;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: -1px;
-    margin-bottom: 8px;
+.logo{
+    font-size:42px;
+    letter-spacing:6px;
+    font-weight:500;
+    margin-bottom:12px;
 }
 
-.company-info p {
-    font-size: 12px;
-    color: #444;
-    line-height: 1.6;
-    text-transform: uppercase;
-    font-weight: 500;
+.store-info{
+    font-size:12px;
+    line-height:1.8;
+    color:#6F6F6F;
 }
 
-.bill-info {
-    text-align: right;
-    font-size: 11px;
-    text-transform: uppercase;
-    font-weight: 600;
-    letter-spacing: 0.5px;
+.store-info strong{
+    color:#1A1A1A;
+    font-weight:600;
 }
 
-.bill-info div {
-    margin-bottom: 6px;
+.bill-info{
+    text-align:right;
 }
 
-.bill-id {
-    font-weight: 700;
-    color: #BA2C2F;
+.bill-label{
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:2px;
+    color:#8B6F5E;
+    margin-bottom:3px;
 }
 
-/* Customer section */
-.customer-section {
-    background: #f9f9f9;
-    padding: 20px;
-    border-left: 6px solid #BA2C2F;
-    border-radius: 4px;
-    margin-bottom: 30px;
+.bill-value{
+    font-size:13px;
+    color:#1A1A1A;
+    margin-bottom:12px;
+    font-weight:500;
 }
 
-.customer-section h3 {
-    font-size: 14px;
-    color: #000;
-    font-weight: 700;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-    letter-spacing: 1px;
+/* Customer */
+
+.customer-section{
+    background:#F8F8F8;
+    border:1px solid #ECECEC;
+    border-radius:18px;
+    padding:20px;
+    margin-bottom:30px;
 }
 
-.customer-section p {
-    font-size: 11px;
-    color: #666;
-    text-transform: uppercase;
-    font-weight: 500;
+.customer-title{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:2px;
+    color:#8B6F5E;
+    margin-bottom:8px;
+}
+
+.customer-name{
+    font-size:22px;
+    font-weight:400;
+    color:#1A1A1A;
+}
+
+.customer-status{
+    font-size:12px;
+    color:#8B6F5E;
+    margin-top:6px;
 }
 
 /* Table */
-.items-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 30px;
+
+.items-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:30px;
 }
 
-.items-table th {
-    background: #000;
-    color: white;
-    padding: 12px 10px;
-    text-align: left;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
+.items-table th{
+    text-align:left;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:2px;
+    color:#8B6F5E;
+    padding-bottom:12px;
+    border-bottom:1px solid #E8E8E8;
+    font-weight:500;
 }
 
-.items-table td {
-    padding: 16px 10px;
-    border-bottom: 1px solid #eee;
-    font-size: 12px;
-    vertical-align: middle;
+.items-table td{
+    padding:18px 0;
+    border-bottom:1px solid #F0F0F0;
+    vertical-align:top;
 }
 
-.item-name {
-    font-weight: 700;
-    text-transform: uppercase;
-    margin-bottom: 4px;
+.item-name{
+    font-size:14px;
+    color:#1A1A1A;
+    font-weight:500;
+    margin-bottom:6px;
 }
 
-.item-category {
-    font-size: 10px;
-    color: #888;
-    text-transform: uppercase;
-    font-weight: 600;
+.item-meta{
+    font-size:11px;
+    color:#8B6F5E;
+    line-height:1.8;
+}
+
+.qty{
+    text-align:center;
+    font-size:13px;
+}
+
+.price{
+    text-align:right;
+    font-size:14px;
+    font-weight:500;
 }
 
 /* Totals */
-.totals-section {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
+
+.totals{
+    margin-top:20px;
+    border-top:1px solid #E8E8E8;
+    padding-top:20px;
 }
 
-.items-count {
-    font-weight: 700;
-    font-size: 12px;
-    text-transform: uppercase;
-    color: #999;
+.total-row{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:12px;
+    font-size:13px;
 }
 
-.totals-table {
-    text-align: right;
-    min-width: 250px;
+.total-row span:first-child{
+    color:#8B6F5E;
 }
 
-.totals-table div {
-    margin-bottom: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    text-transform: uppercase;
+.grand-total{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:20px;
+    padding-top:20px;
+    border-top:1px solid #E8E8E8;
 }
 
-.net-total {
-    font-size: 24px;
-    font-weight: 700;
-    color: #000;
-    border-top: 3px solid #000;
-    padding-top: 10px;
-    margin-top: 10px;
+.grand-total-label{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:2px;
+    color:#8B6F5E;
+}
+
+.grand-total-value{
+    font-size:32px;
+    font-weight:300;
+    color:#1A1A1A;
+}
+
+/* Payment */
+
+.payment-box{
+    background:#1A1A1A;
+    border-radius:20px;
+    padding:18px 22px;
+    margin-top:30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.payment-label{
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:2px;
+    color:#C8A882;
+    margin-bottom:6px;
+}
+
+.payment-method{
+    color:white;
+    font-size:14px;
+}
+
+.payment-amount{
+    color:white;
+    font-size:20px;
+    font-weight:500;
 }
 
 /* Footer */
-.footer {
-    text-align: center;
-    margin-top: 50px;
-    padding-top: 30px;
-    border-top: 2px solid #f0f0f0;
-    font-size: 11px;
-    color: #000;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+
+.footer{
+    margin-top:50px;
+    padding-top:30px;
+    border-top:1px solid #ECECEC;
+    text-align:center;
 }
 
-.footer strong {
-    color: #BA2C2F;
-    font-size: 13px;
+.footer-title{
+    font-size:18px;
+    color:#1A1A1A;
+    margin-bottom:10px;
 }
 
-.powered {
-    margin-top: 20px;
-    font-size: 9px;
-    color: #bbb;
-    font-weight: 700;
-    letter-spacing: 2px;
+.footer-text{
+    color:#8B6F5E;
+    font-size:12px;
+    line-height:1.8;
 }
 
-@media print {
-    body {
-        -webkit-print-color-adjust: exact;
-        width: 100%;
-        padding: 20px;
+.powered{
+    margin-top:25px;
+    font-size:10px;
+    letter-spacing:3px;
+    color:#BBBBBB;
+}
+
+@media print{
+
+    body{
+        width:100%;
+        padding:20px;
+        -webkit-print-color-adjust:exact;
     }
+
 }
+
 </style>
 </head>
 
 <body>
 
 <div class="receipt-header">
-    <div class="company-info">
-        <h1>PUMA</h1>
-        <p>
-            <strong>PUMA India Retail</strong><br>
-            No 777/H, 100 Feet Rd, HAL 2nd Stage<br>
-            Indiranagar, Bengaluru 560008<br>
-            GSTIN: 29AAACP3423F1Z5
-        </p>
+
+    <div>
+
+        <div class="logo">MANGO</div>
+
+        <div class="store-info">
+            <strong>MANGO UB City</strong><br>
+            UB City Mall<br>
+            24 Vittal Mallya Road<br>
+            Ashok Nagar<br>
+            Bengaluru, Karnataka 560001
+        </div>
+
     </div>
 
     <div class="bill-info">
-        <div>Order ID: <span class="bill-id">#7891XQ12</span></div>
-        <div>Date: ${currentReceipt.date}</div>
-        <div>Store Lead: ${currentReceipt.associate}</div>
+
+        <div class="bill-label">Receipt ID</div>
+        <div class="bill-value">#MNG-BR7891XQ12</div>
+
+        <div class="bill-label">Date</div>
+        <div class="bill-value">05 April 2026</div>
+
+        <div class="bill-label">Store Associate</div>
+        <div class="bill-value">Priya Mehta</div>
+
     </div>
+
 </div>
 
 <div class="customer-section">
-    <h3>Athlete: ${customerName}</h3>
-    <p>Status: Verified Purchase</p>
+
+    <div class="customer-title">
+        Customer
+    </div>
+
+    <div class="customer-name">
+        Vikas
+    </div>
+
+    <div class="customer-status">
+        Verified Purchase
+    </div>
+
 </div>
 
 <table class="items-table">
+
     <thead>
+
         <tr>
-            <th style="width:60%">Product Description</th>
-            <th style="width:10%">Qty</th>
+            <th style="width:55%">Product</th>
+            <th style="width:15%">Qty</th>
             <th style="width:30%; text-align:right;">Amount</th>
         </tr>
+
     </thead>
+
     <tbody>
+
         <tr>
+
             <td>
-                <div class="item-name">Velocity Nitro 4</div>
-                <div class="item-category">Running</div>
+
+                <div class="item-name">
+                    Long Satin Dress
+                </div>
+
+                <div class="item-meta">
+                    Colour: Burnt Orange<br>
+                    Size: M<br>
+                    Fit: Fitted<br>
+                    Material: Silk Mix Satin
+                </div>
+
             </td>
-            <td>1</td>
-            <td style="text-align:right;"><strong>₹11,999.00</strong></td>
+
+            <td class="qty">1</td>
+
+            <td class="price">
+                ₹11,990
+            </td>
+
         </tr>
+
         <tr>
+
             <td>
-                <div class="item-name">Train All Day Tee</div>
-                <div class="item-category">Training</div>
+
+                <div class="item-name">
+                    Boat-Neck Ruched Dress
+                </div>
+
+                <div class="item-meta">
+                    Colour: Red<br>
+                    Size: M<br>
+                    Fit: Regular Fit<br>
+                    Material: Woven Fabric
+                </div>
+
             </td>
-            <td>1</td>
-            <td style="text-align:right;"><strong>₹1,079.00</strong></td>
+
+            <td class="qty">1</td>
+
+            <td class="price">
+                ₹5,990
+            </td>
+
         </tr>
+
         <tr>
+
             <td>
-                <div class="item-name">CR Cricket Shorts</div>
-                <div class="item-category">Cricket</div>
+
+                <div class="item-name">
+                    Satin Dress with Gathered V-Neckline
+                </div>
+
+                <div class="item-meta">
+                    Colour: Orange<br>
+                    Size: S<br>
+                    Fit: Regular Fit<br>
+                    Material: Satin
+                </div>
+
             </td>
-            <td>1</td>
-            <td style="text-align:right;"><strong>₹1,099.00</strong></td>
+
+            <td class="qty">1</td>
+
+            <td class="price">
+                ₹7,990
+            </td>
+
         </tr>
+
     </tbody>
+
 </table>
 
-<div class="totals-section">
-    <div class="items-count">
-        Total Units: 3
+<div class="totals">
+
+    <div class="total-row">
+        <span>Subtotal</span>
+        <span>₹22,008.48</span>
     </div>
 
-    <div class="totals-table">
-        <div>Subtotal: ₹12,658.03</div>
-        <div>GST (12%): ₹1,518.97</div>
-        <div class="net-total">Total Paid: ₹14,177.00</div>
+    <div class="total-row">
+        <span>GST</span>
+        <span>₹3,961.52</span>
     </div>
+
+    <div class="total-row">
+        <span>Total Units</span>
+        <span>3</span>
+    </div>
+
+    <div class="grand-total">
+
+        <div class="grand-total-label">
+            Total Paid
+        </div>
+
+        <div class="grand-total-value">
+            ₹25,970
+        </div>
+
+    </div>
+
+</div>
+
+<div class="payment-box">
+
+    <div>
+
+        <div class="payment-label">
+            Payment Method
+        </div>
+
+        <div class="payment-method">
+            Card •••• 4532
+        </div>
+
+    </div>
+
+    <div class="payment-amount">
+        ₹25,970
+    </div>
+
 </div>
 
 <div class="footer">
-    <p><strong>Forever Faster.</strong></p>
-    <p style="margin-top: 8px;">Explore latest collections at in.puma.com</p>
+
+    <div class="footer-title">
+        Thank You For Shopping With MANGO
+    </div>
+
+    <div class="footer-text">
+        Explore new arrivals, seasonal collections and timeless wardrobe essentials at<br>
+        shop.mango.com/in/en
+    </div>
 
     <div class="powered">
         POWERED BY RDEP
     </div>
+
 </div>
 
 </body>
