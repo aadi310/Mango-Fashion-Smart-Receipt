@@ -820,86 +820,91 @@ body {
         <div className="flex flex-col w-full gap-3 pb-4 px-3">
 
           {/* MANGO Premium Fashion Header */}
-<div className="bg-white rounded-3xl shadow-xl border border-[#EAEAEA] mt-6 mx-4 overflow-hidden">
+<div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mt-6 mx-4 overflow-hidden">
 
   {/* Header */}
-  <div className="px-6 pt-8 pb-6 bg-white">
+  <div className="px-7 pt-8 pb-7 bg-white">
 
-    <div className="flex items-center justify-between gap-4">
+    <div className="flex items-start justify-between">
 
       <img
         src="/images/design-mode/mango.png"
         alt="MANGO"
-        className="h-10 w-auto object-contain"
+        className="h-8 w-auto object-contain"
       />
 
-      <div className="bg-[#F5F5F5] rounded-xl p-2.5 border border-[#ECECEC] flex-shrink-0">
+      <div className="bg-[#F7F7F7] rounded-xl p-2 border border-[#EEEEEE] flex-shrink-0">
         <Image
           src="/images/design-mode/800px-QR_code_for_mobile_English_Wikipedia.svg.png"
           alt="Support QR"
-          width={42}
-          height={42}
+          width={38}
+          height={38}
         />
       </div>
+
     </div>
 
-    {/* Customer Greeting */}
-    <div className="mt-8">
-      <div className="text-[30px] font-light tracking-tight text-[#000000]">
+    {/* Greeting */}
+    <div className="mt-9">
+
+      <h1 className="text-[20px] font-normal tracking-[-0.02em] text-[#1A1A1A] leading-none">
         Thank you, {customerName}
-      </div>
+      </h1>
 
-      <div className="text-xs tracking-[0.18em] uppercase text-[#8B6F5E] font-medium mt-2">
-        Your MANGO purchase summary
-      </div>
+      <p className="mt-3 text-[11px] uppercase tracking-[0.24em] text-[#8B6F5E] font-medium">
+        Your Mango Purchase Summary
+      </p>
+
     </div>
+
   </div>
 
-  {/* Purchase Summary */}
-  <div className="px-6 py-6 bg-[#F5F5F5]/60 border-t border-[#ECECEC]">
+  {/* Summary Section */}
+  <div className="px-7 py-6 bg-[#F8F8F8] border-t border-[#ECECEC]">
 
-    <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+    {/* Amount Row */}
+    <div className="flex items-end justify-between border-b border-[#E6E6E6] pb-5">
 
-      {/* Amount */}
-      <div className="col-span-2 flex justify-between items-end border-b border-[#E4E4E4] pb-5 mb-2">
+      <div>
 
-        <div>
-          <div className="text-[10px] uppercase tracking-[0.2em] font-medium text-[#8B6F5E]">
-            Total Amount
-          </div>
-
-          <div className="text-4xl font-light text-[#000000] tabular-nums mt-1">
-            ₹{currentReceipt.total.toLocaleString("en-IN")}
-          </div>
+        <div className="text-[10px] uppercase tracking-[0.22em] text-[#8B6F5E] font-medium">
+          Total Amount
         </div>
 
-        <div className="bg-[#C8A882] text-[#000000] text-[10px] font-semibold px-4 py-1.5 rounded-full uppercase tracking-[0.15em] mb-1">
-          Paid
+        <div className="mt-1 text-[34px] leading-none font-light tracking-[-0.03em] text-[#000000] tabular-nums">
+          ₹{currentReceipt.total.toLocaleString("en-IN")}
         </div>
 
       </div>
 
-      {/* Receipt ID */}
-      <div className="flex flex-col">
-        <span className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] font-medium">
+      <div className="mb-1 bg-[#C8A882] text-black text-[10px] font-semibold uppercase tracking-[0.18em] px-3 py-1 rounded-full">
+        Paid
+      </div>
+
+    </div>
+
+    {/* Metadata */}
+    <div className="grid grid-cols-2 gap-6 pt-5">
+
+      <div>
+        <div className="text-[10px] uppercase tracking-[0.18em] text-[#8B6F5E] font-medium">
           Receipt ID
-        </span>
+        </div>
 
-        <span className="text-sm font-medium text-[#1A1A1A] mt-1">
+        <div className="mt-2 text-[15px] font-medium text-[#1A1A1A]">
           #{currentReceipt.id.slice(-8)}
-        </span>
+        </div>
       </div>
 
-      {/* Date */}
-      <div className="flex flex-col text-right">
-        <span className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] font-medium">
+      <div className="text-right">
+        <div className="text-[10px] uppercase tracking-[0.18em] text-[#8B6F5E] font-medium">
           Date & Time
-        </span>
+        </div>
 
-        <div className="text-sm text-[#1A1A1A] mt-1">
-          <span>{currentReceipt.date}</span>
-          <span className="mx-1 text-[#C8A882]">•</span>
-          <span>{currentReceipt.time}</span>
+        <div className="mt-2 text-[15px] font-medium text-[#1A1A1A]">
+          {currentReceipt.date}
+          <span className="mx-2 text-[#C8A882]">•</span>
+          {currentReceipt.time}
         </div>
       </div>
 
