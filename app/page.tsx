@@ -819,83 +819,94 @@ body {
       >
         <div className="flex flex-col w-full gap-3 pb-4 px-3">
 
-          {/* PUMA Refined Premium Top Section */}
-<div className="bg-white rounded-3xl shadow-xl border border-gray-100 mt-6 mx-4 overflow-hidden">
-  {/* Header: Consolidated Clean Layout */}
-  <div className="px-6 pt-8 pb-5 bg-white">
+          {/* MANGO Premium Fashion Header */}
+<div className="bg-white rounded-3xl shadow-xl border border-[#EAEAEA] mt-6 mx-4 overflow-hidden">
+
+  {/* Header */}
+  <div className="px-6 pt-8 pb-6 bg-white">
+
     <div className="flex items-center justify-between gap-4">
-      {/* Logo: Significantly Larger & Featured */}
+
       <img
-        src="/images/design-mode/puma-logo.png"
-        alt="PUMA"
-        className="h-14 w-auto object-contain" 
+        src="/images/design-mode/mango.png"
+        alt="MANGO"
+        className="h-10 w-auto object-contain"
       />
-      
-      {/* Premium Minimalist QR - Compacted */}
-      <div className="bg-gray-50 rounded-xl p-2.5 border border-gray-100 flex-shrink-0">
+
+      <div className="bg-[#F5F5F5] rounded-xl p-2.5 border border-[#ECECEC] flex-shrink-0">
         <Image
           src="/images/design-mode/800px-QR_code_for_mobile_English_Wikipedia.svg.png"
           alt="Support QR"
-          width={40}
-          height={40}
-          className="grayscale opacity-90"
+          width={42}
+          height={42}
         />
       </div>
     </div>
 
-    {/* Greeting: Personal, Professional, and Bold */}
-    <div className="mt-6">
-      <div className="text-2xl font-black italic uppercase tracking-tight text-black">
+    {/* Customer Greeting */}
+    <div className="mt-8">
+      <div className="text-[30px] font-light tracking-tight text-[#000000]">
         Thank you, {customerName}
       </div>
-      <div className="text-xs uppercase tracking-widest text-gray-500 font-medium mt-1">
-        Summary of your PUMA India purchase
+
+      <div className="text-xs tracking-[0.18em] uppercase text-[#8B6F5E] font-medium mt-2">
+        Your MANGO purchase summary
       </div>
     </div>
   </div>
 
-  {/* Receipt Metadata & Amount: Condensed Grid */}
-  <div className="px-6 py-6 bg-gray-50/50 border-t border-gray-100">
+  {/* Purchase Summary */}
+  <div className="px-6 py-6 bg-[#F5F5F5]/60 border-t border-[#ECECEC]">
+
     <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-      
-      {/* Amount: Direct Retail Language */}
-      <div className="col-span-2 flex justify-between items-end border-b border-gray-200 pb-4 mb-2">
+
+      {/* Amount */}
+      <div className="col-span-2 flex justify-between items-end border-b border-[#E4E4E4] pb-5 mb-2">
+
         <div>
-          <div className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400">
-            Total Amount (Incl. Taxes)
+          <div className="text-[10px] uppercase tracking-[0.2em] font-medium text-[#8B6F5E]">
+            Total Amount
           </div>
-          <div className="text-4xl font-black text-black tabular-nums mt-0.5">
-            ₹{currentReceipt.total.toLocaleString('en-IN')}
+
+          <div className="text-4xl font-light text-[#000000] tabular-nums mt-1">
+            ₹{currentReceipt.total.toLocaleString("en-IN")}
           </div>
         </div>
-        <div className="bg-[#BA2C2F] text-white text-[10px] font-bold px-3.5 py-1.5 rounded-full uppercase tracking-tighter mb-1.5 flex-shrink-0">
+
+        <div className="bg-[#C8A882] text-[#000000] text-[10px] font-semibold px-4 py-1.5 rounded-full uppercase tracking-[0.15em] mb-1">
           Paid
         </div>
+
       </div>
 
-      {/* Transaction ID: Clean */}
+      {/* Receipt ID */}
       <div className="flex flex-col">
-        <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+        <span className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] font-medium">
           Receipt ID
         </span>
-        <span className="text-sm font-mono font-bold text-black mt-1">
+
+        <span className="text-sm font-medium text-[#1A1A1A] mt-1">
           #{currentReceipt.id.slice(-8)}
         </span>
       </div>
-      
-      {/* Date & Time: Re-added Time */}
+
+      {/* Date */}
       <div className="flex flex-col text-right">
-        <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+        <span className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] font-medium">
           Date & Time
         </span>
-        <div className="text-sm font-bold text-black mt-1">
-          <span className="font-mono">{currentReceipt.date}</span>
-          <span className="text-gray-400 mx-1">•</span>
-          <span className="font-mono">{currentReceipt.time}</span>
+
+        <div className="text-sm text-[#1A1A1A] mt-1">
+          <span>{currentReceipt.date}</span>
+          <span className="mx-1 text-[#C8A882]">•</span>
+          <span>{currentReceipt.time}</span>
         </div>
       </div>
+
     </div>
+
   </div>
+
 </div>
           
          {/* Purchase Details Section */}
