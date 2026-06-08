@@ -1237,93 +1237,84 @@ body{
 
         )}
 
-        {/* Feedback Toggle */}
-        <div className="mt-4">
+        {/* Inline Product Rating */}
+<div className="mt-4 flex items-center gap-3">
+
+  <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#8B6F5E]">
+    Rate Product
+  </span>
+
+  <div className="flex items-center gap-1">
+
+    {[1, 2, 3, 4, 5].map((star) => (
+
+      <button
+        key={star}
+        onClick={() => {
+
+          setItemRating(product.id, star)
+
+          if (!expandedItemFeedback.includes(product.id)) {
+            toggleItemFeedback(product.id)
+          }
+
+        }}
+        className="transition-transform hover:scale-110"
+      >
+
+        <Star
+          className={`h-4 w-4 transition-all duration-200 ${
+            star <= (itemFeedback[product.id]?.rating || 0)
+              ? "fill-[#C8A882] text-[#C8A882]"
+              : "text-[#D8D8D8] hover:text-[#C8A882]"
+          }`}
+        />
+
+      </button>
+
+    ))}
+
+  </div>
+
+</div>
+
+{/* Review Panel */}
+{expandedItemFeedback.includes(product.id) && (
+
+  <div className="mt-4 bg-white rounded-2xl border border-[#ECECEC] p-4">
+
+    <div className="flex flex-wrap gap-2 justify-center">
+
+      {["Comfort", "Fit", "Style", "Quality"].map((tag) => {
+
+        const isActive =
+          itemFeedback[product.id]?.tags?.includes(tag)
+
+        return (
 
           <button
-            onClick={() => toggleItemFeedback(product.id)}
-            className="flex items-center text-[10px] font-medium uppercase tracking-[0.15em] text-[#8B6F5E]"
+            key={tag}
+            onClick={() =>
+              toggleItemTag(product.id, tag)
+            }
+            className={`text-[10px] uppercase tracking-[0.08em] px-3 py-1.5 rounded-full border transition-colors ${
+              isActive
+                ? "bg-[#C8A882] border-[#C8A882] text-black"
+                : "border-[#E5E5E5] text-[#8B6F5E] hover:bg-[#F8F8F8]"
+            }`}
           >
-
-            {expandedItemFeedback.includes(product.id)
-              ? "Close Review"
-              : "Rate Product"}
-
-            <Star
-              className={`ml-2 h-3.5 w-3.5 ${
-                expandedItemFeedback.includes(product.id)
-                  ? "fill-[#C8A882] text-[#C8A882]"
-                  : "text-[#8B6F5E]"
-              }`}
-            />
-
+            {tag}
           </button>
 
-        </div>
+        )
 
-        {/* Review Panel */}
-        {expandedItemFeedback.includes(product.id) && (
+      })}
 
-          <div className="mt-4 bg-white rounded-2xl border border-[#ECECEC] p-4">
+    </div>
 
-            <div className="flex justify-center gap-2 mb-4">
+  </div>
 
-              {[1, 2, 3, 4, 5].map((star) => (
-
-                <button
-                  key={star}
-                  onClick={() =>
-                    setItemRating(product.id, star)
-                  }
-                >
-
-                  <Star
-                    className={`h-5 w-5 ${
-                      star <= (itemFeedback[product.id]?.rating || 0)
-                        ? "fill-[#C8A882] text-[#C8A882]"
-                        : "text-[#D8D8D8]"
-                    }`}
-                  />
-
-                </button>
-
-              ))}
-
-            </div>
-
-            <div className="flex flex-wrap gap-2 justify-center">
-
-              {["Comfort", "Fit", "Style", "Quality"].map((tag) => {
-
-                const isActive =
-                  itemFeedback[product.id]?.tags?.includes(tag)
-
-                return (
-
-                  <button
-                    key={tag}
-                    onClick={() =>
-                      toggleItemTag(product.id, tag)
-                    }
-                    className={`text-[10px] uppercase tracking-[0.08em] px-3 py-1.5 rounded-full border transition-colors ${
-                      isActive
-                        ? "bg-[#C8A882] border-[#C8A882] text-black"
-                        : "border-[#E5E5E5] text-[#8B6F5E] hover:bg-[#F8F8F8]"
-                    }`}
-                  >
-                    {tag}
-                  </button>
-
-                )
-
-              })}
-
-            </div>
-
-          </div>
-
-        )}
-
+)}
       </div>
 
     ))}
