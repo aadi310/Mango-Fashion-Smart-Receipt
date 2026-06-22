@@ -1075,220 +1075,149 @@ body{
 
 </div>
           
-         {/* MANGO Purchase Details Section */}
+        {/* MANGO Purchase Details Section */}
 <div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mt-3 mx-4 p-4">
 
   {/* Header */}
   <div className="flex items-center justify-between mb-3">
-
     <h3 className="text-[13px] font-medium uppercase tracking-[0.18em] flex items-center text-[#1A1A1A]">
       <Package className="mr-2 h-4 w-4 text-[#C8A882]" />
       Purchase Summary
     </h3>
-
     <span className="text-[10px] font-medium bg-[#F5F5F5] text-[#8B6F5E] border border-[#E7E7E7] px-3 py-1 rounded-full uppercase tracking-[0.12em]">
       {currentReceipt.items.length} Items
     </span>
-
   </div>
 
   {/* Items */}
   <div className="space-y-2">
-
     {currentReceipt.items.map((product) => (
-
-      <div
-        key={product.id}
-        className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl p-3 transition-all duration-200"
-      >
+      <div key={product.id} className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl p-3 transition-all duration-200">
 
         {/* Product Header */}
-        <div
-          className="flex items-start justify-between cursor-pointer"
-          onClick={() => toggleProductExpansion(product.id)}
-        >
-
+        <div className="flex items-start justify-between cursor-pointer" onClick={() => toggleProductExpansion(product.id)}>
           <div className="flex items-start flex-1">
-
-            <ChevronRight
-              className={`h-4 w-4 mt-0.5 mr-2 text-[#8B6F5E] transition-transform duration-200 flex-shrink-0 ${
-                expandedProducts.includes(product.id) ? "rotate-90" : ""
-              }`}
-            />
-
+            <ChevronRight className={`h-4 w-4 mt-0.5 mr-2 text-[#8B6F5E] transition-transform duration-200 flex-shrink-0 ${expandedProducts.includes(product.id) ? "rotate-90" : ""}`} />
             <div>
-
               <div className="font-medium text-[13px] text-[#1A1A1A] tracking-[-0.01em] leading-snug">
                 {product.name}
               </div>
-
               <div className="text-[10px] text-[#8B6F5E] uppercase tracking-[0.10em] mt-0.5 flex items-center gap-1.5">
                 <span>Size {product.size}</span>
                 {product.discount > 0 && (
                   <>
                     <span className="text-[#DDDDDD]">•</span>
-                    <span className="text-[#B05E2F]">
-                      −₹{product.discount.toLocaleString("en-IN")} off
-                    </span>
+                    <span className="text-[#B05E2F]">−₹{product.discount.toLocaleString("en-IN")} off</span>
                   </>
                 )}
               </div>
-
             </div>
-
           </div>
 
           <div className="text-right ml-3 flex-shrink-0">
-
-            <div className="text-[10px] uppercase tracking-[0.12em] text-[#8B6F5E]">
-              Qty {product.quantity}
-            </div>
-
+            <div className="text-[10px] uppercase tracking-[0.12em] text-[#8B6F5E]">Qty {product.quantity}</div>
             {product.discount > 0 ? (
               <div className="mt-0.5">
-                <div className="text-[11px] text-[#AAAAAA] line-through leading-none">
-                  ₹{product.price.toLocaleString("en-IN")}
-                </div>
-                <div className="font-semibold text-[13px] text-[#1A1A1A] leading-snug">
-                  ₹{(product.price - product.discount).toLocaleString("en-IN")}
-                </div>
+                <div className="text-[11px] text-[#AAAAAA] line-through leading-none">₹{product.price.toLocaleString("en-IN")}</div>
+                <div className="font-semibold text-[13px] text-[#1A1A1A] leading-snug">₹{(product.price - product.discount).toLocaleString("en-IN")}</div>
               </div>
             ) : (
-              <div className="font-semibold text-[13px] text-[#1A1A1A] mt-0.5">
-                ₹{product.price.toLocaleString("en-IN")}
-              </div>
+              <div className="font-semibold text-[13px] text-[#1A1A1A] mt-0.5">₹{product.price.toLocaleString("en-IN")}</div>
             )}
-
           </div>
-
         </div>
 
         {/* Expanded Product Details */}
         {expandedProducts.includes(product.id) && (
-
           <div className="mt-3 pt-3 border-t border-[#E5E5E5]">
-
             <div className="grid grid-cols-2 gap-y-3">
 
               <div>
-                <div className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">
-                  Reference
-                </div>
-                <div className="text-[11px] text-[#1A1A1A] mt-0.5">
-                  {product.itemCode}
-                </div>
+                <div className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">SKU</div>
+                <div className="text-[11px] text-[#1A1A1A] mt-0.5">{product.itemCode}</div>
               </div>
 
               <div className="text-right">
-                <div className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">
-                  Colour
-                </div>
-                <div className="text-[11px] text-[#1A1A1A] mt-0.5">
-                  {product.color}
-                </div>
+                <div className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">Colour</div>
+                <div className="text-[11px] text-[#1A1A1A] mt-0.5">{product.color}</div>
               </div>
 
               <div>
-                <div className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">
-                  Fit
-                </div>
-                <div className="text-[11px] text-[#1A1A1A] mt-0.5">
-                  {product.fit}
-                </div>
+                <div className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">Fit</div>
+                <div className="text-[11px] text-[#1A1A1A] mt-0.5">{product.fit}</div>
               </div>
 
               <div className="text-right">
-                <div className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">
-                  Material
-                </div>
-                <div className="text-[11px] text-[#1A1A1A] mt-0.5">
-                  {product.material}
-                </div>
+                <div className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">Material</div>
+                <div className="text-[11px] text-[#1A1A1A] mt-0.5">{product.material}</div>
               </div>
 
             </div>
-
           </div>
-
         )}
 
         {/* Inline Product Rating */}
-        <div className="mt-3 flex items-center gap-3">
+        {itemFeedback[product.id]?.submitted ? (
 
-          <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#8B6F5E]">
-            Rate
-          </span>
-
-          <div className="flex items-center gap-1">
-
-            {[1, 2, 3, 4, 5].map((star) => (
-
-              <button
-                key={star}
-                onClick={() => {
-                  setItemRating(product.id, star)
-                  if (!expandedItemFeedback.includes(product.id)) {
-                    toggleItemFeedback(product.id)
-                  }
-                }}
-                className="transition-transform hover:scale-110"
-              >
-
-                <Star
-                  className={`h-4 w-4 transition-all duration-200 ${
-                    star <= (itemFeedback[product.id]?.rating || 0)
-                      ? "fill-[#C8A882] text-[#C8A882]"
-                      : "text-[#D8D8D8] hover:text-[#C8A882]"
-                  }`}
-                />
-
-              </button>
-
-            ))}
-
+          <div className="mt-3 pt-3 border-t border-[#E5E5E5] text-center">
+            <p className="text-[11px] text-[#8B6F5E]">Thank you for your feedback.</p>
           </div>
 
-        </div>
+        ) : (
 
-        {/* Review Panel */}
-        {expandedItemFeedback.includes(product.id) && (
+          <div className="mt-3 pt-3 border-t border-[#E5E5E5]">
 
-          <div className="mt-3 bg-white rounded-2xl border border-[#ECECEC] p-3">
-
-            <div className="flex flex-wrap gap-2 justify-center">
-
-              {["Comfort", "Fit", "Style", "Quality"].map((tag) => {
-
-                const isActive = itemFeedback[product.id]?.tags?.includes(tag)
-
-                return (
-
+            {/* Stars */}
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#8B6F5E]">Rate</span>
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map((star) => (
                   <button
-                    key={tag}
-                    onClick={() => toggleItemTag(product.id, tag)}
-                    className={`text-[10px] uppercase tracking-[0.08em] px-3 py-1.5 rounded-full border transition-colors ${
-                      isActive
-                        ? "bg-[#C8A882] border-[#C8A882] text-black"
-                        : "border-[#E5E5E5] text-[#8B6F5E] hover:bg-[#F8F8F8]"
-                    }`}
+                    key={star}
+                    onClick={() => setItemRating(product.id, star)}
+                    className="transition-transform hover:scale-110"
                   >
-                    {tag}
+                    <Star className={`h-4 w-4 transition-all duration-200 ${star <= (itemFeedback[product.id]?.rating || 0) ? "fill-[#C8A882] text-[#C8A882]" : "text-[#D8D8D8] hover:text-[#C8A882]"}`} />
                   </button>
-
-                )
-
-              })}
-
+                ))}
+              </div>
             </div>
+
+            {/* Comment box + submit — shown after rating */}
+            {itemFeedback[product.id]?.rating > 0 && (
+              <div className="mt-3 space-y-2">
+                <textarea
+                  rows={2}
+                  placeholder="Tell us what you think (optional)..."
+                  value={itemFeedback[product.id]?.comment || ""}
+                  onChange={(e) =>
+                    setItemFeedback((prev) => ({
+                      ...prev,
+                      [product.id]: { ...prev[product.id], comment: e.target.value },
+                    }))
+                  }
+                  className="w-full p-3 text-[11px] bg-white border border-[#ECECEC] rounded-xl focus:border-[#C8A882] focus:outline-none resize-none transition-all placeholder:text-[#C0C0C0] text-[#1A1A1A]"
+                />
+                <button
+                  onClick={() =>
+                    setItemFeedback((prev) => ({
+                      ...prev,
+                      [product.id]: { ...prev[product.id], submitted: true },
+                    }))
+                  }
+                  className="w-full h-9 bg-[#1A1A1A] text-white rounded-xl text-[11px] uppercase tracking-[0.15em] hover:bg-black transition-all"
+                >
+                  Submit
+                </button>
+              </div>
+            )}
 
           </div>
 
         )}
 
       </div>
-
     ))}
-
   </div>
 
   {/* Totals */}
@@ -1296,9 +1225,7 @@ body{
 
     <div className="flex justify-between text-[11px] uppercase tracking-[0.08em] text-[#8B6F5E]">
       <span>Subtotal (MRP)</span>
-      <span className="text-[#1A1A1A]">
-        ₹{currentReceipt.items.reduce((acc, i) => acc + i.price * i.quantity, 0).toLocaleString("en-IN")}
-      </span>
+      <span className="text-[#1A1A1A]">₹{currentReceipt.items.reduce((acc, i) => acc + i.price * i.quantity, 0).toLocaleString("en-IN")}</span>
     </div>
 
     {currentReceipt.discount > 0 && (
@@ -1310,60 +1237,32 @@ body{
 
     <div className="flex justify-between text-[11px] uppercase tracking-[0.08em] text-[#8B6F5E]">
       <span>GST</span>
-      <span className="text-[#1A1A1A]">
-        ₹{currentReceipt.tax.toLocaleString("en-IN")}
-      </span>
+      <span className="text-[#1A1A1A]">₹{currentReceipt.tax.toLocaleString("en-IN")}</span>
     </div>
 
     <div className="flex justify-between items-end pt-3 border-t border-[#E5E5E5]">
-
-      <span className="text-[13px] uppercase tracking-[0.12em] text-[#8B6F5E]">
-        Total Paid
-      </span>
-
-      <span className="text-[24px] leading-none font-light tracking-[-0.02em] text-[#000000]">
-        ₹{currentReceipt.total.toLocaleString("en-IN")}
-      </span>
-
+      <span className="text-[13px] uppercase tracking-[0.12em] text-[#8B6F5E]">Total Paid</span>
+      <span className="text-[24px] leading-none font-light tracking-[-0.02em] text-[#000000]">₹{currentReceipt.total.toLocaleString("en-IN")}</span>
     </div>
 
   </div>
 
   {/* Payment */}
   <div className="mt-4">
-
     <div className="bg-[#1A1A1A] rounded-2xl p-4 flex items-center justify-between">
-
       <div className="flex items-center">
-
         <div className="w-10 h-10 bg-[#C8A882]/15 rounded-xl flex items-center justify-center mr-3">
           <CreditCard className="w-5 h-5 text-[#C8A882]" />
         </div>
-
         <div>
-
-          <div className="text-[10px] uppercase tracking-[0.12em] text-[#C8A882]">
-            Payment Method
-          </div>
-
-          <div className="text-sm text-white mt-1">
-            Card •••• 4532
-          </div>
-
+          <div className="text-[10px] uppercase tracking-[0.12em] text-[#C8A882]">Payment Method</div>
+          <div className="text-sm text-white mt-1">Card •••• 4532</div>
         </div>
-
       </div>
-
       <div className="text-right">
-
-        <div className="text-[18px] font-medium text-white">
-          ₹{currentReceipt.total.toLocaleString("en-IN")}
-        </div>
-
+        <div className="text-[18px] font-medium text-white">₹{currentReceipt.total.toLocaleString("en-IN")}</div>
       </div>
-
     </div>
-
   </div>
 
 </div>
