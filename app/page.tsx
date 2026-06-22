@@ -1013,86 +1013,47 @@ body{
       >
         <div className="flex flex-col w-full gap-3 pb-4 px-3">
 
-          {/* MANGO Premium Fashion Header */}
-<div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mt-6 mx-4 overflow-hidden">
+         {/* MANGO Premium Fashion Header */}
+<div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mt-4 mx-4 overflow-hidden">
 
-  {/* Header */}
-  <div className="px-6 pt-5 pb-4 bg-white">
+  {/* Logo + Amount in one row */}
+  <div className="px-5 pt-4 pb-3 bg-white flex items-center justify-between">
 
-    <div className="flex items-start justify-between">
-
+    <div>
       <img
         src="/images/design-mode/mango.png"
         alt="MANGO"
-        className="h-8 w-auto object-contain"
+        className="h-6 w-auto object-contain"
       />
-
+      <p className="mt-1.5 text-[9px] uppercase tracking-[0.22em] text-[#8B6F5E] font-medium">
+        Thank you, {customerName}
+      </p>
     </div>
 
-    {/* Greeting */}
-    <div className="mt-4">
-
-      <h1 className="text-[17px] font-normal tracking-[-0.02em] text-[#1A1A1A] leading-none">
-        Thank you, {customerName}
-      </h1>
-
-      <p className="mt-1 text-[10px] uppercase tracking-[0.24em] text-[#8B6F5E] font-medium">
-        Your Mango Purchase Summary
-      </p>
-
+    <div className="text-right">
+      <div className="text-[9px] uppercase tracking-[0.18em] text-[#8B6F5E] font-medium">
+        Total Paid
+      </div>
+      <div className="text-[22px] leading-none font-light tracking-[-0.03em] text-[#000000] tabular-nums mt-1">
+        ₹{currentReceipt.total.toLocaleString("en-IN")}
+      </div>
     </div>
 
   </div>
 
-  {/* Summary Section */}
-  <div className="px-7 py-6 bg-[#F8F8F8] border-t border-[#ECECEC]">
+  {/* Slim metadata strip */}
+  <div className="px-5 py-2.5 bg-[#F8F8F8] border-t border-[#ECECEC] flex items-center justify-between">
 
-    {/* Amount Row */}
-    <div className="flex items-end justify-between border-b border-[#E6E6E6] pb-5">
-
-      <div>
-
-        <div className="text-[10px] uppercase tracking-[0.22em] text-[#8B6F5E] font-medium">
-          Total Amount
-        </div>
-
-        <div className="mt-1 text-[26px] leading-none font-light tracking-[-0.03em] text-[#000000] tabular-nums">
-          ₹{currentReceipt.total.toLocaleString("en-IN")}
-        </div>
-
-      </div>
-
-      <div className="mb-1 bg-[#C8A882] text-black text-[10px] font-semibold uppercase tracking-[0.18em] px-3 py-1 rounded-full">
-        Paid
-      </div>
-
+    <div className="flex items-center gap-3 text-[10px] text-[#8B6F5E]">
+      <span className="font-medium text-[#1A1A1A]">#{currentReceipt.id.slice(-8)}</span>
+      <span className="text-[#C8A882]">•</span>
+      <span>{currentReceipt.date}</span>
+      <span className="text-[#C8A882]">•</span>
+      <span>{currentReceipt.time}</span>
     </div>
 
-    {/* Metadata */}
-    <div className="grid grid-cols-2 gap-6 pt-5">
-
-      <div>
-        <div className="text-[10px] uppercase tracking-[0.18em] text-[#8B6F5E] font-medium">
-          Receipt ID
-        </div>
-
-        <div className="mt-2 text-[12px] font-medium text-[#1A1A1A]">
-          #{currentReceipt.id.slice(-8)}
-        </div>
-      </div>
-
-      <div className="text-right">
-        <div className="text-[10px] uppercase tracking-[0.18em] text-[#8B6F5E] font-medium">
-          Date & Time
-        </div>
-
-        <div className="mt-2 text-[12px] font-medium text-[#1A1A1A]">
-          {currentReceipt.date}
-          <span className="mx-2 text-[#C8A882]">•</span>
-          {currentReceipt.time}
-        </div>
-      </div>
-
+    <div className="bg-[#C8A882] text-black text-[9px] font-semibold uppercase tracking-[0.15em] px-2.5 py-1 rounded-full">
+      Paid
     </div>
 
   </div>
