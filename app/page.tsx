@@ -72,6 +72,7 @@ interface Receipt {
     quantity: number
     baseAmount?: number
     tax?: number
+    discount?: number
 
     // Optional merchandising fields
     description?: string
@@ -233,6 +234,7 @@ const receipts = {
         material: "Silk Mix Satin",
         fit: "Fitted",
         price: 11990,
+        discount: 1199,
         quantity: 1,
         category: "Women > Dresses",
         itemCode: "27034440",
@@ -247,6 +249,7 @@ const receipts = {
         material: "Woven Fabric",
         fit: "Regular Fit",
         price: 5990,
+        discount: 0,
         quantity: 1,
         category: "Women > Dresses",
         itemCode: "27014089",
@@ -261,6 +264,7 @@ const receipts = {
         material: "Satin",
         fit: "Regular Fit",
         price: 7990,
+        discount: 0,
         quantity: 1,
         category: "Women > Dresses",
         itemCode: "27009090",
@@ -268,9 +272,11 @@ const receipts = {
         tax: 1218.81,
       },
     ],
-    subtotal: 22008.48,
-    tax: 3961.52,
-    total: 25970,
+    // MRP total: 25970 — discount: 1199 = 24771
+    subtotal: 20977.54, // 22008.48 - (1199 × 10161.02/11990) ≈ keep GST same, reduce base
+    tax: 3961.52,       // GST unchanged
+    discount: 1199,
+    total: 24771,       // 25970 - 1199
   },
 
   hist1: {
@@ -288,6 +294,7 @@ const receipts = {
         material: "100% Organic Cotton",
         fit: "Slim Fit",
         price: 1290,
+        discount: 0,
         quantity: 1,
         category: "Men > T-Shirts",
         itemCode: "37011432",
@@ -302,6 +309,7 @@ const receipts = {
         material: "Linen Blend",
         fit: "Slim Fit",
         price: 4290,
+        discount: 429,
         quantity: 1,
         category: "Men > T-Shirts",
         itemCode: "27035965",
@@ -316,6 +324,7 @@ const receipts = {
         material: "Denim",
         fit: "Straight Fit",
         price: 4990,
+        discount: 0,
         quantity: 1,
         category: "Men > Jeans",
         itemCode: "27041249",
@@ -323,9 +332,11 @@ const receipts = {
         tax: 761.19,
       },
     ],
-    subtotal: 8957.62,
-    tax: 1612.38,
-    total: 10570,
+    // MRP total: 10570 — discount: 429 = 10141
+    subtotal: 8528.62,  // unchanged
+    tax: 1612.38,       // GST unchanged
+    discount: 429,
+    total: 10141,       // 10570 - 429
   },
 
   hist2: {
@@ -343,6 +354,7 @@ const receipts = {
         material: "Linen Blend",
         fit: "A-Line",
         price: 3590,
+        discount: 0,
         quantity: 1,
         category: "Kids > Girls",
         itemCode: "27076746",
@@ -357,6 +369,7 @@ const receipts = {
         material: "Printed Fabric",
         fit: "Regular Fit",
         price: 3890,
+        discount: 0,
         quantity: 1,
         category: "Kids > Girls",
         itemCode: "27086748",
@@ -371,6 +384,7 @@ const receipts = {
         material: "Cotton Blend",
         fit: "Regular Fit",
         price: 3290,
+        discount: 0,
         quantity: 1,
         category: "Kids > Girls",
         itemCode: "27027948",
@@ -378,12 +392,13 @@ const receipts = {
         tax: 501.86,
       },
     ],
+    // No discounts
     subtotal: 9127.12,
     tax: 1642.88,
+    discount: 0,
     total: 10770,
   },
 }
-
 const currentReceipt = receipts[currentReceiptId]
 
 const totalSlides = 2
@@ -393,22 +408,21 @@ const transactionHistory = [
     id: "current",
     date: "05-04-2026",
     branch: "MANGO",
-    amount:
-      currentReceiptId === "current"
-        ? receipts.current.subtotal + receipts.current.tax
-        : 25970.0,
+    amount: currentReceiptId === "current"
+      ? receipts.current.total
+      : 24771,
   },
   {
     id: "hist1",
     date: "20-03-2026",
     branch: "MANGO",
-    amount: 10570.0,
+    amount: 10141,
   },
   {
     id: "hist2",
     date: "15-02-2026",
     branch: "MANGO",
-    amount: 10770.0,
+    amount: 10770,
   },
 ]
   
@@ -1061,10 +1075,10 @@ body{
 </div>
           
          {/* MANGO Purchase Details Section */}
-<div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mt-6 mx-4 p-6">
+<div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mt-3 mx-4 p-4">
 
   {/* Header */}
-  <div className="flex items-center justify-between mb-6">
+  <div className="flex items-center justify-between mb-3">
 
     <h3 className="text-[13px] font-medium uppercase tracking-[0.18em] flex items-center text-[#1A1A1A]">
       <Package className="mr-2 h-4 w-4 text-[#C8A882]" />
@@ -1078,13 +1092,13 @@ body{
   </div>
 
   {/* Items */}
-  <div className="space-y-4">
+  <div className="space-y-2">
 
     {currentReceipt.items.map((product) => (
 
       <div
         key={product.id}
-        className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl p-5 transition-all duration-200"
+        className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl p-3 transition-all duration-200"
       >
 
         {/* Product Header */}
@@ -1096,36 +1110,53 @@ body{
           <div className="flex items-start flex-1">
 
             <ChevronRight
-              className={`h-4 w-4 mt-1 mr-2 text-[#8B6F5E] transition-transform duration-200 ${
-                expandedProducts.includes(product.id)
-                  ? "rotate-90"
-                  : ""
+              className={`h-4 w-4 mt-0.5 mr-2 text-[#8B6F5E] transition-transform duration-200 flex-shrink-0 ${
+                expandedProducts.includes(product.id) ? "rotate-90" : ""
               }`}
             />
 
             <div>
 
-              <div className="font-medium text-[15px] text-[#1A1A1A] tracking-[-0.01em]">
+              <div className="font-medium text-[13px] text-[#1A1A1A] tracking-[-0.01em] leading-snug">
                 {product.name}
               </div>
 
-              <div className="text-[11px] text-[#8B6F5E] uppercase tracking-[0.12em] mt-1">
-                {product.category}
+              <div className="text-[10px] text-[#8B6F5E] uppercase tracking-[0.10em] mt-0.5 flex items-center gap-1.5">
+                <span>Size {product.size}</span>
+                {product.discount > 0 && (
+                  <>
+                    <span className="text-[#DDDDDD]">•</span>
+                    <span className="text-[#B05E2F]">
+                      −₹{product.discount.toLocaleString("en-IN")} off
+                    </span>
+                  </>
+                )}
               </div>
 
             </div>
 
           </div>
 
-          <div className="text-right">
+          <div className="text-right ml-3 flex-shrink-0">
 
             <div className="text-[10px] uppercase tracking-[0.12em] text-[#8B6F5E]">
               Qty {product.quantity}
             </div>
 
-            <div className="font-semibold text-[15px] text-[#1A1A1A] mt-1">
-              ₹{product.price.toLocaleString("en-IN")}
-            </div>
+            {product.discount > 0 ? (
+              <div className="mt-0.5">
+                <div className="text-[11px] text-[#AAAAAA] line-through leading-none">
+                  ₹{product.price.toLocaleString("en-IN")}
+                </div>
+                <div className="font-semibold text-[13px] text-[#1A1A1A] leading-snug">
+                  ₹{(product.price - product.discount).toLocaleString("en-IN")}
+                </div>
+              </div>
+            ) : (
+              <div className="font-semibold text-[13px] text-[#1A1A1A] mt-0.5">
+                ₹{product.price.toLocaleString("en-IN")}
+              </div>
+            )}
 
           </div>
 
@@ -1134,15 +1165,15 @@ body{
         {/* Expanded Product Details */}
         {expandedProducts.includes(product.id) && (
 
-          <div className="mt-4 pt-4 border-t border-[#E5E5E5]">
+          <div className="mt-3 pt-3 border-t border-[#E5E5E5]">
 
-            <div className="grid grid-cols-2 gap-y-4">
+            <div className="grid grid-cols-2 gap-y-3">
 
               <div>
                 <div className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">
                   Reference
                 </div>
-                <div className="text-[12px] text-[#1A1A1A] mt-1">
+                <div className="text-[11px] text-[#1A1A1A] mt-0.5">
                   {product.itemCode}
                 </div>
               </div>
@@ -1151,34 +1182,25 @@ body{
                 <div className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">
                   Colour
                 </div>
-                <div className="text-[12px] text-[#1A1A1A] mt-1">
+                <div className="text-[11px] text-[#1A1A1A] mt-0.5">
                   {product.color}
                 </div>
               </div>
 
               <div>
                 <div className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">
-                  Size
+                  Fit
                 </div>
-                <div className="text-[12px] text-[#1A1A1A] mt-1">
-                  {product.size}
+                <div className="text-[11px] text-[#1A1A1A] mt-0.5">
+                  {product.fit}
                 </div>
               </div>
 
               <div className="text-right">
                 <div className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">
-                  Fit
-                </div>
-                <div className="text-[12px] text-[#1A1A1A] mt-1">
-                  {product.fit}
-                </div>
-              </div>
-
-              <div className="col-span-2">
-                <div className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">
                   Material
                 </div>
-                <div className="text-[12px] text-[#1A1A1A] mt-1">
+                <div className="text-[11px] text-[#1A1A1A] mt-0.5">
                   {product.material}
                 </div>
               </div>
@@ -1190,83 +1212,78 @@ body{
         )}
 
         {/* Inline Product Rating */}
-<div className="mt-4 flex items-center gap-3">
+        <div className="mt-3 flex items-center gap-3">
 
-  <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#8B6F5E]">
-    Rate Product
-  </span>
+          <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#8B6F5E]">
+            Rate
+          </span>
 
-  <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1">
 
-    {[1, 2, 3, 4, 5].map((star) => (
+            {[1, 2, 3, 4, 5].map((star) => (
 
-      <button
-        key={star}
-        onClick={() => {
+              <button
+                key={star}
+                onClick={() => {
+                  setItemRating(product.id, star)
+                  if (!expandedItemFeedback.includes(product.id)) {
+                    toggleItemFeedback(product.id)
+                  }
+                }}
+                className="transition-transform hover:scale-110"
+              >
 
-          setItemRating(product.id, star)
+                <Star
+                  className={`h-4 w-4 transition-all duration-200 ${
+                    star <= (itemFeedback[product.id]?.rating || 0)
+                      ? "fill-[#C8A882] text-[#C8A882]"
+                      : "text-[#D8D8D8] hover:text-[#C8A882]"
+                  }`}
+                />
 
-          if (!expandedItemFeedback.includes(product.id)) {
-            toggleItemFeedback(product.id)
-          }
+              </button>
 
-        }}
-        className="transition-transform hover:scale-110"
-      >
+            ))}
 
-        <Star
-          className={`h-4 w-4 transition-all duration-200 ${
-            star <= (itemFeedback[product.id]?.rating || 0)
-              ? "fill-[#C8A882] text-[#C8A882]"
-              : "text-[#D8D8D8] hover:text-[#C8A882]"
-          }`}
-        />
+          </div>
 
-      </button>
+        </div>
 
-    ))}
+        {/* Review Panel */}
+        {expandedItemFeedback.includes(product.id) && (
 
-  </div>
+          <div className="mt-3 bg-white rounded-2xl border border-[#ECECEC] p-3">
 
-</div>
+            <div className="flex flex-wrap gap-2 justify-center">
 
-{/* Review Panel */}
-{expandedItemFeedback.includes(product.id) && (
+              {["Comfort", "Fit", "Style", "Quality"].map((tag) => {
 
-  <div className="mt-4 bg-white rounded-2xl border border-[#ECECEC] p-4">
+                const isActive = itemFeedback[product.id]?.tags?.includes(tag)
 
-    <div className="flex flex-wrap gap-2 justify-center">
+                return (
 
-      {["Comfort", "Fit", "Style", "Quality"].map((tag) => {
+                  <button
+                    key={tag}
+                    onClick={() => toggleItemTag(product.id, tag)}
+                    className={`text-[10px] uppercase tracking-[0.08em] px-3 py-1.5 rounded-full border transition-colors ${
+                      isActive
+                        ? "bg-[#C8A882] border-[#C8A882] text-black"
+                        : "border-[#E5E5E5] text-[#8B6F5E] hover:bg-[#F8F8F8]"
+                    }`}
+                  >
+                    {tag}
+                  </button>
 
-        const isActive =
-          itemFeedback[product.id]?.tags?.includes(tag)
+                )
 
-        return (
+              })}
 
-          <button
-            key={tag}
-            onClick={() =>
-              toggleItemTag(product.id, tag)
-            }
-            className={`text-[10px] uppercase tracking-[0.08em] px-3 py-1.5 rounded-full border transition-colors ${
-              isActive
-                ? "bg-[#C8A882] border-[#C8A882] text-black"
-                : "border-[#E5E5E5] text-[#8B6F5E] hover:bg-[#F8F8F8]"
-            }`}
-          >
-            {tag}
-          </button>
+            </div>
 
-        )
+          </div>
 
-      })}
+        )}
 
-    </div>
-
-  </div>
-
-)}
       </div>
 
     ))}
@@ -1274,14 +1291,21 @@ body{
   </div>
 
   {/* Totals */}
-  <div className="mt-8 pt-6 border-t border-[#ECECEC] space-y-3">
+  <div className="mt-4 pt-4 border-t border-[#ECECEC] space-y-2">
 
     <div className="flex justify-between text-[11px] uppercase tracking-[0.08em] text-[#8B6F5E]">
-      <span>Subtotal</span>
+      <span>Subtotal (MRP)</span>
       <span className="text-[#1A1A1A]">
-        ₹{currentReceipt.subtotal.toLocaleString("en-IN")}
+        ₹{currentReceipt.items.reduce((acc, i) => acc + i.price * i.quantity, 0).toLocaleString("en-IN")}
       </span>
     </div>
+
+    {currentReceipt.discount > 0 && (
+      <div className="flex justify-between text-[11px] uppercase tracking-[0.08em] text-[#B05E2F]">
+        <span>Discount</span>
+        <span>−₹{currentReceipt.discount.toLocaleString("en-IN")}</span>
+      </div>
+    )}
 
     <div className="flex justify-between text-[11px] uppercase tracking-[0.08em] text-[#8B6F5E]">
       <span>GST</span>
@@ -1290,13 +1314,13 @@ body{
       </span>
     </div>
 
-    <div className="flex justify-between items-end pt-4 border-t border-[#E5E5E5]">
+    <div className="flex justify-between items-end pt-3 border-t border-[#E5E5E5]">
 
       <span className="text-[13px] uppercase tracking-[0.12em] text-[#8B6F5E]">
         Total Paid
       </span>
 
-      <span className="text-[26px] leading-none font-light tracking-[-0.02em] text-[#000000]">
+      <span className="text-[24px] leading-none font-light tracking-[-0.02em] text-[#000000]">
         ₹{currentReceipt.total.toLocaleString("en-IN")}
       </span>
 
@@ -1305,7 +1329,7 @@ body{
   </div>
 
   {/* Payment */}
-  <div className="mt-6">
+  <div className="mt-4">
 
     <div className="bg-[#1A1A1A] rounded-2xl p-4 flex items-center justify-between">
 
