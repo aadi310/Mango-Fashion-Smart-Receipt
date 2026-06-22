@@ -112,7 +112,6 @@ const [expandedItemFeedback, setExpandedItemFeedback] = useState([])
     email: "",
     gender: "",
     promoOptIn: false,
-    whatsappOptIn: false,
   })
   const [profileUpdateSuccess, setProfileUpdateSuccess] = useState(false)
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false)
@@ -1828,31 +1827,31 @@ body{
           Communication Preferences
         </div>
 
-        <div className="space-y-2.5">
+        <div className="space-y-2">
 
-          {/* Transactional */}
-          <div className="flex items-start justify-between bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3">
+          {/* Transactional — always on, locked */}
+          <div className="flex items-center justify-between bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3">
 
             <div className="flex-1 mr-3">
               <div className="text-[12px] font-medium text-[#1A1A1A]">
-                Order & Purchase Updates
+                Purchase & Order Updates
               </div>
-              <div className="text-[10px] text-[#8B6F5E] mt-0.5 leading-relaxed">
-                Receipts, return confirmations and order status. Always on.
+              <div className="text-[10px] text-[#8B6F5E] mt-0.5">
+                Receipts and return confirmations. Always on.
               </div>
             </div>
 
-            <div className="flex-shrink-0 mt-0.5">
-              <div className="w-9 h-5 bg-[#C8A882] rounded-full flex items-center justify-end px-0.5 cursor-not-allowed opacity-70">
+            <div className="flex-shrink-0">
+              <div className="w-9 h-5 bg-[#C8A882] rounded-full flex items-center justify-end px-0.5 opacity-60 cursor-not-allowed">
                 <div className="w-4 h-4 bg-white rounded-full shadow-sm" />
               </div>
             </div>
 
           </div>
 
-          {/* Promotional */}
+          {/* Promotional opt-in */}
           <div
-            className="flex items-start justify-between bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3 cursor-pointer"
+            className="flex items-center justify-between bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3 cursor-pointer"
             onClick={() =>
               setProfile((prev) => ({
                 ...prev,
@@ -1865,49 +1864,15 @@ body{
               <div className="text-[12px] font-medium text-[#1A1A1A]">
                 New Arrivals & Offers
               </div>
-              <div className="text-[10px] text-[#8B6F5E] mt-0.5 leading-relaxed">
-                Early access to collections, member offers and seasonal edits.
+              <div className="text-[10px] text-[#8B6F5E] mt-0.5">
+                Collections, member offers and seasonal edits.
               </div>
             </div>
 
-            <div className="flex-shrink-0 mt-0.5">
+            <div className="flex-shrink-0">
               <div
                 className={`w-9 h-5 rounded-full flex items-center px-0.5 transition-all duration-200 ${
                   profile.promoOptIn
-                    ? "bg-[#C8A882] justify-end"
-                    : "bg-[#E0E0E0] justify-start"
-                }`}
-              >
-                <div className="w-4 h-4 bg-white rounded-full shadow-sm" />
-              </div>
-            </div>
-
-          </div>
-
-          {/* WhatsApp */}
-          <div
-            className="flex items-start justify-between bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3 cursor-pointer"
-            onClick={() =>
-              setProfile((prev) => ({
-                ...prev,
-                whatsappOptIn: !prev.whatsappOptIn,
-              }))
-            }
-          >
-
-            <div className="flex-1 mr-3">
-              <div className="text-[12px] font-medium text-[#1A1A1A]">
-                WhatsApp Updates
-              </div>
-              <div className="text-[10px] text-[#8B6F5E] mt-0.5 leading-relaxed">
-                Receive purchase summaries and style picks on WhatsApp.
-              </div>
-            </div>
-
-            <div className="flex-shrink-0 mt-0.5">
-              <div
-                className={`w-9 h-5 rounded-full flex items-center px-0.5 transition-all duration-200 ${
-                  profile.whatsappOptIn
                     ? "bg-[#C8A882] justify-end"
                     : "bg-[#E0E0E0] justify-start"
                 }`}
