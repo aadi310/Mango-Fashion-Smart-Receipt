@@ -1017,7 +1017,7 @@ body{
 <div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mt-6 mx-4 overflow-hidden">
 
   {/* Header */}
-  <div className="px-7 pt-8 pb-7 bg-white">
+  <div className="px-6 pt-5 pb-4 bg-white">
 
     <div className="flex items-start justify-between">
 
@@ -1027,25 +1027,16 @@ body{
         className="h-8 w-auto object-contain"
       />
 
-      <div className="bg-[#F7F7F7] rounded-xl p-2 border border-[#EEEEEE] flex-shrink-0">
-        <Image
-          src="/images/design-mode/800px-QR_code_for_mobile_English_Wikipedia.svg.png"
-          alt="Support QR"
-          width={38}
-          height={38}
-        />
-      </div>
-
     </div>
 
     {/* Greeting */}
-    <div className="mt-9">
+    <div className="mt-4">
 
-      <h1 className="text-[20px] font-normal tracking-[-0.02em] text-[#1A1A1A] leading-none">
+      <h1 className="text-[17px] font-normal tracking-[-0.02em] text-[#1A1A1A] leading-none">
         Thank you, {customerName}
       </h1>
 
-      <p className="mt-3 text-[11px] uppercase tracking-[0.24em] text-[#8B6F5E] font-medium">
+      <p className="mt-1 text-[10px] uppercase tracking-[0.24em] text-[#8B6F5E] font-medium">
         Your Mango Purchase Summary
       </p>
 
@@ -1065,7 +1056,7 @@ body{
           Total Amount
         </div>
 
-        <div className="mt-1 text-[34px] leading-none font-light tracking-[-0.03em] text-[#000000] tabular-nums">
+        <div className="mt-1 text-[26px] leading-none font-light tracking-[-0.03em] text-[#000000] tabular-nums">
           ₹{currentReceipt.total.toLocaleString("en-IN")}
         </div>
 
