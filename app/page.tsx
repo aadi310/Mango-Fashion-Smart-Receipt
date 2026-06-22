@@ -84,7 +84,7 @@ interface Receipt {
 }
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [showTerms, setShowTerms] = useState(false)
+  const [showTerms, setShowTerms] = useState(true)
   const [showFeedbackModal, setShowFeedbackModal] = useState(false)
   const [expandedProducts, setExpandedProducts] = useState<number[]>([])
   const [expandedSections, setExpandedSections] = useState<{ [key: number]: string[] }>({})
@@ -2484,21 +2484,20 @@ body{
 </div>
           
       {/* Social Media & Store Information */}
-<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-6 mb-8">
+<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-5 mb-8">
 
   {/* Header */}
-  <div className="flex items-center mb-6">
+  <div className="flex items-center mb-5">
 
-    <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-4">
+    <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-3">
       <Share2 className="h-5 w-5 text-[#8B6F5E]" />
     </div>
 
     <div>
-      <h3 className="text-[15px] font-medium text-[#1A1A1A]">
+      <h3 className="text-[14px] font-medium text-[#1A1A1A]">
         Follow MANGO
       </h3>
-
-      <p className="text-[11px] text-[#8B6F5E] mt-1">
+      <p className="text-[11px] text-[#8B6F5E] mt-0.5">
         Discover new collections and fashion inspiration.
       </p>
     </div>
@@ -2506,93 +2505,127 @@ body{
   </div>
 
   {/* Social Links */}
+  <div className="flex justify-center space-x-6 mb-6">
 
-  <div className="flex justify-center space-x-8 mb-8">
-
-    {/* Instagram */}
     <button
-      onClick={() =>
-        handleSocialLink(
-          "https://www.instagram.com/mango/?hl=en"
-        )
-      }
+      onClick={() => handleSocialLink("https://www.instagram.com/mango/?hl=en")}
       className="flex flex-col items-center group"
     >
-
-      <div className="w-12 h-12 rounded-2xl bg-[#F8F8F8] border border-[#ECECEC] flex items-center justify-center mb-2 transition-all group-hover:border-[#C8A882]">
-
+      <div className="w-12 h-12 rounded-2xl bg-[#F8F8F8] border border-[#ECECEC] flex items-center justify-center mb-1.5 transition-all group-hover:border-[#C8A882]">
         <Instagram className="h-5 w-5 text-[#8B6F5E]" />
-
       </div>
-
-      <span className="text-[10px] text-[#8B6F5E]">
-        Instagram
-      </span>
-
+      <span className="text-[10px] text-[#8B6F5E]">Instagram</span>
     </button>
 
-    {/* Facebook */}
     <button
-      onClick={() =>
-        handleSocialLink(
-          "https://www.facebook.com/mango.com/"
-        )
-      }
+      onClick={() => handleSocialLink("https://www.facebook.com/mango.com/")}
       className="flex flex-col items-center group"
     >
-
-      <div className="w-12 h-12 rounded-2xl bg-[#F8F8F8] border border-[#ECECEC] flex items-center justify-center mb-2 transition-all group-hover:border-[#C8A882]">
-
+      <div className="w-12 h-12 rounded-2xl bg-[#F8F8F8] border border-[#ECECEC] flex items-center justify-center mb-1.5 transition-all group-hover:border-[#C8A882]">
         <Facebook className="h-5 w-5 text-[#8B6F5E]" />
-
       </div>
-
-      <span className="text-[10px] text-[#8B6F5E]">
-        Facebook
-      </span>
-
+      <span className="text-[10px] text-[#8B6F5E]">Facebook</span>
     </button>
 
-    {/* Website */}
     <button
-      onClick={() =>
-        handleSocialLink(
-          "https://shop.mango.com/in/en"
-        )
-      }
+      onClick={() => handleSocialLink("https://shop.mango.com/in/en")}
       className="flex flex-col items-center group"
     >
-
-      <div className="w-12 h-12 rounded-2xl bg-[#F8F8F8] border border-[#ECECEC] flex items-center justify-center mb-2 transition-all group-hover:border-[#C8A882]">
-
+      <div className="w-12 h-12 rounded-2xl bg-[#F8F8F8] border border-[#ECECEC] flex items-center justify-center mb-1.5 transition-all group-hover:border-[#C8A882]">
         <ExternalLink className="h-5 w-5 text-[#8B6F5E]" />
-
       </div>
-
-      <span className="text-[10px] text-[#8B6F5E]">
-        Website
-      </span>
-
+      <span className="text-[10px] text-[#8B6F5E]">Website</span>
     </button>
 
   </div>
 
-  {/* Store Information */}
+  {/* Customer Support */}
+  <div className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl p-4 mb-3">
 
-  <div className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl p-4 mb-4">
+    <div className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-3">
+      Customer Support
+    </div>
+
+    <div className="grid grid-cols-3 gap-2">
+
+      <button
+        onClick={handleCall}
+        className="flex flex-col items-center justify-center bg-white border border-[#ECECEC] rounded-xl py-3 hover:border-[#C8A882] transition-all"
+      >
+        <Phone className="h-4 w-4 text-[#8B6F5E] mb-1.5" />
+        <span className="text-[10px] text-[#1A1A1A]">Call</span>
+      </button>
+
+      <button
+        onClick={handleEmail}
+        className="flex flex-col items-center justify-center bg-white border border-[#ECECEC] rounded-xl py-3 hover:border-[#C8A882] transition-all"
+      >
+        <Mail className="h-4 w-4 text-[#8B6F5E] mb-1.5" />
+        <span className="text-[10px] text-[#1A1A1A]">Email</span>
+      </button>
+
+      <button
+        onClick={() => handleSocialLink("https://www.instagram.com/mango/?hl=en")}
+        className="flex flex-col items-center justify-center bg-white border border-[#ECECEC] rounded-xl py-3 hover:border-[#C8A882] transition-all"
+      >
+        <Instagram className="h-4 w-4 text-[#8B6F5E] mb-1.5" />
+        <span className="text-[10px] text-[#1A1A1A]">Instagram</span>
+      </button>
+
+    </div>
+
+    <p className="text-[10px] text-[#8B6F5E] text-center mt-3 leading-relaxed">
+      Available Mon–Fri, 9am to 8:30pm
+    </p>
+
+  </div>
+
+  {/* Store Locator */}
+  <div className="mb-3">
+
+    
+      href="https://shop.mango.com/in/en/stores"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center justify-between w-full bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3.5 hover:border-[#C8A882] transition-all group"
+    >
+
+      <div className="flex items-center">
+        <div className="w-8 h-8 rounded-xl bg-white border border-[#ECECEC] flex items-center justify-center mr-3">
+          <MapPin className="h-4 w-4 text-[#C8A882]" />
+        </div>
+        <div>
+          <div className="text-[12px] font-medium text-[#1A1A1A]">
+            Find a MANGO Store
+          </div>
+          <div className="text-[10px] text-[#8B6F5E] mt-0.5">
+            Locate your nearest store in India
+          </div>
+        </div>
+      </div>
+
+      <ArrowRight className="h-4 w-4 text-[#8B6F5E] group-hover:translate-x-0.5 transition-transform" />
+
+    </a>
+
+  </div>
+
+  {/* Store Information — current store */}
+  <div className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl p-4 mb-3">
 
     <button
       onClick={() => setShowStoreLocation(!showStoreLocation)}
-      className="w-full flex items-center justify-center"
+      className="w-full flex items-center justify-between"
     >
 
-      <MapPin className="h-4 w-4 mr-2 text-[#C8A882]" />
+      <div className="flex items-center">
+        <MapPin className="h-4 w-4 mr-2 text-[#C8A882]" />
+        <span className="text-[12px] font-medium text-[#1A1A1A]">
+          {currentReceipt.branch}
+        </span>
+      </div>
 
-      <span className="text-[13px] font-medium text-[#1A1A1A]">
-        MANGO UB City
-      </span>
-
-      <span className="ml-2 text-[#8B6F5E]">
+      <span className="text-[10px] text-[#8B6F5E]">
         {showStoreLocation ? "▲" : "▼"}
       </span>
 
@@ -2600,42 +2633,23 @@ body{
 
     {showStoreLocation && (
 
-      <div className="mt-4 pt-4 border-t border-[#E5E5E5] text-center">
+      <div className="mt-3 pt-3 border-t border-[#E5E5E5] text-center">
 
-        <div className="space-y-1 text-[12px] text-[#1A1A1A]">
-
-          <p className="font-medium">
-            MANGO Store
-          </p>
-
-          <p>
-            UB City
-          </p>
-
-          <p>
-            24 Vittal Mallya Road
-          </p>
-
-          <p>
-            Ashok Nagar
-          </p>
-
-          <p>
-            Bengaluru, Karnataka 560001
-          </p>
-
+        <div className="space-y-0.5 text-[12px] text-[#1A1A1A]">
+          <p className="font-medium">MANGO Store</p>
+          <p>UB City</p>
+          <p>24 Vittal Mallya Road</p>
+          <p>Ashok Nagar</p>
+          <p>Bengaluru, Karnataka 560001</p>
         </div>
 
-        <div className="mt-4 pt-4 border-t border-[#E5E5E5]">
-
+        <div className="mt-3 pt-3 border-t border-[#E5E5E5]">
           <p className="text-[10px] uppercase tracking-[0.12em] text-[#8B6F5E]">
             Store Associate
           </p>
-
           <p className="text-[12px] text-[#1A1A1A] mt-1">
             {currentReceipt.associate}
           </p>
-
         </div>
 
       </div>
@@ -2644,42 +2658,75 @@ body{
 
   </div>
 
-  {/* Terms */}
+  {/* Returns & Exchange Policy — open by default */}
+  <div className="mb-3">
 
-  <button
-    className="w-full text-[11px] text-[#8B6F5E] py-2 transition-colors"
-    onClick={() => setShowTerms(!showTerms)}
-  >
-    Terms & Conditions {showTerms ? "▲" : "▼"}
-  </button>
+    <button
+      className="w-full flex items-center justify-between bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3.5 hover:border-[#C8A882] transition-all"
+      onClick={() => setShowTerms(!showTerms)}
+    >
 
-  {showTerms && (
+      <div className="flex items-center">
+        <div className="w-8 h-8 rounded-xl bg-white border border-[#ECECEC] flex items-center justify-center mr-3">
+          <FileText className="h-4 w-4 text-[#8B6F5E]" />
+        </div>
+        <span className="text-[12px] font-medium text-[#1A1A1A]">
+          Returns & Exchange Policy
+        </span>
+      </div>
 
-    <div className="mt-4 bg-[#FAFAFA] border border-[#ECECEC] rounded-2xl p-4 text-[11px] text-[#8B6F5E] leading-relaxed space-y-3">
+      <span className="text-[10px] text-[#8B6F5E]">
+        {showTerms ? "▲" : "▼"}
+      </span>
 
-      <p>
-        • Returns are accepted within 30 days with proof of purchase and original tags attached.
-      </p>
+    </button>
 
-      <p>
-        • Items must be unused and returned in their original condition.
-      </p>
+    {showTerms && (
 
-      <p>
-        • Certain products may be excluded from exchange or return according to local policy.
-      </p>
+      <div className="mt-2 bg-[#FAFAFA] border border-[#ECECEC] rounded-2xl p-4 text-[11px] text-[#8B6F5E] leading-relaxed space-y-2.5">
 
-      <p>
-        • Visit shop.mango.com for complete terms and customer support information.
-      </p>
+        <p className="font-medium text-[#1A1A1A] text-[12px]">
+          In-Store Exchanges & Returns
+        </p>
 
-    </div>
+        <p>
+          • You have <span className="text-[#1A1A1A] font-medium">30 days</span> from the date of purchase to exchange items at any MANGO store in India. Bring this receipt (digital or printed) along with the items.
+        </p>
 
-  )}
+        <p>
+          • For hygiene reasons, <span className="text-[#1A1A1A]">swimwear, lingerie, underwear and earrings</span> cannot be exchanged or returned.
+        </p>
+
+        <p>
+          • Personalised or altered items cannot be exchanged or returned.
+        </p>
+
+        <p>
+          • Fragrances, candles and cosmetics must be returned in original sealed packaging.
+        </p>
+
+        <p>
+          • Gift cards are non-exchangeable and non-returnable.
+        </p>
+
+        
+          href="https://shop.mango.com/in/en/help/returns/store-returns"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1 text-[#C8A882] mt-3 hover:underline"
+        >
+          Full returns policy
+          <ArrowUpRight className="h-3 w-3" />
+        </a>
+
+      </div>
+
+    )}
+
+  </div>
 
   {/* Powered by */}
-
-  <div className="text-center mt-6 pt-6 border-t border-[#ECECEC]">
+  <div className="text-center mt-5 pt-5 border-t border-[#ECECEC]">
 
     <div className="flex items-center justify-center space-x-2">
 
@@ -2687,13 +2734,12 @@ body{
         Powered by
       </span>
 
-      <a
+      
         href="https://www.rdep.io"
         target="_blank"
         rel="noopener noreferrer"
         className="opacity-80 hover:opacity-100 transition-opacity"
       >
-
         <Image
           src="/images/design-mode/RDEP%20cropped.png"
           alt="RDEP"
@@ -2701,7 +2747,6 @@ body{
           height={14}
           className="object-contain"
         />
-
       </a>
 
     </div>
