@@ -1278,22 +1278,14 @@ body{
         <Check className="w-6 h-6 text-[#8B6F5E]" />
       </div>
 
-      <div className="text-[16px] font-medium text-[#1A1A1A]">
-        Thank You
-      </div>
+      <div className="text-[16px] font-medium text-[#1A1A1A]">Thank You</div>
 
       <div className="text-[11px] text-[#8B6F5E] mt-2 max-w-[240px] mx-auto leading-relaxed">
         Your feedback helps us create a better experience at every MANGO store.
       </div>
 
-      {/* Google Review CTA — post submit */}
       <button
-        onClick={() =>
-          window.open(
-            "https://search.google.com/local/writereview?placeid=PLACE_ID_HERE",
-            "_blank"
-          )
-        }
+        onClick={() => window.open("https://search.google.com/local/writereview?placeid=ChIJ6cT7KqUZrjsR0h5N8XQ5Q9Y", "_blank")}
         className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-[#ECECEC] rounded-full text-[11px] text-[#1A1A1A] hover:border-[#C8A882] transition-all shadow-sm"
       >
         <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none">
@@ -1313,97 +1305,35 @@ body{
 
       {/* Header */}
       <div className="flex items-center">
-
         <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-3">
           <MessageSquare className="h-4 w-4 text-[#8B6F5E]" />
         </div>
-
         <div>
-          <h3 className="text-[14px] font-medium text-[#1A1A1A]">
-            Rate Your Visit
-          </h3>
+          <h3 className="text-[14px] font-medium text-[#1A1A1A]">Rate Your Visit</h3>
           <p className="text-[11px] text-[#8B6F5E] mt-0.5">
             How was your experience at MANGO {currentReceipt.branch}?
           </p>
         </div>
-
       </div>
 
-      {/* Rating */}
+      {/* Stars */}
       <div className="flex justify-center gap-4 py-1">
-
         {[1, 2, 3, 4, 5].map((star) => (
-
           <button
             key={star}
-            onClick={() => {
-              setRating(star)
-              setSelectedTags([])
-            }}
+            onClick={() => setRating(star)}
             className="transition-all duration-200 hover:scale-105"
           >
-            <Star
-              className={`h-7 w-7 transition-colors ${
-                star <= rating
-                  ? "fill-[#C8A882] text-[#C8A882]"
-                  : "text-[#D8D8D8]"
-              }`}
-            />
+            <Star className={`h-7 w-7 transition-colors ${star <= rating ? "fill-[#C8A882] text-[#C8A882]" : "text-[#D8D8D8]"}`} />
           </button>
-
         ))}
-
       </div>
-
-      {/* Feedback Chips */}
-      {rating > 0 && (
-
-        <div className="space-y-2">
-
-          <div className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E]">
-            {rating >= 4 ? "What stood out most?" : "How can we improve?"}
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-
-            {(rating >= 4
-              ? ["Style", "Fit", "Fabric Quality", "Store Experience", "Collection", "Easy Checkout"]
-              : ["Sizing", "Availability", "Checkout Time", "Product Quality", "Store Support", "Pricing"]
-            ).map((item) => (
-
-              <button
-                key={item}
-                onClick={() =>
-                  setSelectedTags((prev) =>
-                    prev.includes(item)
-                      ? prev.filter((tag) => tag !== item)
-                      : [...prev, item]
-                  )
-                }
-                className={`text-[11px] px-3 py-1.5 rounded-full border transition-all ${
-                  selectedTags.includes(item)
-                    ? "bg-[#C8A882] border-[#C8A882] text-black"
-                    : "bg-[#F8F8F8] border-[#ECECEC] text-[#8B6F5E]"
-                }`}
-              >
-                {item}
-              </button>
-
-            ))}
-
-          </div>
-
-        </div>
-
-      )}
 
       {/* Comment Box */}
       <div>
-
         <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-2">
           Additional Comments
         </label>
-
         <textarea
           rows={3}
           placeholder="Tell us about your experience..."
@@ -1411,15 +1341,12 @@ body{
           value={feedbackText}
           onChange={(e) => setFeedbackText(e.target.value)}
         />
-
       </div>
 
       {/* Submit */}
       <button
         className={`w-full h-11 rounded-2xl text-[12px] uppercase tracking-[0.18em] transition-all ${
-          rating
-            ? "bg-[#1A1A1A] text-white hover:bg-black"
-            : "bg-[#F5F5F5] text-[#B5B5B5] cursor-not-allowed"
+          rating ? "bg-[#1A1A1A] text-white hover:bg-black" : "bg-[#F5F5F5] text-[#B5B5B5] cursor-not-allowed"
         }`}
         onClick={handleFeedbackSubmit}
         disabled={!rating}
@@ -1427,15 +1354,10 @@ body{
         {rating ? "Submit Feedback" : "Select a Rating"}
       </button>
 
-      {/* Google Review nudge — shown only when rating is 4 or 5 */}
+      {/* Google Review — only on 4 or 5 stars */}
       {rating >= 4 && (
         <button
-          onClick={() =>
-            window.open(
-              "https://search.google.com/local/writereview?placeid=PLACE_ID_HERE",
-              "_blank"
-            )
-          }
+          onClick={() => window.open("https://search.google.com/local/writereview?placeid=ChIJ6cT7KqUZrjsR0h5N8XQ5Q9Y", "_blank")}
           className="w-full h-11 rounded-2xl border border-[#ECECEC] bg-[#F8F8F8] text-[11px] text-[#1A1A1A] flex items-center justify-center gap-2 hover:border-[#C8A882] transition-all"
         >
           <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none">
