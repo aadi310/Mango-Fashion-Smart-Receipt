@@ -2453,104 +2453,43 @@ body{
 
   {/* Header */}
   <div className="flex items-center mb-5">
-
     <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-3">
       <Share2 className="h-5 w-5 text-[#8B6F5E]" />
     </div>
-
     <div>
-      <h3 className="text-[14px] font-medium text-[#1A1A1A]">
-        Follow MANGO
-      </h3>
-      <p className="text-[11px] text-[#8B6F5E] mt-0.5">
-        Discover new collections and fashion inspiration.
-      </p>
+      <h3 className="text-[14px] font-medium text-[#1A1A1A]">Follow MANGO</h3>
+      <p className="text-[11px] text-[#8B6F5E] mt-0.5">Discover new collections and fashion inspiration.</p>
     </div>
-
   </div>
 
   {/* Social Links */}
   <div className="flex justify-center space-x-6 mb-6">
-
-    <button
-      onClick={() => handleSocialLink("https://www.instagram.com/mango/?hl=en")}
-      className="flex flex-col items-center group"
-    >
+    <button onClick={() => handleSocialLink("https://www.instagram.com/mango/?hl=en")} className="flex flex-col items-center group">
       <div className="w-12 h-12 rounded-2xl bg-[#F8F8F8] border border-[#ECECEC] flex items-center justify-center mb-1.5 transition-all group-hover:border-[#C8A882]">
         <Instagram className="h-5 w-5 text-[#8B6F5E]" />
       </div>
       <span className="text-[10px] text-[#8B6F5E]">Instagram</span>
     </button>
-
-    <button
-      onClick={() => handleSocialLink("https://www.facebook.com/mango.com/")}
-      className="flex flex-col items-center group"
-    >
+    <button onClick={() => handleSocialLink("https://www.facebook.com/mango.com/")} className="flex flex-col items-center group">
       <div className="w-12 h-12 rounded-2xl bg-[#F8F8F8] border border-[#ECECEC] flex items-center justify-center mb-1.5 transition-all group-hover:border-[#C8A882]">
         <Facebook className="h-5 w-5 text-[#8B6F5E]" />
       </div>
       <span className="text-[10px] text-[#8B6F5E]">Facebook</span>
     </button>
-
-    <button
-      onClick={() => handleSocialLink("https://shop.mango.com/in/en")}
-      className="flex flex-col items-center group"
-    >
+    <button onClick={() => handleSocialLink("https://shop.mango.com/in/en")} className="flex flex-col items-center group">
       <div className="w-12 h-12 rounded-2xl bg-[#F8F8F8] border border-[#ECECEC] flex items-center justify-center mb-1.5 transition-all group-hover:border-[#C8A882]">
         <ExternalLink className="h-5 w-5 text-[#8B6F5E]" />
       </div>
       <span className="text-[10px] text-[#8B6F5E]">Website</span>
     </button>
-
-  </div>
-
-  {/* Customer Support */}
-  <div className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl p-4 mb-3">
-
-    <div className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-3">
-      Customer Support
-    </div>
-
-    <div className="grid grid-cols-3 gap-2">
-
-      <button
-        onClick={handleCall}
-        className="flex flex-col items-center justify-center bg-white border border-[#ECECEC] rounded-xl py-3 hover:border-[#C8A882] transition-all"
-      >
-        <Phone className="h-4 w-4 text-[#8B6F5E] mb-1.5" />
-        <span className="text-[10px] text-[#1A1A1A]">Call</span>
-      </button>
-
-      <button
-        onClick={handleEmail}
-        className="flex flex-col items-center justify-center bg-white border border-[#ECECEC] rounded-xl py-3 hover:border-[#C8A882] transition-all"
-      >
-        <Mail className="h-4 w-4 text-[#8B6F5E] mb-1.5" />
-        <span className="text-[10px] text-[#1A1A1A]">Email</span>
-      </button>
-
-      <button
-        onClick={() => handleSocialLink("https://www.instagram.com/mango/?hl=en")}
-        className="flex flex-col items-center justify-center bg-white border border-[#ECECEC] rounded-xl py-3 hover:border-[#C8A882] transition-all"
-      >
-        <Instagram className="h-4 w-4 text-[#8B6F5E] mb-1.5" />
-        <span className="text-[10px] text-[#1A1A1A]">Instagram</span>
-      </button>
-
-    </div>
-
-    <p className="text-[10px] text-[#8B6F5E] text-center mt-3 leading-relaxed">
-      Available Mon–Fri, 9am to 8:30pm
-    </p>
-
   </div>
 
   {/* Store Locator */}
   <div className="mb-3">
     <a href="https://shop.mango.com/in/en/stores" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between w-full bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3.5 hover:border-[#C8A882] transition-all group">
       <div className="flex items-center">
-        <div className="w-8 h-8 rounded-xl bg-white border border-[#ECECEC] flex items-center justify-center mr-3">
-          <MapPin className="h-4 w-4 text-[#C8A882]" />
+        <div className="w-10 h-10 rounded-xl bg-white border border-[#ECECEC] flex items-center justify-center mr-3">
+          <MapPin className="h-5 w-5 text-[#C8A882]" />
         </div>
         <div>
           <div className="text-[12px] font-medium text-[#1A1A1A]">Find a MANGO Store</div>
@@ -2562,11 +2501,16 @@ body{
   </div>
 
   {/* Store Information — current store */}
-  <div className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl p-4 mb-3">
+  <div className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3.5 mb-3">
     <button onClick={() => setShowStoreLocation(!showStoreLocation)} className="w-full flex items-center justify-between">
       <div className="flex items-center">
-        <MapPin className="h-4 w-4 mr-2 text-[#C8A882]" />
-        <span className="text-[12px] font-medium text-[#1A1A1A]">{currentReceipt.branch}</span>
+        <div className="w-10 h-10 rounded-xl bg-white border border-[#ECECEC] flex items-center justify-center mr-3">
+          <MapPin className="h-5 w-5 text-[#8B6F5E]" />
+        </div>
+        <div className="text-left">
+          <div className="text-[12px] font-medium text-[#1A1A1A]">{currentReceipt.branch}</div>
+          <div className="text-[10px] text-[#8B6F5E] mt-0.5">View store details</div>
+        </div>
       </div>
       <span className="text-[10px] text-[#8B6F5E]">{showStoreLocation ? "▲" : "▼"}</span>
     </button>
@@ -2592,10 +2536,13 @@ body{
   <div className="mb-3">
     <button className="w-full flex items-center justify-between bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3.5 hover:border-[#C8A882] transition-all" onClick={() => setShowTerms(!showTerms)}>
       <div className="flex items-center">
-        <div className="w-8 h-8 rounded-xl bg-white border border-[#ECECEC] flex items-center justify-center mr-3">
-          <FileText className="h-4 w-4 text-[#8B6F5E]" />
+        <div className="w-10 h-10 rounded-xl bg-white border border-[#ECECEC] flex items-center justify-center mr-3">
+          <FileText className="h-5 w-5 text-[#8B6F5E]" />
         </div>
-        <span className="text-[12px] font-medium text-[#1A1A1A]">Returns & Exchange Policy</span>
+        <div className="text-left">
+          <div className="text-[12px] font-medium text-[#1A1A1A]">Returns & Exchange Policy</div>
+          <div className="text-[10px] text-[#8B6F5E] mt-0.5">30-day exchange policy</div>
+        </div>
       </div>
       <span className="text-[10px] text-[#8B6F5E]">{showTerms ? "▲" : "▼"}</span>
     </button>
@@ -2603,14 +2550,8 @@ body{
     {showTerms && (
       <div className="mt-2 bg-[#FAFAFA] border border-[#ECECEC] rounded-2xl p-4 text-[11px] text-[#8B6F5E] leading-relaxed space-y-2.5">
         <p className="font-medium text-[#1A1A1A] text-[12px]">In-Store Exchanges & Returns</p>
-        <p>{"• You have "}
-          <span className="text-[#1A1A1A] font-medium">30 days</span>
-          {" from the date of purchase to exchange items at any MANGO store in India. Bring this receipt (digital or printed) along with the items."}
-        </p>
-        <p>{"• For hygiene reasons, "}
-          <span className="text-[#1A1A1A]">swimwear, lingerie, underwear and earrings</span>
-          {" cannot be exchanged or returned."}
-        </p>
+        <p>{"• You have "}<span className="text-[#1A1A1A] font-medium">30 days</span>{" from the date of purchase to exchange items at any MANGO store in India. Bring this receipt (digital or printed) along with the items."}</p>
+        <p>{"• For hygiene reasons, "}<span className="text-[#1A1A1A]">swimwear, lingerie, underwear and earrings</span>{" cannot be exchanged or returned."}</p>
         <p>{"• Personalised or altered items cannot be exchanged or returned."}</p>
         <p>{"• Fragrances, candles and cosmetics must be returned in original sealed packaging."}</p>
         <p>{"• Gift cards are non-exchangeable and non-returnable."}</p>
@@ -2631,6 +2572,7 @@ body{
       </a>
     </div>
   </div>
+
 </div>
           <div id="height-marker" style={{ height: "1px" }} />
         </div>
