@@ -1285,7 +1285,7 @@ body{
       </div>
 
       <button
-        onClick={() => window.open("https://www.google.com/maps/place/?q=place_id:0x3bae110b04a3be4b:0xcffb252dab2e9643&action=write_review", "_blank")}
+        onClick={() => window.open("https://www.google.com/maps/search/Mango+UB+City+Bangalore", "_blank")}
         className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-[#ECECEC] rounded-full text-[11px] text-[#1A1A1A] hover:border-[#C8A882] transition-all shadow-sm"
       >
         <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none">
@@ -1357,7 +1357,7 @@ body{
       {/* Google Review — only on 4 or 5 stars */}
       {rating >= 4 && (
         <button
-          onClick={() => window.open("https://www.google.com/maps/place/?q=place_id:0x3bae110b04a3be4b:0xcffb252dab2e9643&action=write_review", "_blank")}
+          onClick={() => window.open("https://www.google.com/maps/search/Mango+UB+City+Bangalore", "_blank")}
           className="w-full h-11 rounded-2xl border border-[#ECECEC] bg-[#F8F8F8] text-[11px] text-[#1A1A1A] flex items-center justify-center gap-2 hover:border-[#C8A882] transition-all"
         >
           <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none">
