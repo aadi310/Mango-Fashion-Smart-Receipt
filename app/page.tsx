@@ -2549,11 +2549,10 @@ body{
   <div className="mb-3">
 
     
-      href="https://shop.mango.com/in/en/stores"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="flex items-center justify-between w-full bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3.5 hover:border-[#C8A882] transition-all group"
-    >
+  href="https://shop.mango.com/in/en/stores"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="flex items-center justify-between w-full bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3.5 hover:border-[#C8A882] transition-all group">
 
       <div className="flex items-center">
         <div className="w-8 h-8 rounded-xl bg-white border border-[#ECECEC] flex items-center justify-center mr-3">
