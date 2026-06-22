@@ -111,6 +111,8 @@ const [expandedItemFeedback, setExpandedItemFeedback] = useState([])
     name: "",
     email: "",
     gender: "",
+    promoOptIn: false,
+    whatsappOptIn: false,
   })
   const [profileUpdateSuccess, setProfileUpdateSuccess] = useState(false)
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false)
@@ -1368,111 +1370,107 @@ body{
 </div>
           
           {/* MANGO Feedback Section */}
-<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-6">
+<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-5">
 
   {feedbackSubmitted ? (
 
-    <div className="text-center py-10 bg-[#FAFAFA] rounded-2xl border border-[#ECECEC]">
+    <div className="text-center py-8 bg-[#FAFAFA] rounded-2xl border border-[#ECECEC]">
 
-      <div className="w-16 h-16 bg-[#C8A882]/15 rounded-full flex items-center justify-center mx-auto mb-5">
-        <Check className="w-7 h-7 text-[#8B6F5E]" />
+      <div className="w-14 h-14 bg-[#C8A882]/15 rounded-full flex items-center justify-center mx-auto mb-4">
+        <Check className="w-6 h-6 text-[#8B6F5E]" />
       </div>
 
-      <div className="text-[18px] font-medium text-[#1A1A1A]">
+      <div className="text-[16px] font-medium text-[#1A1A1A]">
         Thank You
       </div>
 
-      <div className="text-[12px] text-[#8B6F5E] mt-2 max-w-[260px] mx-auto leading-relaxed">
-        Your feedback helps us create a better shopping experience.
+      <div className="text-[11px] text-[#8B6F5E] mt-2 max-w-[240px] mx-auto leading-relaxed">
+        Your feedback helps us create a better experience at every MANGO store.
       </div>
+
+      {/* Google Review CTA — post submit */}
+      <button
+        onClick={() =>
+          window.open(
+            "https://search.google.com/local/writereview?placeid=PLACE_ID_HERE",
+            "_blank"
+          )
+        }
+        className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-[#ECECEC] rounded-full text-[11px] text-[#1A1A1A] hover:border-[#C8A882] transition-all shadow-sm"
+      >
+        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Also leave a Google Review
+      </button>
 
     </div>
 
   ) : (
 
-    <div className="space-y-7">
+    <div className="space-y-5">
 
       {/* Header */}
       <div className="flex items-center">
 
-        <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-4">
+        <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-3">
           <MessageSquare className="h-4 w-4 text-[#8B6F5E]" />
         </div>
 
         <div>
-          <h3 className="text-[15px] font-medium text-[#1A1A1A]">
-            Share Your Experience
+          <h3 className="text-[14px] font-medium text-[#1A1A1A]">
+            Rate Your Visit
           </h3>
-
-          <p className="text-[11px] text-[#8B6F5E] mt-1">
-            We'd love to hear about your recent purchase.
+          <p className="text-[11px] text-[#8B6F5E] mt-0.5">
+            How was your experience at MANGO {currentReceipt.branch}?
           </p>
         </div>
 
       </div>
 
       {/* Rating */}
-      <div>
+      <div className="flex justify-center gap-4 py-1">
 
-        <div className="flex justify-center gap-4 py-2">
+        {[1, 2, 3, 4, 5].map((star) => (
 
-          {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            onClick={() => {
+              setRating(star)
+              setSelectedTags([])
+            }}
+            className="transition-all duration-200 hover:scale-105"
+          >
+            <Star
+              className={`h-7 w-7 transition-colors ${
+                star <= rating
+                  ? "fill-[#C8A882] text-[#C8A882]"
+                  : "text-[#D8D8D8]"
+              }`}
+            />
+          </button>
 
-            <button
-              key={star}
-              onClick={() => {
-                setRating(star)
-                setSelectedTags([])
-              }}
-              className="transition-all duration-200 hover:scale-105"
-            >
-
-              <Star
-                className={`h-7 w-7 transition-colors ${
-                  star <= rating
-                    ? "fill-[#C8A882] text-[#C8A882]"
-                    : "text-[#D8D8D8]"
-                }`}
-              />
-
-            </button>
-
-          ))}
-
-        </div>
+        ))}
 
       </div>
 
       {/* Feedback Chips */}
       {rating > 0 && (
 
-        <div className="space-y-3">
+        <div className="space-y-2">
 
-          <div className="text-[11px] uppercase tracking-[0.15em] text-[#8B6F5E]">
-            {rating >= 4
-              ? "What stood out most?"
-              : "How can we improve?"}
+          <div className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E]">
+            {rating >= 4 ? "What stood out most?" : "How can we improve?"}
           </div>
 
           <div className="flex flex-wrap gap-2">
 
             {(rating >= 4
-              ? [
-                  "Style",
-                  "Fit",
-                  "Fabric Quality",
-                  "Store Experience",
-                  "Collection",
-                  "Easy Checkout",
-                ]
-              : [
-                  "Sizing",
-                  "Availability",
-                  "Checkout Time",
-                  "Product Quality",
-                  "Store Support",
-                  "Pricing",
-                ]
+              ? ["Style", "Fit", "Fabric Quality", "Store Experience", "Collection", "Easy Checkout"]
+              : ["Sizing", "Availability", "Checkout Time", "Product Quality", "Store Support", "Pricing"]
             ).map((item) => (
 
               <button
@@ -1484,7 +1482,7 @@ body{
                       : [...prev, item]
                   )
                 }
-                className={`text-[11px] px-4 py-2 rounded-full border transition-all ${
+                className={`text-[11px] px-3 py-1.5 rounded-full border transition-all ${
                   selectedTags.includes(item)
                     ? "bg-[#C8A882] border-[#C8A882] text-black"
                     : "bg-[#F8F8F8] border-[#ECECEC] text-[#8B6F5E]"
@@ -1504,23 +1502,23 @@ body{
       {/* Comment Box */}
       <div>
 
-        <label className="block text-[11px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-3">
+        <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-2">
           Additional Comments
         </label>
 
         <textarea
-          rows={4}
+          rows={3}
           placeholder="Tell us about your experience..."
-          className="w-full p-4 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:bg-white focus:border-[#C8A882] outline-none resize-none transition-all text-[#1A1A1A] placeholder:text-[#B5B5B5]"
+          className="w-full p-3 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:bg-white focus:border-[#C8A882] outline-none resize-none transition-all text-[#1A1A1A] placeholder:text-[#B5B5B5]"
           value={feedbackText}
           onChange={(e) => setFeedbackText(e.target.value)}
         />
 
       </div>
 
-      {/* Submit Button */}
+      {/* Submit */}
       <button
-        className={`w-full h-12 rounded-2xl text-[12px] uppercase tracking-[0.18em] transition-all ${
+        className={`w-full h-11 rounded-2xl text-[12px] uppercase tracking-[0.18em] transition-all ${
           rating
             ? "bg-[#1A1A1A] text-white hover:bg-black"
             : "bg-[#F5F5F5] text-[#B5B5B5] cursor-not-allowed"
@@ -1528,11 +1526,32 @@ body{
         onClick={handleFeedbackSubmit}
         disabled={!rating}
       >
-        {rating ? "Submit Feedback" : "Select Rating"}
+        {rating ? "Submit Feedback" : "Select a Rating"}
       </button>
 
+      {/* Google Review nudge — shown only when rating is 4 or 5 */}
+      {rating >= 4 && (
+        <button
+          onClick={() =>
+            window.open(
+              "https://search.google.com/local/writereview?placeid=PLACE_ID_HERE",
+              "_blank"
+            )
+          }
+          className="w-full h-11 rounded-2xl border border-[#ECECEC] bg-[#F8F8F8] text-[11px] text-[#1A1A1A] flex items-center justify-center gap-2 hover:border-[#C8A882] transition-all"
+        >
+          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Leave a Google Review for this store
+        </button>
+      )}
+
       <p className="text-center text-[10px] text-[#8B6F5E]">
-        Your feedback helps us refine every collection and experience.
+        Your feedback helps us refine every collection and in-store experience.
       </p>
 
     </div>
@@ -1709,23 +1728,23 @@ body{
 
 </div>
           
-       {/* MANGO Club Membership */}
-<div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mx-4 mt-6 p-6">
+       {/* Profile & Preferences */}
+<div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mx-4 mt-6 p-5">
 
   {profileUpdateSuccess ? (
 
-    <div className="text-center py-10 bg-[#FAFAFA] rounded-2xl border border-[#ECECEC]">
+    <div className="text-center py-8 bg-[#FAFAFA] rounded-2xl border border-[#ECECEC]">
 
-      <div className="w-16 h-16 bg-[#C8A882]/15 rounded-full flex items-center justify-center mx-auto mb-5">
-        <Check className="w-7 h-7 text-[#8B6F5E]" />
+      <div className="w-14 h-14 bg-[#C8A882]/15 rounded-full flex items-center justify-center mx-auto mb-4">
+        <Check className="w-6 h-6 text-[#8B6F5E]" />
       </div>
 
-      <div className="text-[18px] font-medium text-[#1A1A1A]">
-        Welcome to MANGO Club
+      <div className="text-[16px] font-medium text-[#1A1A1A]">
+        Details Saved
       </div>
 
-      <div className="text-[12px] text-[#8B6F5E] mt-2 max-w-[260px] mx-auto leading-relaxed">
-        Your membership has been activated successfully.
+      <div className="text-[11px] text-[#8B6F5E] mt-2 max-w-[240px] mx-auto leading-relaxed">
+        Your profile and communication preferences have been updated.
       </div>
 
     </div>
@@ -1733,111 +1752,171 @@ body{
   ) : (
 
     <>
-      {/* Header */}
-      <div className="flex items-start mb-7">
 
-        <div className="w-11 h-11 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-4 flex-shrink-0">
-          <User2 className="h-5 w-5 text-[#8B6F5E]" />
+      {/* Header */}
+      <div className="flex items-start mb-5">
+
+        <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-3 flex-shrink-0">
+          <User2 className="h-4 w-4 text-[#8B6F5E]" />
         </div>
 
         <div>
-
-          <h3 className="text-[15px] font-medium text-[#1A1A1A]">
-            Join MANGO Club
+          <h3 className="text-[14px] font-medium text-[#1A1A1A]">
+            Your Profile
           </h3>
-
-          <p className="text-[11px] text-[#8B6F5E] mt-1 leading-relaxed">
-            Enjoy member-only benefits, curated recommendations and faster checkout.
+          <p className="text-[11px] text-[#8B6F5E] mt-0.5 leading-relaxed">
+            Save your details for faster service and personalised updates.
           </p>
-
         </div>
-
-      </div>
-
-      {/* Benefits */}
-      <div className="grid grid-cols-2 gap-2 mb-6">
-
-        {[
-          "Early Access",
-          "Exclusive Offers",
-          "Style Updates",
-          "Faster Checkout",
-        ].map((benefit) => (
-
-          <div
-            key={benefit}
-            className="bg-[#F8F8F8] border border-[#ECECEC] rounded-xl px-3 py-2 text-[11px] text-[#8B6F5E]"
-          >
-            {benefit}
-          </div>
-
-        ))}
 
       </div>
 
       {/* Form */}
-      <div className="space-y-4">
+      <div className="space-y-3">
 
         <div>
-
-          <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-2">
+          <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1.5">
             Full Name
           </label>
-
           <input
             type="text"
             placeholder="Enter your full name"
             value={profile.name}
             onChange={(e) =>
-              setProfile((prev) => ({
-                ...prev,
-                name: e.target.value,
-              }))
+              setProfile((prev) => ({ ...prev, name: e.target.value }))
             }
-            className="w-full h-12 px-4 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:outline-none focus:border-[#C8A882] focus:bg-white transition-all placeholder:text-[#B8B8B8]"
+            className="w-full h-11 px-4 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:outline-none focus:border-[#C8A882] focus:bg-white transition-all placeholder:text-[#B8B8B8]"
           />
-
         </div>
 
         <div>
-
-          <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-2">
+          <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1.5">
             Email Address
           </label>
-
           <input
             type="email"
             placeholder="name@email.com"
             value={profile.email}
             onChange={(e) =>
-              setProfile((prev) => ({
-                ...prev,
-                email: e.target.value,
-              }))
+              setProfile((prev) => ({ ...prev, email: e.target.value }))
             }
-            className="w-full h-12 px-4 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:outline-none focus:border-[#C8A882] focus:bg-white transition-all placeholder:text-[#B8B8B8]"
+            className="w-full h-11 px-4 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:outline-none focus:border-[#C8A882] focus:bg-white transition-all placeholder:text-[#B8B8B8]"
           />
-
         </div>
 
         <div>
-
-          <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-2">
+          <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1.5">
             Mobile Number
           </label>
-
           <input
             type="tel"
             placeholder="+91"
             value={profile.mobile}
             onChange={(e) =>
+              setProfile((prev) => ({ ...prev, mobile: e.target.value }))
+            }
+            className="w-full h-11 px-4 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:outline-none focus:border-[#C8A882] focus:bg-white transition-all placeholder:text-[#B8B8B8]"
+          />
+        </div>
+
+      </div>
+
+      {/* Communication Preferences */}
+      <div className="mt-5 pt-4 border-t border-[#ECECEC]">
+
+        <div className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-3">
+          Communication Preferences
+        </div>
+
+        <div className="space-y-2.5">
+
+          {/* Transactional */}
+          <div className="flex items-start justify-between bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3">
+
+            <div className="flex-1 mr-3">
+              <div className="text-[12px] font-medium text-[#1A1A1A]">
+                Order & Purchase Updates
+              </div>
+              <div className="text-[10px] text-[#8B6F5E] mt-0.5 leading-relaxed">
+                Receipts, return confirmations and order status. Always on.
+              </div>
+            </div>
+
+            <div className="flex-shrink-0 mt-0.5">
+              <div className="w-9 h-5 bg-[#C8A882] rounded-full flex items-center justify-end px-0.5 cursor-not-allowed opacity-70">
+                <div className="w-4 h-4 bg-white rounded-full shadow-sm" />
+              </div>
+            </div>
+
+          </div>
+
+          {/* Promotional */}
+          <div
+            className="flex items-start justify-between bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3 cursor-pointer"
+            onClick={() =>
               setProfile((prev) => ({
                 ...prev,
-                mobile: e.target.value,
+                promoOptIn: !prev.promoOptIn,
               }))
             }
-            className="w-full h-12 px-4 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:outline-none focus:border-[#C8A882] focus:bg-white transition-all placeholder:text-[#B8B8B8]"
-          />
+          >
+
+            <div className="flex-1 mr-3">
+              <div className="text-[12px] font-medium text-[#1A1A1A]">
+                New Arrivals & Offers
+              </div>
+              <div className="text-[10px] text-[#8B6F5E] mt-0.5 leading-relaxed">
+                Early access to collections, member offers and seasonal edits.
+              </div>
+            </div>
+
+            <div className="flex-shrink-0 mt-0.5">
+              <div
+                className={`w-9 h-5 rounded-full flex items-center px-0.5 transition-all duration-200 ${
+                  profile.promoOptIn
+                    ? "bg-[#C8A882] justify-end"
+                    : "bg-[#E0E0E0] justify-start"
+                }`}
+              >
+                <div className="w-4 h-4 bg-white rounded-full shadow-sm" />
+              </div>
+            </div>
+
+          </div>
+
+          {/* WhatsApp */}
+          <div
+            className="flex items-start justify-between bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3 cursor-pointer"
+            onClick={() =>
+              setProfile((prev) => ({
+                ...prev,
+                whatsappOptIn: !prev.whatsappOptIn,
+              }))
+            }
+          >
+
+            <div className="flex-1 mr-3">
+              <div className="text-[12px] font-medium text-[#1A1A1A]">
+                WhatsApp Updates
+              </div>
+              <div className="text-[10px] text-[#8B6F5E] mt-0.5 leading-relaxed">
+                Receive purchase summaries and style picks on WhatsApp.
+              </div>
+            </div>
+
+            <div className="flex-shrink-0 mt-0.5">
+              <div
+                className={`w-9 h-5 rounded-full flex items-center px-0.5 transition-all duration-200 ${
+                  profile.whatsappOptIn
+                    ? "bg-[#C8A882] justify-end"
+                    : "bg-[#E0E0E0] justify-start"
+                }`}
+              >
+                <div className="w-4 h-4 bg-white rounded-full shadow-sm" />
+              </div>
+            </div>
+
+          </div>
 
         </div>
 
@@ -1845,15 +1924,15 @@ body{
 
       {/* CTA */}
       <button
-        className="w-full mt-7 h-12 bg-[#1A1A1A] text-white rounded-2xl text-[12px] uppercase tracking-[0.18em] hover:bg-black transition-all"
+        className="w-full mt-5 h-11 bg-[#1A1A1A] text-white rounded-2xl text-[12px] uppercase tracking-[0.18em] hover:bg-black transition-all"
         onClick={handleProfileUpdate}
       >
-        Join MANGO Club
+        Save Details
       </button>
 
-      {/* Legal */}
-      <div className="text-[10px] text-[#8B6F5E] text-center mt-4 leading-relaxed">
-        By continuing, you agree to MANGO's Terms & Conditions and Privacy Policy.
+      <div className="text-[10px] text-[#8B6F5E] text-center mt-3 leading-relaxed">
+        Your information is used only for purchase communication and personalisation.
+        We never share your data with third parties.
       </div>
 
     </>
