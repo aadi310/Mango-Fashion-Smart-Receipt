@@ -1285,7 +1285,7 @@ body{
       </div>
 
       <button
-        onClick={() => window.open("https://search.google.com/local/writereview?placeid=ChIJ6cT7KqUZrjsR0h5N8XQ5Q9Y", "_blank")}
+        onClick={() => window.open("https://search.google.com/local/writereview?placeid=ChIJCy29ZfgRrjsRdM50mhAcw5Y", "_blank")}
         className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-[#ECECEC] rounded-full text-[11px] text-[#1A1A1A] hover:border-[#C8A882] transition-all shadow-sm"
       >
         <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none">
