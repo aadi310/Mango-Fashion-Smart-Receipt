@@ -2547,58 +2547,32 @@ body{
 
   {/* Store Locator */}
   <div className="mb-3">
-
-    
-  href="https://shop.mango.com/in/en/stores"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="flex items-center justify-between w-full bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3.5 hover:border-[#C8A882] transition-all group">
-
+    <a href="https://shop.mango.com/in/en/stores" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between w-full bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3.5 hover:border-[#C8A882] transition-all group">
       <div className="flex items-center">
         <div className="w-8 h-8 rounded-xl bg-white border border-[#ECECEC] flex items-center justify-center mr-3">
           <MapPin className="h-4 w-4 text-[#C8A882]" />
         </div>
         <div>
-          <div className="text-[12px] font-medium text-[#1A1A1A]">
-            Find a MANGO Store
-          </div>
-          <div className="text-[10px] text-[#8B6F5E] mt-0.5">
-            Locate your nearest store in India
-          </div>
+          <div className="text-[12px] font-medium text-[#1A1A1A]">Find a MANGO Store</div>
+          <div className="text-[10px] text-[#8B6F5E] mt-0.5">Locate your nearest store in India</div>
         </div>
       </div>
-
       <ArrowRight className="h-4 w-4 text-[#8B6F5E] group-hover:translate-x-0.5 transition-transform" />
-
     </a>
-
   </div>
 
   {/* Store Information — current store */}
   <div className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl p-4 mb-3">
-
-    <button
-      onClick={() => setShowStoreLocation(!showStoreLocation)}
-      className="w-full flex items-center justify-between"
-    >
-
+    <button onClick={() => setShowStoreLocation(!showStoreLocation)} className="w-full flex items-center justify-between">
       <div className="flex items-center">
         <MapPin className="h-4 w-4 mr-2 text-[#C8A882]" />
-        <span className="text-[12px] font-medium text-[#1A1A1A]">
-          {currentReceipt.branch}
-        </span>
+        <span className="text-[12px] font-medium text-[#1A1A1A]">{currentReceipt.branch}</span>
       </div>
-
-      <span className="text-[10px] text-[#8B6F5E]">
-        {showStoreLocation ? "▲" : "▼"}
-      </span>
-
+      <span className="text-[10px] text-[#8B6F5E]">{showStoreLocation ? "▲" : "▼"}</span>
     </button>
 
     {showStoreLocation && (
-
       <div className="mt-3 pt-3 border-t border-[#E5E5E5] text-center">
-
         <div className="space-y-0.5 text-[12px] text-[#1A1A1A]">
           <p className="font-medium">MANGO Store</p>
           <p>UB City</p>
@@ -2606,117 +2580,57 @@ body{
           <p>Ashok Nagar</p>
           <p>Bengaluru, Karnataka 560001</p>
         </div>
-
         <div className="mt-3 pt-3 border-t border-[#E5E5E5]">
-          <p className="text-[10px] uppercase tracking-[0.12em] text-[#8B6F5E]">
-            Store Associate
-          </p>
-          <p className="text-[12px] text-[#1A1A1A] mt-1">
-            {currentReceipt.associate}
-          </p>
+          <p className="text-[10px] uppercase tracking-[0.12em] text-[#8B6F5E]">Store Associate</p>
+          <p className="text-[12px] text-[#1A1A1A] mt-1">{currentReceipt.associate}</p>
         </div>
-
       </div>
-
     )}
-
   </div>
 
-  {/* Returns & Exchange Policy — open by default */}
+  {/* Returns & Exchange Policy */}
   <div className="mb-3">
-
-    <button
-      className="w-full flex items-center justify-between bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3.5 hover:border-[#C8A882] transition-all"
-      onClick={() => setShowTerms(!showTerms)}
-    >
-
+    <button className="w-full flex items-center justify-between bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3.5 hover:border-[#C8A882] transition-all" onClick={() => setShowTerms(!showTerms)}>
       <div className="flex items-center">
         <div className="w-8 h-8 rounded-xl bg-white border border-[#ECECEC] flex items-center justify-center mr-3">
           <FileText className="h-4 w-4 text-[#8B6F5E]" />
         </div>
-        <span className="text-[12px] font-medium text-[#1A1A1A]">
-          Returns & Exchange Policy
-        </span>
+        <span className="text-[12px] font-medium text-[#1A1A1A]">Returns & Exchange Policy</span>
       </div>
-
-      <span className="text-[10px] text-[#8B6F5E]">
-        {showTerms ? "▲" : "▼"}
-      </span>
-
+      <span className="text-[10px] text-[#8B6F5E]">{showTerms ? "▲" : "▼"}</span>
     </button>
 
     {showTerms && (
-
       <div className="mt-2 bg-[#FAFAFA] border border-[#ECECEC] rounded-2xl p-4 text-[11px] text-[#8B6F5E] leading-relaxed space-y-2.5">
-
-        <p className="font-medium text-[#1A1A1A] text-[12px]">
-          In-Store Exchanges & Returns
+        <p className="font-medium text-[#1A1A1A] text-[12px]">In-Store Exchanges & Returns</p>
+        <p>{"• You have "}
+          <span className="text-[#1A1A1A] font-medium">30 days</span>
+          {" from the date of purchase to exchange items at any MANGO store in India. Bring this receipt (digital or printed) along with the items."}
         </p>
-
-        <p>
-          • You have <span className="text-[#1A1A1A] font-medium">30 days</span> from the date of purchase to exchange items at any MANGO store in India. Bring this receipt (digital or printed) along with the items.
+        <p>{"• For hygiene reasons, "}
+          <span className="text-[#1A1A1A]">swimwear, lingerie, underwear and earrings</span>
+          {" cannot be exchanged or returned."}
         </p>
-
-        <p>
-          • For hygiene reasons, <span className="text-[#1A1A1A]">swimwear, lingerie, underwear and earrings</span> cannot be exchanged or returned.
-        </p>
-
-        <p>
-          • Personalised or altered items cannot be exchanged or returned.
-        </p>
-
-        <p>
-          • Fragrances, candles and cosmetics must be returned in original sealed packaging.
-        </p>
-
-        <p>
-          • Gift cards are non-exchangeable and non-returnable.
-        </p>
-
-        
-          href="https://shop.mango.com/in/en/help/returns/store-returns"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-1 text-[#C8A882] mt-3 hover:underline"
-        >
+        <p>{"• Personalised or altered items cannot be exchanged or returned."}</p>
+        <p>{"• Fragrances, candles and cosmetics must be returned in original sealed packaging."}</p>
+        <p>{"• Gift cards are non-exchangeable and non-returnable."}</p>
+        <a href="https://shop.mango.com/in/en/help/returns/store-returns" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[#C8A882] mt-3 hover:underline">
           Full returns policy
           <ArrowUpRight className="h-3 w-3" />
         </a>
-
       </div>
-
     )}
-
   </div>
 
   {/* Powered by */}
   <div className="text-center mt-5 pt-5 border-t border-[#ECECEC]">
-
     <div className="flex items-center justify-center space-x-2">
-
-      <span className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E]">
-        Powered by
-      </span>
-
-      
-        href="https://www.rdep.io"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="opacity-80 hover:opacity-100 transition-opacity"
-      >
-        <Image
-          src="/images/design-mode/RDEP%20cropped.png"
-          alt="RDEP"
-          width={55}
-          height={14}
-          className="object-contain"
-        />
+      <span className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E]">Powered by</span>
+      <a href="https://www.rdep.io" target="_blank" rel="noopener noreferrer" className="opacity-80 hover:opacity-100 transition-opacity">
+        <Image src="/images/design-mode/RDEP%20cropped.png" alt="RDEP" width={55} height={14} className="object-contain" />
       </a>
-
     </div>
-
   </div>
-
 </div>
           <div id="height-marker" style={{ height: "1px" }} />
         </div>
