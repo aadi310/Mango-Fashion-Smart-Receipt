@@ -1533,7 +1533,7 @@ body{
   </div>
 
   {/* Store Locator — full width */}
-  
+  <a
     href="https://shop.mango.com/in/en/stores"
     target="_blank"
     rel="noopener noreferrer"
@@ -1550,7 +1550,6 @@ body{
     </div>
     <ArrowRight className="h-4 w-4 text-[#8B6F5E] group-hover:translate-x-0.5 transition-transform" />
   </a>
-
 </div>
         
           {/* MANGO Feedback Section */}
