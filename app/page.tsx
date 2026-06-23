@@ -112,6 +112,8 @@ const [expandedItemFeedback, setExpandedItemFeedback] = useState([])
     email: "",
     gender: "",
     promoOptIn: false,
+    birthday: "",
+    anniversary: "",
   })
   const [profileUpdateSuccess, setProfileUpdateSuccess] = useState(false)
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false)
@@ -1472,19 +1474,13 @@ body{
   {profileUpdateSuccess ? (
 
     <div className="text-center py-8 bg-[#FAFAFA] rounded-2xl border border-[#ECECEC]">
-
       <div className="w-14 h-14 bg-[#C8A882]/15 rounded-full flex items-center justify-center mx-auto mb-4">
         <Check className="w-6 h-6 text-[#8B6F5E]" />
       </div>
-
-      <div className="text-[16px] font-medium text-[#1A1A1A]">
-        Details Saved
-      </div>
-
+      <div className="text-[16px] font-medium text-[#1A1A1A]">Details Saved</div>
       <div className="text-[11px] text-[#8B6F5E] mt-2 max-w-[240px] mx-auto leading-relaxed">
         Your profile and communication preferences have been updated.
       </div>
-
     </div>
 
   ) : (
@@ -1492,134 +1488,123 @@ body{
     <>
 
       {/* Header */}
-      <div className="flex items-start mb-5">
-
+      <div className="flex items-start mb-4">
         <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-3 flex-shrink-0">
           <User2 className="h-4 w-4 text-[#8B6F5E]" />
         </div>
-
         <div>
-          <h3 className="text-[14px] font-medium text-[#1A1A1A]">
-            Your Profile
-          </h3>
+          <h3 className="text-[14px] font-medium text-[#1A1A1A]">Your Profile</h3>
           <p className="text-[11px] text-[#8B6F5E] mt-0.5 leading-relaxed">
             Save your details for faster service and personalised updates.
           </p>
         </div>
-
       </div>
 
       {/* Form */}
-      <div className="space-y-3">
+      <div className="space-y-2.5">
 
         <div>
-          <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1.5">
-            Full Name
-          </label>
+          <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1.5">Full Name</label>
           <input
             type="text"
             placeholder="Enter your full name"
             value={profile.name}
-            onChange={(e) =>
-              setProfile((prev) => ({ ...prev, name: e.target.value }))
-            }
+            onChange={(e) => setProfile((prev) => ({ ...prev, name: e.target.value }))}
             className="w-full h-11 px-4 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:outline-none focus:border-[#C8A882] focus:bg-white transition-all placeholder:text-[#B8B8B8]"
           />
         </div>
 
         <div>
-          <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1.5">
-            Email Address
-          </label>
+          <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1.5">Email Address</label>
           <input
             type="email"
             placeholder="name@email.com"
             value={profile.email}
-            onChange={(e) =>
-              setProfile((prev) => ({ ...prev, email: e.target.value }))
-            }
+            onChange={(e) => setProfile((prev) => ({ ...prev, email: e.target.value }))}
             className="w-full h-11 px-4 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:outline-none focus:border-[#C8A882] focus:bg-white transition-all placeholder:text-[#B8B8B8]"
           />
         </div>
 
         <div>
-          <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1.5">
-            Mobile Number
-          </label>
+          <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1.5">Mobile Number</label>
           <input
             type="tel"
             placeholder="+91"
             value={profile.mobile}
-            onChange={(e) =>
-              setProfile((prev) => ({ ...prev, mobile: e.target.value }))
-            }
+            onChange={(e) => setProfile((prev) => ({ ...prev, mobile: e.target.value }))}
             className="w-full h-11 px-4 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:outline-none focus:border-[#C8A882] focus:bg-white transition-all placeholder:text-[#B8B8B8]"
           />
+        </div>
+
+        {/* Birthday + Anniversary side by side */}
+        <div className="grid grid-cols-2 gap-2.5">
+
+          <div>
+            <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1.5">
+              Birthday
+            </label>
+            <input
+              type="date"
+              value={profile.birthday || ""}
+              onChange={(e) => setProfile((prev) => ({ ...prev, birthday: e.target.value }))}
+              className="w-full h-11 px-3 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:outline-none focus:border-[#C8A882] focus:bg-white transition-all text-[#1A1A1A] [&::-webkit-calendar-picker-indicator]:opacity-40"
+            />
+            <p className="text-[9px] text-[#B8B8B8] mt-1 pl-1">For birthday offers</p>
+          </div>
+
+          <div>
+            <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1.5">
+              Anniversary
+            </label>
+            <input
+              type="date"
+              value={profile.anniversary || ""}
+              onChange={(e) => setProfile((prev) => ({ ...prev, anniversary: e.target.value }))}
+              className="w-full h-11 px-3 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:outline-none focus:border-[#C8A882] focus:bg-white transition-all text-[#1A1A1A] [&::-webkit-calendar-picker-indicator]:opacity-40"
+            />
+            <p className="text-[9px] text-[#B8B8B8] mt-1 pl-1">Optional</p>
+          </div>
+
         </div>
 
       </div>
 
       {/* Communication Preferences */}
-      <div className="mt-5 pt-4 border-t border-[#ECECEC]">
+      <div className="mt-4 pt-4 border-t border-[#ECECEC]">
 
-        <div className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-3">
+        <div className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-2.5">
           Communication Preferences
         </div>
 
         <div className="space-y-2">
 
-          {/* Transactional — always on, locked */}
-          <div className="flex items-center justify-between bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3">
-
+          {/* Transactional — always on */}
+          <div className="flex items-center justify-between bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-2.5">
             <div className="flex-1 mr-3">
-              <div className="text-[12px] font-medium text-[#1A1A1A]">
-                Purchase & Order Updates
-              </div>
-              <div className="text-[10px] text-[#8B6F5E] mt-0.5">
-                Receipts and return confirmations. Always on.
-              </div>
+              <div className="text-[12px] font-medium text-[#1A1A1A]">Purchase & Order Updates</div>
+              <div className="text-[10px] text-[#8B6F5E] mt-0.5">Receipts and return confirmations. Always on.</div>
             </div>
-
             <div className="flex-shrink-0">
               <div className="w-9 h-5 bg-[#C8A882] rounded-full flex items-center justify-end px-0.5 opacity-60 cursor-not-allowed">
                 <div className="w-4 h-4 bg-white rounded-full shadow-sm" />
               </div>
             </div>
-
           </div>
 
           {/* Promotional opt-in */}
           <div
-            className="flex items-center justify-between bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3 cursor-pointer"
-            onClick={() =>
-              setProfile((prev) => ({
-                ...prev,
-                promoOptIn: !prev.promoOptIn,
-              }))
-            }
+            className="flex items-center justify-between bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-2.5 cursor-pointer"
+            onClick={() => setProfile((prev) => ({ ...prev, promoOptIn: !prev.promoOptIn }))}
           >
-
             <div className="flex-1 mr-3">
-              <div className="text-[12px] font-medium text-[#1A1A1A]">
-                New Arrivals & Offers
-              </div>
-              <div className="text-[10px] text-[#8B6F5E] mt-0.5">
-                Collections, member offers and seasonal edits.
-              </div>
+              <div className="text-[12px] font-medium text-[#1A1A1A]">New Arrivals & Offers</div>
+              <div className="text-[10px] text-[#8B6F5E] mt-0.5">Collections, member offers and seasonal edits.</div>
             </div>
-
             <div className="flex-shrink-0">
-              <div
-                className={`w-9 h-5 rounded-full flex items-center px-0.5 transition-all duration-200 ${
-                  profile.promoOptIn
-                    ? "bg-[#C8A882] justify-end"
-                    : "bg-[#E0E0E0] justify-start"
-                }`}
-              >
+              <div className={`w-9 h-5 rounded-full flex items-center px-0.5 transition-all duration-200 ${profile.promoOptIn ? "bg-[#C8A882] justify-end" : "bg-[#E0E0E0] justify-start"}`}>
                 <div className="w-4 h-4 bg-white rounded-full shadow-sm" />
               </div>
             </div>
-
           </div>
 
         </div>
@@ -1628,7 +1613,7 @@ body{
 
       {/* CTA */}
       <button
-        className="w-full mt-5 h-11 bg-[#1A1A1A] text-white rounded-2xl text-[12px] uppercase tracking-[0.18em] hover:bg-black transition-all"
+        className="w-full mt-4 h-11 bg-[#1A1A1A] text-white rounded-2xl text-[12px] uppercase tracking-[0.18em] hover:bg-black transition-all"
         onClick={handleProfileUpdate}
       >
         Save Details
