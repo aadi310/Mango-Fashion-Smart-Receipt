@@ -1087,10 +1087,11 @@ body{
   {/* Items */}
   <div className="space-y-2">
     {currentReceipt.items.map((product) => (
-      <div key={product.id} className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl p-3 transition-all duration-200">
+      <div key={product.id} className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl p-3">
 
-        {/* Product Header */}
+        {/* Product Row */}
         <div className="flex items-start justify-between cursor-pointer" onClick={() => toggleProductExpansion(product.id)}>
+
           <div className="flex items-start flex-1">
             <ChevronRight className={`h-4 w-4 mt-0.5 mr-2 text-[#8B6F5E] transition-transform duration-200 flex-shrink-0 ${expandedProducts.includes(product.id) ? "rotate-90" : ""}`} />
             <div>
@@ -1120,95 +1121,16 @@ body{
               <div className="font-semibold text-[13px] text-[#1A1A1A] mt-0.5">₹{product.price.toLocaleString("en-IN")}</div>
             )}
           </div>
+
         </div>
 
-        {/* Expanded Product Details */}
+        {/* Expanded — SKU only */}
         {expandedProducts.includes(product.id) && (
-          <div className="mt-3 pt-3 border-t border-[#E5E5E5]">
-            <div className="grid grid-cols-2 gap-y-3">
-
-              <div>
-                <div className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">SKU</div>
-                <div className="text-[11px] text-[#1A1A1A] mt-0.5">{product.itemCode}</div>
-              </div>
-
-              <div className="text-right">
-                <div className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">Colour</div>
-                <div className="text-[11px] text-[#1A1A1A] mt-0.5">{product.color}</div>
-              </div>
-
-              <div>
-                <div className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">Fit</div>
-                <div className="text-[11px] text-[#1A1A1A] mt-0.5">{product.fit}</div>
-              </div>
-
-              <div className="text-right">
-                <div className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">Material</div>
-                <div className="text-[11px] text-[#1A1A1A] mt-0.5">{product.material}</div>
-              </div>
-
-            </div>
+          <div className="mt-2 pt-2 border-t border-[#E5E5E5] flex items-center gap-1.5">
+            <span className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">SKU</span>
+            <span className="text-[9px] text-[#C8A882]">•</span>
+            <span className="text-[11px] text-[#1A1A1A]">{product.itemCode}</span>
           </div>
-        )}
-
-        {/* Inline Product Rating */}
-        {itemFeedback[product.id]?.submitted ? (
-
-          <div className="mt-3 pt-3 border-t border-[#E5E5E5] text-center">
-            <p className="text-[11px] text-[#8B6F5E]">Thank you for your feedback.</p>
-          </div>
-
-        ) : (
-
-          <div className="mt-3 pt-3 border-t border-[#E5E5E5]">
-
-            {/* Stars */}
-            <div className="flex items-center gap-3">
-              <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#8B6F5E]">Rate</span>
-              <div className="flex items-center gap-1">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    onClick={() => setItemRating(product.id, star)}
-                    className="transition-transform hover:scale-110"
-                  >
-                    <Star className={`h-4 w-4 transition-all duration-200 ${star <= (itemFeedback[product.id]?.rating || 0) ? "fill-[#C8A882] text-[#C8A882]" : "text-[#D8D8D8] hover:text-[#C8A882]"}`} />
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Comment box + submit — shown after rating */}
-            {itemFeedback[product.id]?.rating > 0 && (
-              <div className="mt-3 space-y-2">
-                <textarea
-                  rows={2}
-                  placeholder="Tell us what you think (optional)..."
-                  value={itemFeedback[product.id]?.comment || ""}
-                  onChange={(e) =>
-                    setItemFeedback((prev) => ({
-                      ...prev,
-                      [product.id]: { ...prev[product.id], comment: e.target.value },
-                    }))
-                  }
-                  className="w-full p-3 text-[11px] bg-white border border-[#ECECEC] rounded-xl focus:border-[#C8A882] focus:outline-none resize-none transition-all placeholder:text-[#C0C0C0] text-[#1A1A1A]"
-                />
-                <button
-                  onClick={() =>
-                    setItemFeedback((prev) => ({
-                      ...prev,
-                      [product.id]: { ...prev[product.id], submitted: true },
-                    }))
-                  }
-                  className="w-full h-9 bg-[#1A1A1A] text-white rounded-xl text-[11px] uppercase tracking-[0.15em] hover:bg-black transition-all"
-                >
-                  Submit
-                </button>
-              </div>
-            )}
-
-          </div>
-
         )}
 
       </div>
