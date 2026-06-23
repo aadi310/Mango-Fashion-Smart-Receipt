@@ -1028,50 +1028,42 @@ body{
       >
         <div className="flex flex-col w-full gap-3 pb-4 px-3">
 
-         {/* MANGO Premium Fashion Header */}
+        {/* MANGO Premium Fashion Header */}
 <div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mt-4 mx-4 overflow-hidden">
 
-  {/* Logo + Total */}
-  <div className="px-5 pt-4 pb-3 bg-white flex items-center justify-between">
+  {/* Logo only row */}
+  <div className="px-5 pt-4 pb-3 bg-white">
+    <img
+      src="/images/design-mode/mango.png"
+      alt="MANGO"
+      className="h-6 w-auto object-contain"
+    />
+    <p className="mt-1.5 text-[9px] uppercase tracking-[0.22em] text-[#8B6F5E] font-medium">
+      Thank you, {customerName}
+    </p>
+  </div>
+
+  {/* Metadata strip — receipt info left, total right */}
+  <div className="px-5 py-3 bg-[#F8F8F8] border-t border-[#ECECEC] flex items-center justify-between">
 
     <div>
-      <img
-        src="/images/design-mode/mango.png"
-        alt="MANGO"
-        className="h-6 w-auto object-contain"
-      />
-      <p className="mt-1.5 text-[9px] uppercase tracking-[0.22em] text-[#8B6F5E] font-medium">
-        Thank you, {customerName}
-      </p>
+      <div className="text-[11px] font-medium text-[#1A1A1A]">
+        #{currentReceipt.id.slice(-8)}
+      </div>
+      <div className="flex items-center gap-2 mt-0.5 text-[10px] text-[#8B6F5E]">
+        <span>{currentReceipt.date}</span>
+        <span className="text-[#C8A882]">•</span>
+        <span>{currentReceipt.time}</span>
+      </div>
     </div>
 
     <div className="text-right">
       <div className="text-[9px] uppercase tracking-[0.18em] text-[#8B6F5E] font-medium">
         Total Paid
       </div>
-      <div className="text-[22px] leading-none font-light tracking-[-0.03em] text-[#000000] tabular-nums mt-1">
+      <div className="text-[18px] leading-none font-light tracking-[-0.03em] text-[#000000] tabular-nums mt-1">
         ₹{currentReceipt.total.toLocaleString("en-IN")}
       </div>
-      <div className="mt-1.5 flex justify-end">
-        <div className="bg-[#C8A882] text-black text-[9px] font-semibold uppercase tracking-[0.15em] px-2.5 py-1 rounded-full">
-          Paid
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  {/* Two-line metadata strip */}
-  <div className="px-5 py-2.5 bg-[#F8F8F8] border-t border-[#ECECEC]">
-
-    <div className="text-[11px] font-medium text-[#1A1A1A]">
-      #{currentReceipt.id.slice(-8)}
-    </div>
-
-    <div className="flex items-center gap-2 mt-0.5 text-[10px] text-[#8B6F5E]">
-      <span>{currentReceipt.date}</span>
-      <span className="text-[#C8A882]">•</span>
-      <span>{currentReceipt.time}</span>
     </div>
 
   </div>
