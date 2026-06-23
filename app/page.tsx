@@ -1191,9 +1191,6 @@ body{
 
   <div className="flex items-center gap-3">
 
-    <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-[#8B6F5E]">Receipt</span>
-
-    <div className="flex flex-1 gap-2">
 
       <button
         ref={historyButtonRef}
@@ -1219,8 +1216,6 @@ body{
         <Download className="h-3.5 w-3.5 text-[#8B6F5E]" />
         <span className="text-[10px] text-[#1A1A1A]">Download</span>
       </button>
-
-    </div>
 
   </div>
 
