@@ -1419,121 +1419,7 @@ body{
 
 </div>
 
-          
-          {/* MANGO Feedback Section */}
-<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-5">
-
-  {feedbackSubmitted ? (
-
-    <div className="text-center py-8 bg-[#FAFAFA] rounded-2xl border border-[#ECECEC]">
-
-      <div className="w-14 h-14 bg-[#C8A882]/15 rounded-full flex items-center justify-center mx-auto mb-4">
-        <Check className="w-6 h-6 text-[#8B6F5E]" />
-      </div>
-
-      <div className="text-[16px] font-medium text-[#1A1A1A]">Thank You</div>
-
-      <div className="text-[11px] text-[#8B6F5E] mt-2 max-w-[240px] mx-auto leading-relaxed">
-        Your feedback helps us create a better experience at every MANGO store.
-      </div>
-
-      <button
-        onClick={() => window.open("https://www.google.com/maps/search/Mango+UB+City+Bangalore", "_blank")}
-        className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-[#ECECEC] rounded-full text-[11px] text-[#1A1A1A] hover:border-[#C8A882] transition-all shadow-sm"
-      >
-        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none">
-          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-        </svg>
-        Also leave a Google Review
-      </button>
-
-    </div>
-
-  ) : (
-
-    <div className="space-y-4">
-
-      {/* Header */}
-      <div className="flex items-center">
-        <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-3">
-          <MessageSquare className="h-4 w-4 text-[#8B6F5E]" />
-        </div>
-        <div>
-          <h3 className="text-[14px] font-medium text-[#1A1A1A]">Rate Your Visit</h3>
-          <p className="text-[11px] text-[#8B6F5E] mt-0.5">
-            How was your experience at MANGO {currentReceipt.branch}?
-          </p>
-        </div>
-      </div>
-
-      {/* Stars — always visible */}
-      <div className="flex justify-center gap-4 py-1">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <button
-            key={star}
-            onClick={() => setRating(star)}
-            className="transition-all duration-200 hover:scale-105"
-          >
-            <Star className={`h-7 w-7 transition-colors ${star <= rating ? "fill-[#C8A882] text-[#C8A882]" : "text-[#D8D8D8]"}`} />
-          </button>
-        ))}
-      </div>
-
-      {/* Everything below — only after star selected */}
-      {rating > 0 && (
-
-        <div className="space-y-3">
-
-          {/* Comment Box */}
-          <textarea
-            rows={3}
-            placeholder="Additional comments (optional)..."
-            className="w-full p-3 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:bg-white focus:border-[#C8A882] outline-none resize-none transition-all text-[#1A1A1A] placeholder:text-[#B5B5B5]"
-            value={feedbackText}
-            onChange={(e) => setFeedbackText(e.target.value)}
-          />
-
-          {/* Submit */}
-          <button
-            className="w-full h-11 bg-[#1A1A1A] text-white rounded-2xl text-[12px] uppercase tracking-[0.18em] hover:bg-black transition-all"
-            onClick={handleFeedbackSubmit}
-          >
-            Submit Feedback
-          </button>
-
-          {/* Google Review — only 4 or 5 stars */}
-          {rating >= 4 && (
-            <button
-              onClick={() => window.open("https://www.google.com/maps/search/Mango+UB+City+Bangalore", "_blank")}
-              className="w-full h-11 rounded-2xl border border-[#ECECEC] bg-[#F8F8F8] text-[11px] text-[#1A1A1A] flex items-center justify-center gap-2 hover:border-[#C8A882] transition-all"
-            >
-              <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none">
-                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-              </svg>
-              Leave a Google Review for this store
-            </button>
-          )}
-
-          <p className="text-center text-[10px] text-[#8B6F5E]">
-            Your feedback helps us refine every collection and in-store experience.
-          </p>
-
-        </div>
-
-      )}
-
-    </div>
-
-  )}
-
-</div>
-
+        
           
           
 {/* MANGO Editorial Carousel */}
@@ -1607,70 +1493,52 @@ body{
 
 </div>          
                
-{/* Customer Care */}
-<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-3 p-4">
+{/* Reach Us */}
+<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-3 p-4 mb-8">
 
+  {/* Header */}
   <div className="flex items-center mb-4">
     <div className="w-9 h-9 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-3 flex-shrink-0">
       <Headset className="h-4 w-4 text-[#8B6F5E]" />
     </div>
     <div>
-      <h3 className="text-[13px] font-medium text-[#1A1A1A]">Customer Care</h3>
+      <h3 className="text-[13px] font-medium text-[#1A1A1A]">Reach Us</h3>
+      <p className="text-[11px] text-[#8B6F5E] mt-0.5">Get in touch or find us online.</p>
     </div>
   </div>
 
-  <div className="grid grid-cols-2 gap-2">
-
+  {/* Row — Instagram, Call, Email */}
+  <div className="grid grid-cols-3 gap-2 mb-2">
     <button
-      onClick={handleCall}
-      className="flex items-center gap-3 bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3 transition-all hover:border-[#C8A882] active:scale-[0.97]"
+      onClick={() => handleSocialLink("https://www.instagram.com/mango/?hl=en")}
+      className="flex flex-col items-center gap-2 bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-3 py-3 transition-all hover:border-[#C8A882] active:scale-[0.97]"
     >
-      <Phone className="h-4 w-4 text-[#8B6F5E] flex-shrink-0" />
-      <div className="text-left">
-        <div className="text-[11px] font-medium text-[#1A1A1A]">Call Us</div>
-      </div>
-    </button>
-
-    <button
-      onClick={handleEmail}
-      className="flex items-center gap-3 bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3 transition-all hover:border-[#C8A882] active:scale-[0.97]"
-    >
-      <Mail className="h-4 w-4 text-[#8B6F5E] flex-shrink-0" />
-      <div className="text-left">
-        <div className="text-[11px] font-medium text-[#1A1A1A]">Email Us</div>
-      </div>
-    </button>
-
-  </div>
-
-</div>
-          
-      {/* Social Media & Store Information */}
-<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-5 mb-8">
-
-  {/* Header */}
-  <div className="flex items-center mb-5">
-    <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-3">
-      <Share2 className="h-5 w-5 text-[#8B6F5E]" />
-    </div>
-    <div>
-      <h3 className="text-[14px] font-medium text-[#1A1A1A]">Follow MANGO</h3>
-      <p className="text-[11px] text-[#8B6F5E] mt-0.5">Discover new collections and fashion inspiration.</p>
-    </div>
-  </div>
-
-  {/* Social Links — Instagram only */}
-  <div className="flex justify-center mb-5">
-    <button onClick={() => handleSocialLink("https://www.instagram.com/mango/?hl=en")} className="flex flex-col items-center group">
-      <div className="w-12 h-12 rounded-2xl bg-[#F8F8F8] border border-[#ECECEC] flex items-center justify-center mb-1.5 transition-all group-hover:border-[#C8A882]">
-        <Instagram className="h-5 w-5 text-[#8B6F5E]" />
-      </div>
+      <Instagram className="h-4 w-4 text-[#8B6F5E]" />
       <span className="text-[10px] text-[#8B6F5E]">Instagram</span>
     </button>
+    <button
+      onClick={handleCall}
+      className="flex flex-col items-center gap-2 bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-3 py-3 transition-all hover:border-[#C8A882] active:scale-[0.97]"
+    >
+      <Phone className="h-4 w-4 text-[#8B6F5E]" />
+      <span className="text-[10px] text-[#8B6F5E]">Call Us</span>
+    </button>
+    <button
+      onClick={handleEmail}
+      className="flex flex-col items-center gap-2 bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-3 py-3 transition-all hover:border-[#C8A882] active:scale-[0.97]"
+    >
+      <Mail className="h-4 w-4 text-[#8B6F5E]" />
+      <span className="text-[10px] text-[#8B6F5E]">Email Us</span>
+    </button>
   </div>
 
-  {/* Store Locator */}
-  <a href="https://shop.mango.com/in/en/stores" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between w-full bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3.5 hover:border-[#C8A882] transition-all group">
+  {/* Store Locator — full width */}
+  
+    href="https://shop.mango.com/in/en/stores"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="flex items-center justify-between w-full bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3.5 hover:border-[#C8A882] transition-all group"
+  >
     <div className="flex items-center">
       <div className="w-10 h-10 rounded-xl bg-white border border-[#ECECEC] flex items-center justify-center mr-3">
         <MapPin className="h-5 w-5 text-[#C8A882]" />
@@ -1683,15 +1551,145 @@ body{
     <ArrowRight className="h-4 w-4 text-[#8B6F5E] group-hover:translate-x-0.5 transition-transform" />
   </a>
 
-  {/* Powered by */}
-  <div className="text-center mt-5 pt-5 border-t border-[#ECECEC]">
-    <div className="flex items-center justify-center space-x-2">
-      <span className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E]">Powered by</span>
-      <a href="https://www.rdep.io" target="_blank" rel="noopener noreferrer" className="opacity-80 hover:opacity-100 transition-opacity">
-        <Image src="/images/design-mode/RDEP%20cropped.png" alt="RDEP" width={55} height={14} className="object-contain" />
-      </a>
+</div>
+        
+          {/* MANGO Feedback Section */}
+<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-5">
+
+  {feedbackSubmitted ? (
+
+    <div className="text-center py-8 bg-[#FAFAFA] rounded-2xl border border-[#ECECEC]">
+
+      <div className="w-14 h-14 bg-[#C8A882]/15 rounded-full flex items-center justify-center mx-auto mb-4">
+        <Check className="w-6 h-6 text-[#8B6F5E]" />
+      </div>
+
+      <div className="text-[16px] font-medium text-[#1A1A1A]">Thank You</div>
+
+      <div className="text-[11px] text-[#8B6F5E] mt-2 max-w-[240px] mx-auto leading-relaxed">
+        Your feedback helps us create a better experience at every MANGO store.
+      </div>
+
+      <button
+        onClick={() => window.open("https://www.google.com/maps/search/Mango+UB+City+Bangalore", "_blank")}
+        className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-[#ECECEC] rounded-full text-[11px] text-[#1A1A1A] hover:border-[#C8A882] transition-all shadow-sm"
+      >
+        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Also leave a Google Review
+      </button>
+
+      {/* Powered by — thank you state */}
+      <div className="flex items-center justify-center space-x-2 mt-6 pt-5 border-t border-[#ECECEC]">
+        <span className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E]">Powered by</span>
+        <a href="https://www.rdep.io" target="_blank" rel="noopener noreferrer" className="opacity-80 hover:opacity-100 transition-opacity">
+          <Image src="/images/design-mode/RDEP%20cropped.png" alt="RDEP" width={55} height={14} className="object-contain" />
+        </a>
+      </div>
+
     </div>
-  </div>
+
+  ) : (
+
+    <div className="space-y-4">
+
+      {/* Header */}
+      <div className="flex items-center">
+        <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-3">
+          <MessageSquare className="h-4 w-4 text-[#8B6F5E]" />
+        </div>
+        <div>
+          <h3 className="text-[14px] font-medium text-[#1A1A1A]">Rate Your Visit</h3>
+          <p className="text-[11px] text-[#8B6F5E] mt-0.5">
+            How was your experience at MANGO {currentReceipt.branch}?
+          </p>
+        </div>
+      </div>
+
+      {/* Stars — always visible */}
+      <div className="flex justify-center gap-4 py-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            onClick={() => setRating(star)}
+            className="transition-all duration-200 hover:scale-105"
+          >
+            <Star className={`h-7 w-7 transition-colors ${star <= rating ? "fill-[#C8A882] text-[#C8A882]" : "text-[#D8D8D8]"}`} />
+          </button>
+        ))}
+      </div>
+
+      {/* Everything below — only after star selected */}
+      {rating > 0 ? (
+
+        <div className="space-y-3">
+
+          {/* Comment Box */}
+          <textarea
+            rows={3}
+            placeholder="Additional comments (optional)..."
+            className="w-full p-3 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:bg-white focus:border-[#C8A882] outline-none resize-none transition-all text-[#1A1A1A] placeholder:text-[#B5B5B5]"
+            value={feedbackText}
+            onChange={(e) => setFeedbackText(e.target.value)}
+          />
+
+          {/* Submit */}
+          <button
+            className="w-full h-11 bg-[#1A1A1A] text-white rounded-2xl text-[12px] uppercase tracking-[0.18em] hover:bg-black transition-all"
+            onClick={handleFeedbackSubmit}
+          >
+            Submit Feedback
+          </button>
+
+          {/* Google Review — only 4 or 5 stars */}
+          {rating >= 4 && (
+            <button
+              onClick={() => window.open("https://www.google.com/maps/search/Mango+UB+City+Bangalore", "_blank")}
+              className="w-full h-11 rounded-2xl border border-[#ECECEC] bg-[#F8F8F8] text-[11px] text-[#1A1A1A] flex items-center justify-center gap-2 hover:border-[#C8A882] transition-all"
+            >
+              <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+              Leave a Google Review for this store
+            </button>
+          )}
+
+          <p className="text-center text-[10px] text-[#8B6F5E]">
+            Your feedback helps us refine every collection and in-store experience.
+          </p>
+
+          {/* Powered by — post-rating state */}
+          <div className="flex items-center justify-center space-x-2 pt-2 border-t border-[#ECECEC]">
+            <span className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E]">Powered by</span>
+            <a href="https://www.rdep.io" target="_blank" rel="noopener noreferrer" className="opacity-80 hover:opacity-100 transition-opacity">
+              <Image src="/images/design-mode/RDEP%20cropped.png" alt="RDEP" width={55} height={14} className="object-contain" />
+            </a>
+          </div>
+
+        </div>
+
+      ) : (
+
+        /* Powered by — pre-rating state (no star selected yet) */
+        <div className="flex items-center justify-center space-x-2 pt-1 border-t border-[#ECECEC]">
+          <span className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E]">Powered by</span>
+          <a href="https://www.rdep.io" target="_blank" rel="noopener noreferrer" className="opacity-80 hover:opacity-100 transition-opacity">
+            <Image src="/images/design-mode/RDEP%20cropped.png" alt="RDEP" width={55} height={14} className="object-contain" />
+          </a>
+        </div>
+
+      )}
+
+    </div>
+
+  )}
 
 </div>
           <div id="height-marker" style={{ height: "1px" }} />
