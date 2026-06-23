@@ -1692,7 +1692,6 @@ body{
       <Phone className="h-4 w-4 text-[#8B6F5E] flex-shrink-0" />
       <div className="text-left">
         <div className="text-[11px] font-medium text-[#1A1A1A]">Call Us</div>
-        <div className="text-[9px] text-[#8B6F5E] mt-0.5">Mon–Fri, 9am–8:30pm</div>
       </div>
     </button>
 
@@ -1703,7 +1702,6 @@ body{
       <Mail className="h-4 w-4 text-[#8B6F5E] flex-shrink-0" />
       <div className="text-left">
         <div className="text-[11px] font-medium text-[#1A1A1A]">Email Us</div>
-        <div className="text-[9px] text-[#8B6F5E] mt-0.5">We'll respond shortly</div>
       </div>
     </button>
 
