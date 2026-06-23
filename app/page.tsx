@@ -1072,7 +1072,7 @@ body{
 
 </div>
           
-        {/* MANGO Purchase Details Section */}
+       {/* MANGO Purchase Details Section */}
 <div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mt-3 mx-4 p-4">
 
   {/* Header */}
@@ -1091,24 +1091,25 @@ body{
     {currentReceipt.items.map((product) => (
       <div key={product.id} className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl p-3">
 
-        {/* Product Row */}
-        <div className="flex items-start justify-between cursor-pointer" onClick={() => toggleProductExpansion(product.id)}>
+        <div className="flex items-start justify-between">
 
-          <div className="flex items-start flex-1">
-            <ChevronRight className={`h-4 w-4 mt-0.5 mr-2 text-[#8B6F5E] transition-transform duration-200 flex-shrink-0 ${expandedProducts.includes(product.id) ? "rotate-90" : ""}`} />
-            <div>
-              <div className="font-medium text-[13px] text-[#1A1A1A] tracking-[-0.01em] leading-snug">
-                {product.name}
-              </div>
-              <div className="text-[10px] text-[#8B6F5E] uppercase tracking-[0.10em] mt-0.5 flex items-center gap-1.5">
-                <span>Size {product.size}</span>
-                {product.discount > 0 && (
-                  <>
-                    <span className="text-[#DDDDDD]">•</span>
-                    <span className="text-[#B05E2F]">−₹{product.discount.toLocaleString("en-IN")} off</span>
-                  </>
-                )}
-              </div>
+          <div className="flex-1">
+            <div className="font-medium text-[13px] text-[#1A1A1A] tracking-[-0.01em] leading-snug">
+              {product.name}
+            </div>
+            <div className="text-[10px] text-[#8B6F5E] uppercase tracking-[0.10em] mt-0.5 flex items-center gap-1.5">
+              <span>Size {product.size}</span>
+              {product.discount > 0 && (
+                <>
+                  <span className="text-[#DDDDDD]">•</span>
+                  <span className="text-[#B05E2F]">−₹{product.discount.toLocaleString("en-IN")} off</span>
+                </>
+              )}
+            </div>
+            <div className="mt-1 flex items-center gap-1">
+              <span className="text-[9px] uppercase tracking-[0.15em] text-[#BBBBBB]">SKU</span>
+              <span className="text-[9px] text-[#DDDDDD]">·</span>
+              <span className="text-[10px] text-[#BBBBBB] font-medium">{product.itemCode}</span>
             </div>
           </div>
 
@@ -1125,15 +1126,6 @@ body{
           </div>
 
         </div>
-
-        {/* Expanded — SKU only */}
-        {expandedProducts.includes(product.id) && (
-          <div className="mt-2 pt-2 border-t border-[#E5E5E5] flex items-center gap-1.5">
-            <span className="text-[9px] uppercase tracking-[0.15em] text-[#8B6F5E]">SKU</span>
-            <span className="text-[9px] text-[#C8A882]">•</span>
-            <span className="text-[11px] text-[#1A1A1A]">{product.itemCode}</span>
-          </div>
-        )}
 
       </div>
     ))}
