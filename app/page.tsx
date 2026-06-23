@@ -1221,290 +1221,7 @@ body{
 
 </div>
 
-          
-          {/* MANGO Feedback Section */}
-<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-5">
-
-  {feedbackSubmitted ? (
-
-    <div className="text-center py-8 bg-[#FAFAFA] rounded-2xl border border-[#ECECEC]">
-
-      <div className="w-14 h-14 bg-[#C8A882]/15 rounded-full flex items-center justify-center mx-auto mb-4">
-        <Check className="w-6 h-6 text-[#8B6F5E]" />
-      </div>
-
-      <div className="text-[16px] font-medium text-[#1A1A1A]">Thank You</div>
-
-      <div className="text-[11px] text-[#8B6F5E] mt-2 max-w-[240px] mx-auto leading-relaxed">
-        Your feedback helps us create a better experience at every MANGO store.
-      </div>
-
-      <button
-        onClick={() => window.open("https://www.google.com/maps/search/Mango+UB+City+Bangalore", "_blank")}
-        className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-[#ECECEC] rounded-full text-[11px] text-[#1A1A1A] hover:border-[#C8A882] transition-all shadow-sm"
-      >
-        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none">
-          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-        </svg>
-        Also leave a Google Review
-      </button>
-
-    </div>
-
-  ) : (
-
-    <div className="space-y-4">
-
-      {/* Header */}
-      <div className="flex items-center">
-        <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-3">
-          <MessageSquare className="h-4 w-4 text-[#8B6F5E]" />
-        </div>
-        <div>
-          <h3 className="text-[14px] font-medium text-[#1A1A1A]">Rate Your Visit</h3>
-          <p className="text-[11px] text-[#8B6F5E] mt-0.5">
-            How was your experience at MANGO {currentReceipt.branch}?
-          </p>
-        </div>
-      </div>
-
-      {/* Stars — always visible */}
-      <div className="flex justify-center gap-4 py-1">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <button
-            key={star}
-            onClick={() => setRating(star)}
-            className="transition-all duration-200 hover:scale-105"
-          >
-            <Star className={`h-7 w-7 transition-colors ${star <= rating ? "fill-[#C8A882] text-[#C8A882]" : "text-[#D8D8D8]"}`} />
-          </button>
-        ))}
-      </div>
-
-      {/* Everything below — only after star selected */}
-      {rating > 0 && (
-
-        <div className="space-y-3">
-
-          {/* Comment Box */}
-          <textarea
-            rows={3}
-            placeholder="Additional comments (optional)..."
-            className="w-full p-3 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:bg-white focus:border-[#C8A882] outline-none resize-none transition-all text-[#1A1A1A] placeholder:text-[#B5B5B5]"
-            value={feedbackText}
-            onChange={(e) => setFeedbackText(e.target.value)}
-          />
-
-          {/* Submit */}
-          <button
-            className="w-full h-11 bg-[#1A1A1A] text-white rounded-2xl text-[12px] uppercase tracking-[0.18em] hover:bg-black transition-all"
-            onClick={handleFeedbackSubmit}
-          >
-            Submit Feedback
-          </button>
-
-          {/* Google Review — only 4 or 5 stars */}
-          {rating >= 4 && (
-            <button
-              onClick={() => window.open("https://www.google.com/maps/search/Mango+UB+City+Bangalore", "_blank")}
-              className="w-full h-11 rounded-2xl border border-[#ECECEC] bg-[#F8F8F8] text-[11px] text-[#1A1A1A] flex items-center justify-center gap-2 hover:border-[#C8A882] transition-all"
-            >
-              <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none">
-                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-              </svg>
-              Leave a Google Review for this store
-            </button>
-          )}
-
-          <p className="text-center text-[10px] text-[#8B6F5E]">
-            Your feedback helps us refine every collection and in-store experience.
-          </p>
-
-        </div>
-
-      )}
-
-    </div>
-
-  )}
-
-</div>
-          
-{/* MANGO Editorial Carousel */}
-<div className="bg-white rounded-3xl overflow-hidden mx-4 mt-6 relative shadow-xl border border-[#ECECEC]">
-
-  <Carousel
-    className="w-full"
-    setApi={setPromoApi}
-    opts={{
-      loop: true,
-    }}
-  >
-
-    <CarouselContent>
-
-      {/* Banner 1 - Kids World Cup Collection */}
-      <CarouselItem>
-
-        <div className="relative w-full aspect-[5/3]">
-
-          <a
-            href="https://shop.mango.com/in/en/i/kids/boys/world-cup-collection/c948a54e"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block w-full h-full"
-          >
-
-            <Image
-              src="/images/design-mode/mango-banner-1.png"
-              alt="MANGO Kids World Cup Collection"
-              fill
-              className="object-cover"
-              priority
-            />
-
-            <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-black/5 to-transparent" />
-
-          </a>
-
-          <div className="absolute bottom-6 left-6">
-
-            <a
-              href="https://shop.mango.com/in/en/i/kids/boys/world-cup-collection/c948a54e"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-
-              <button className="bg-white/95 backdrop-blur text-[#1A1A1A] text-[11px] px-5 py-2 rounded-full border border-white/50 hover:bg-white transition-all">
-                Explore Collection
-              </button>
-
-            </a>
-
-          </div>
-
-        </div>
-
-      </CarouselItem>
-
-      {/* Banner 2 - Total White */}
-      <CarouselItem>
-
-        <div className="relative w-full aspect-[5/3]">
-
-          <a
-            href="https://shop.mango.com/in/en/i/women/total-white/f1e2d25c"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block w-full h-full"
-          >
-
-            <Image
-              src="/images/design-mode/mango-banner-2.png"
-              alt="MANGO Total White"
-              fill
-              className="object-cover"
-            />
-
-            <div className="absolute inset-0 bg-gradient-to-r from-black/15 via-transparent to-transparent" />
-
-          </a>
-
-          <div className="absolute bottom-6 left-6">
-
-            <a
-              href="https://shop.mango.com/in/en/i/women/total-white/f1e2d25c"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-
-              <button className="bg-white/95 backdrop-blur text-[#1A1A1A] text-[11px] px-5 py-2 rounded-full border border-white/50 hover:bg-white transition-all">
-                Shop The Edit
-              </button>
-
-            </a>
-
-          </div>
-
-        </div>
-
-      </CarouselItem>
-
-      {/* Banner 3 - Suit Guide */}
-      <CarouselItem>
-
-        <div className="relative w-full aspect-[5/3]">
-
-          <a
-            href="https://shop.mango.com/in/en/i/men/suit-guide/5162340e"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block w-full h-full"
-          >
-
-            <Image
-              src="/images/design-mode/mango-banner-3.png"
-              alt="MANGO Suit Guide"
-              fill
-              className="object-cover"
-            />
-
-            <div className="absolute inset-0 bg-gradient-to-r from-black/15 via-transparent to-transparent" />
-
-          </a>
-
-          <div className="absolute bottom-6 left-6">
-
-            <a
-              href="https://shop.mango.com/in/en/i/men/suit-guide/5162340e"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-
-              <button className="bg-white/95 backdrop-blur text-[#1A1A1A] text-[11px] px-5 py-2 rounded-full border border-white/50 hover:bg-white transition-all">
-                View Guide
-              </button>
-
-            </a>
-
-          </div>
-
-        </div>
-
-      </CarouselItem>
-
-    </CarouselContent>
-
-    {/* Mango Style Indicators */}
-    <div className="absolute bottom-4 right-5 flex gap-2 z-10">
-
-      {[0, 1, 2].map((index) => (
-
-        <button
-          key={index}
-          onClick={() => promoApi?.scrollTo(index)}
-          className={`transition-all duration-300 rounded-full ${
-            currentSlide === index
-              ? "w-8 h-2 bg-[#C8A882]"
-              : "w-2 h-2 bg-white/60"
-          }`}
-        />
-
-      ))}
-
-    </div>
-
-  </Carousel>
-
-</div>
-          
-       {/* Profile & Preferences */}
+            {/* Profile & Preferences */}
 <div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mx-4 mt-6 p-5">
 
   {profileUpdateSuccess ? (
@@ -1665,7 +1382,231 @@ body{
   )}
 
 </div>
+
+        {/* Returns & Exchange Policy */}
+<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-5 mb-8">
+
+  <button
+    className="w-full flex items-center justify-between"
+    onClick={() => setShowTerms(!showTerms)}
+  >
+    <div className="flex items-center">
+      <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-3">
+        <FileText className="h-5 w-5 text-[#8B6F5E]" />
+      </div>
+      <div className="text-left">
+        <h3 className="text-[14px] font-medium text-[#1A1A1A]">Returns & Exchange</h3>
+        <p className="text-[11px] text-[#8B6F5E] mt-0.5">30-day exchange policy</p>
+      </div>
+    </div>
+    <span className="text-[10px] text-[#8B6F5E]">{showTerms ? "▲" : "▼"}</span>
+  </button>
+
+  {showTerms && (
+    <div className="mt-4 pt-4 border-t border-[#ECECEC] text-[11px] text-[#8B6F5E] leading-relaxed space-y-2.5">
+      <p className="font-medium text-[#1A1A1A] text-[12px]">In-Store Exchanges & Returns</p>
+      <p>{"• You have "}<span className="text-[#1A1A1A] font-medium">30 days</span>{" from the date of purchase to exchange items at any MANGO store in India. Bring this receipt (digital or printed) along with the items."}</p>
+      <p>{"• For hygiene reasons, "}<span className="text-[#1A1A1A]">swimwear, lingerie, underwear and earrings</span>{" cannot be exchanged or returned."}</p>
+      <p>• Personalised or altered items cannot be exchanged or returned.</p>
+      <p>• Fragrances, candles and cosmetics must be returned in original sealed packaging.</p>
+      <p>• Gift cards are non-exchangeable and non-returnable.</p>
+      <a href="https://shop.mango.com/in/en/help/returns/store-returns" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[#C8A882] mt-3 hover:underline">
+        Full returns policy
+        <ArrowUpRight className="h-3 w-3" />
+      </a>
+    </div>
+  )}
+
+</div>
+
           
+          {/* MANGO Feedback Section */}
+<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-5">
+
+  {feedbackSubmitted ? (
+
+    <div className="text-center py-8 bg-[#FAFAFA] rounded-2xl border border-[#ECECEC]">
+
+      <div className="w-14 h-14 bg-[#C8A882]/15 rounded-full flex items-center justify-center mx-auto mb-4">
+        <Check className="w-6 h-6 text-[#8B6F5E]" />
+      </div>
+
+      <div className="text-[16px] font-medium text-[#1A1A1A]">Thank You</div>
+
+      <div className="text-[11px] text-[#8B6F5E] mt-2 max-w-[240px] mx-auto leading-relaxed">
+        Your feedback helps us create a better experience at every MANGO store.
+      </div>
+
+      <button
+        onClick={() => window.open("https://www.google.com/maps/search/Mango+UB+City+Bangalore", "_blank")}
+        className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-[#ECECEC] rounded-full text-[11px] text-[#1A1A1A] hover:border-[#C8A882] transition-all shadow-sm"
+      >
+        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Also leave a Google Review
+      </button>
+
+    </div>
+
+  ) : (
+
+    <div className="space-y-4">
+
+      {/* Header */}
+      <div className="flex items-center">
+        <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-3">
+          <MessageSquare className="h-4 w-4 text-[#8B6F5E]" />
+        </div>
+        <div>
+          <h3 className="text-[14px] font-medium text-[#1A1A1A]">Rate Your Visit</h3>
+          <p className="text-[11px] text-[#8B6F5E] mt-0.5">
+            How was your experience at MANGO {currentReceipt.branch}?
+          </p>
+        </div>
+      </div>
+
+      {/* Stars — always visible */}
+      <div className="flex justify-center gap-4 py-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            onClick={() => setRating(star)}
+            className="transition-all duration-200 hover:scale-105"
+          >
+            <Star className={`h-7 w-7 transition-colors ${star <= rating ? "fill-[#C8A882] text-[#C8A882]" : "text-[#D8D8D8]"}`} />
+          </button>
+        ))}
+      </div>
+
+      {/* Everything below — only after star selected */}
+      {rating > 0 && (
+
+        <div className="space-y-3">
+
+          {/* Comment Box */}
+          <textarea
+            rows={3}
+            placeholder="Additional comments (optional)..."
+            className="w-full p-3 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:bg-white focus:border-[#C8A882] outline-none resize-none transition-all text-[#1A1A1A] placeholder:text-[#B5B5B5]"
+            value={feedbackText}
+            onChange={(e) => setFeedbackText(e.target.value)}
+          />
+
+          {/* Submit */}
+          <button
+            className="w-full h-11 bg-[#1A1A1A] text-white rounded-2xl text-[12px] uppercase tracking-[0.18em] hover:bg-black transition-all"
+            onClick={handleFeedbackSubmit}
+          >
+            Submit Feedback
+          </button>
+
+          {/* Google Review — only 4 or 5 stars */}
+          {rating >= 4 && (
+            <button
+              onClick={() => window.open("https://www.google.com/maps/search/Mango+UB+City+Bangalore", "_blank")}
+              className="w-full h-11 rounded-2xl border border-[#ECECEC] bg-[#F8F8F8] text-[11px] text-[#1A1A1A] flex items-center justify-center gap-2 hover:border-[#C8A882] transition-all"
+            >
+              <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+              Leave a Google Review for this store
+            </button>
+          )}
+
+          <p className="text-center text-[10px] text-[#8B6F5E]">
+            Your feedback helps us refine every collection and in-store experience.
+          </p>
+
+        </div>
+
+      )}
+
+    </div>
+
+  )}
+
+</div>
+
+          
+          
+{/* MANGO Editorial Carousel */}
+<div className="bg-white rounded-3xl overflow-hidden mx-4 mt-6 relative shadow-xl border border-[#ECECEC]">
+
+  <Carousel
+    className="w-full"
+    setApi={setPromoApi}
+    opts={{
+      loop: true,
+    }}
+  >
+
+    <CarouselContent>
+
+      {/* Banner 1 - Kids World Cup Collection */}
+      <CarouselItem>
+        <div className="relative w-full aspect-[5/3]">
+          <Image
+            src="/images/design-mode/mango-banner-1.png"
+            alt="MANGO Kids World Cup Collection"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+      </CarouselItem>
+
+      {/* Banner 2 - Total White */}
+      <CarouselItem>
+        <div className="relative w-full aspect-[5/3]">
+          <Image
+            src="/images/design-mode/mango-banner-2.png"
+            alt="MANGO Total White"
+            fill
+            className="object-cover"
+          />
+        </div>
+      </CarouselItem>
+
+      {/* Banner 3 - Suit Guide */}
+      <CarouselItem>
+        <div className="relative w-full aspect-[5/3]">
+          <Image
+            src="/images/design-mode/mango-banner-3.png"
+            alt="MANGO Suit Guide"
+            fill
+            className="object-cover"
+          />
+        </div>
+      </CarouselItem>
+
+    </CarouselContent>
+
+    {/* Indicators */}
+    <div className="absolute bottom-4 right-5 flex gap-2 z-10">
+      {[0, 1, 2].map((index) => (
+        <button
+          key={index}
+          onClick={() => promoApi?.scrollTo(index)}
+          className={`transition-all duration-300 rounded-full ${
+            currentSlide === index
+              ? "w-8 h-2 bg-[#C8A882]"
+              : "w-2 h-2 bg-white/60"
+          }`}
+        />
+      ))}
+    </div>
+
+  </Carousel>
+
+</div>          
+               
 {/* Customer Care */}
 <div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-3 p-4">
 
@@ -1718,106 +1659,29 @@ body{
     </div>
   </div>
 
-  {/* Social Links */}
-  <div className="flex justify-center space-x-6 mb-6">
+  {/* Social Links — Instagram only */}
+  <div className="flex justify-center mb-5">
     <button onClick={() => handleSocialLink("https://www.instagram.com/mango/?hl=en")} className="flex flex-col items-center group">
       <div className="w-12 h-12 rounded-2xl bg-[#F8F8F8] border border-[#ECECEC] flex items-center justify-center mb-1.5 transition-all group-hover:border-[#C8A882]">
         <Instagram className="h-5 w-5 text-[#8B6F5E]" />
       </div>
       <span className="text-[10px] text-[#8B6F5E]">Instagram</span>
     </button>
-    <button onClick={() => handleSocialLink("https://www.facebook.com/mango.com/")} className="flex flex-col items-center group">
-      <div className="w-12 h-12 rounded-2xl bg-[#F8F8F8] border border-[#ECECEC] flex items-center justify-center mb-1.5 transition-all group-hover:border-[#C8A882]">
-        <Facebook className="h-5 w-5 text-[#8B6F5E]" />
-      </div>
-      <span className="text-[10px] text-[#8B6F5E]">Facebook</span>
-    </button>
-    <button onClick={() => handleSocialLink("https://shop.mango.com/in/en")} className="flex flex-col items-center group">
-      <div className="w-12 h-12 rounded-2xl bg-[#F8F8F8] border border-[#ECECEC] flex items-center justify-center mb-1.5 transition-all group-hover:border-[#C8A882]">
-        <ExternalLink className="h-5 w-5 text-[#8B6F5E]" />
-      </div>
-      <span className="text-[10px] text-[#8B6F5E]">Website</span>
-    </button>
   </div>
 
   {/* Store Locator */}
-  <div className="mb-3">
-    <a href="https://shop.mango.com/in/en/stores" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between w-full bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3.5 hover:border-[#C8A882] transition-all group">
-      <div className="flex items-center">
-        <div className="w-10 h-10 rounded-xl bg-white border border-[#ECECEC] flex items-center justify-center mr-3">
-          <MapPin className="h-5 w-5 text-[#C8A882]" />
-        </div>
-        <div>
-          <div className="text-[12px] font-medium text-[#1A1A1A]">Find a MANGO Store</div>
-          <div className="text-[10px] text-[#8B6F5E] mt-0.5">Locate your nearest store in India</div>
-        </div>
+  <a href="https://shop.mango.com/in/en/stores" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between w-full bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3.5 hover:border-[#C8A882] transition-all group">
+    <div className="flex items-center">
+      <div className="w-10 h-10 rounded-xl bg-white border border-[#ECECEC] flex items-center justify-center mr-3">
+        <MapPin className="h-5 w-5 text-[#C8A882]" />
       </div>
-      <ArrowRight className="h-4 w-4 text-[#8B6F5E] group-hover:translate-x-0.5 transition-transform" />
-    </a>
-  </div>
-
-  {/* Store Information — current store */}
-  <div className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3.5 mb-3">
-    <button onClick={() => setShowStoreLocation(!showStoreLocation)} className="w-full flex items-center justify-between">
-      <div className="flex items-center">
-        <div className="w-10 h-10 rounded-xl bg-white border border-[#ECECEC] flex items-center justify-center mr-3">
-          <MapPin className="h-5 w-5 text-[#8B6F5E]" />
-        </div>
-        <div className="text-left">
-          <div className="text-[12px] font-medium text-[#1A1A1A]">{currentReceipt.branch}</div>
-          <div className="text-[10px] text-[#8B6F5E] mt-0.5">View store details</div>
-        </div>
+      <div>
+        <div className="text-[12px] font-medium text-[#1A1A1A]">Find a MANGO Store</div>
+        <div className="text-[10px] text-[#8B6F5E] mt-0.5">Locate your nearest store in India</div>
       </div>
-      <span className="text-[10px] text-[#8B6F5E]">{showStoreLocation ? "▲" : "▼"}</span>
-    </button>
-
-    {showStoreLocation && (
-      <div className="mt-3 pt-3 border-t border-[#E5E5E5] text-center">
-        <div className="space-y-0.5 text-[12px] text-[#1A1A1A]">
-          <p className="font-medium">MANGO Store</p>
-          <p>UB City</p>
-          <p>24 Vittal Mallya Road</p>
-          <p>Ashok Nagar</p>
-          <p>Bengaluru, Karnataka 560001</p>
-        </div>
-        <div className="mt-3 pt-3 border-t border-[#E5E5E5]">
-          <p className="text-[10px] uppercase tracking-[0.12em] text-[#8B6F5E]">Store Associate</p>
-          <p className="text-[12px] text-[#1A1A1A] mt-1">{currentReceipt.associate}</p>
-        </div>
-      </div>
-    )}
-  </div>
-
-  {/* Returns & Exchange Policy */}
-  <div className="mb-3">
-    <button className="w-full flex items-center justify-between bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3.5 hover:border-[#C8A882] transition-all" onClick={() => setShowTerms(!showTerms)}>
-      <div className="flex items-center">
-        <div className="w-10 h-10 rounded-xl bg-white border border-[#ECECEC] flex items-center justify-center mr-3">
-          <FileText className="h-5 w-5 text-[#8B6F5E]" />
-        </div>
-        <div className="text-left">
-          <div className="text-[12px] font-medium text-[#1A1A1A]">Returns & Exchange Policy</div>
-          <div className="text-[10px] text-[#8B6F5E] mt-0.5">30-day exchange policy</div>
-        </div>
-      </div>
-      <span className="text-[10px] text-[#8B6F5E]">{showTerms ? "▲" : "▼"}</span>
-    </button>
-
-    {showTerms && (
-      <div className="mt-2 bg-[#FAFAFA] border border-[#ECECEC] rounded-2xl p-4 text-[11px] text-[#8B6F5E] leading-relaxed space-y-2.5">
-        <p className="font-medium text-[#1A1A1A] text-[12px]">In-Store Exchanges & Returns</p>
-        <p>{"• You have "}<span className="text-[#1A1A1A] font-medium">30 days</span>{" from the date of purchase to exchange items at any MANGO store in India. Bring this receipt (digital or printed) along with the items."}</p>
-        <p>{"• For hygiene reasons, "}<span className="text-[#1A1A1A]">swimwear, lingerie, underwear and earrings</span>{" cannot be exchanged or returned."}</p>
-        <p>{"• Personalised or altered items cannot be exchanged or returned."}</p>
-        <p>{"• Fragrances, candles and cosmetics must be returned in original sealed packaging."}</p>
-        <p>{"• Gift cards are non-exchangeable and non-returnable."}</p>
-        <a href="https://shop.mango.com/in/en/help/returns/store-returns" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[#C8A882] mt-3 hover:underline">
-          Full returns policy
-          <ArrowUpRight className="h-3 w-3" />
-        </a>
-      </div>
-    )}
-  </div>
+    </div>
+    <ArrowRight className="h-4 w-4 text-[#8B6F5E] group-hover:translate-x-0.5 transition-transform" />
+  </a>
 
   {/* Powered by */}
   <div className="text-center mt-5 pt-5 border-t border-[#ECECEC]">
