@@ -1680,9 +1680,6 @@ body{
     </div>
     <div>
       <h3 className="text-[13px] font-medium text-[#1A1A1A]">Customer Care</h3>
-      <p className="text-[10px] text-[#8B6F5E] mt-0.5">
-        Help with orders, returns and product enquiries.
-      </p>
     </div>
   </div>
 
