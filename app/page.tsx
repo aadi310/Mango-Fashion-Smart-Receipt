@@ -1185,6 +1185,74 @@ body{
   </div>
 
 </div>
+
+           {/* Receipt Actions */}
+<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-6">
+
+  <div className="mb-5">
+    <h3 className="text-[15px] font-medium text-[#1A1A1A]">
+      Receipt Services
+    </h3>
+
+    <p className="text-[11px] text-[#8B6F5E] mt-1">
+      Access and manage your purchase documents.
+    </p>
+  </div>
+
+  <div className="grid grid-cols-3 gap-4">
+
+    {/* History */}
+    <button
+      ref={historyButtonRef}
+      onClick={handleTransactionHistoryOpen}
+      className="group flex flex-col items-center justify-center bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl py-4 transition-all hover:border-[#C8A882] active:scale-[0.97]"
+    >
+
+      <div className="w-10 h-10 rounded-full bg-white border border-[#ECECEC] flex items-center justify-center mb-3">
+        <History className="h-5 w-5 text-[#8B6F5E]" />
+      </div>
+
+      <span className="text-[11px] text-[#1A1A1A]">
+        History
+      </span>
+
+    </button>
+
+    {/* Email */}
+    <button
+      onClick={handleEmailReceipt}
+      className="group flex flex-col items-center justify-center bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl py-4 transition-all hover:border-[#C8A882] active:scale-[0.97]"
+    >
+
+      <div className="w-10 h-10 rounded-full bg-white border border-[#ECECEC] flex items-center justify-center mb-3">
+        <Mail className="h-5 w-5 text-[#8B6F5E]" />
+      </div>
+
+      <span className="text-[11px] text-[#1A1A1A]">
+        Email
+      </span>
+
+    </button>
+
+    {/* Download */}
+    <button
+      onClick={handleDownloadReceipt}
+      className="group flex flex-col items-center justify-center bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl py-4 transition-all hover:border-[#C8A882] active:scale-[0.97]"
+    >
+
+      <div className="w-10 h-10 rounded-full bg-white border border-[#ECECEC] flex items-center justify-center mb-3">
+        <Download className="h-5 w-5 text-[#8B6F5E]" />
+      </div>
+
+      <span className="text-[11px] text-[#1A1A1A]">
+        Download
+      </span>
+
+    </button>
+
+  </div>
+
+</div>
           
           {/* MANGO Feedback Section */}
 <div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-5">
@@ -1630,464 +1698,6 @@ body{
 
 </div>
           
-      {/* MANGO Club Status */}
-<div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mt-6 mx-4 p-6">
-
-  {/* Header */}
-  <div className="flex items-center justify-between mb-6">
-
-    <div className="flex items-center">
-
-      <div className="w-10 h-10 bg-[#C8A882]/15 rounded-xl flex items-center justify-center mr-3">
-        <Crown className="h-5 w-5 text-[#8B6F5E]" />
-      </div>
-
-      <div>
-        <h3 className="text-[15px] font-medium text-[#1A1A1A]">
-          MANGO Club
-        </h3>
-
-        <p className="text-[11px] text-[#8B6F5E] mt-1">
-          Member benefits and exclusive fashion access
-        </p>
-      </div>
-
-    </div>
-
-    <div>
-      <span className="bg-[#C8A882] text-black text-[10px] uppercase tracking-[0.12em] px-3 py-1 rounded-full">
-        Premium
-      </span>
-    </div>
-
-  </div>
-
-  {/* Membership Overview */}
-
-  <div className="grid grid-cols-2 gap-3 mb-6">
-
-    <div className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl p-4">
-
-      <div className="text-[10px] uppercase tracking-[0.12em] text-[#8B6F5E] mb-2">
-        Annual Spend
-      </div>
-
-      <div className="text-[24px] font-light text-[#1A1A1A]">
-        ₹18,420
-      </div>
-
-    </div>
-
-    <div className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl p-4">
-
-      <div className="text-[10px] uppercase tracking-[0.12em] text-[#8B6F5E] mb-2">
-        Purchases
-      </div>
-
-      <div className="text-[24px] font-light text-[#1A1A1A]">
-        12
-      </div>
-
-    </div>
-
-  </div>
-
-  {/* Tier Progress */}
-
-  <div className="bg-[#1A1A1A] rounded-2xl p-5 mb-6">
-
-    <div className="flex justify-between items-center mb-4">
-
-      <div>
-
-        <div className="text-[10px] uppercase tracking-[0.15em] text-[#C8A882]">
-          Current Tier
-        </div>
-
-        <div className="text-white text-lg font-medium mt-1">
-          Premium Member
-        </div>
-
-      </div>
-
-      <div className="text-right">
-
-        <div className="text-white text-sm">
-          ₹18,420 / ₹25,000
-        </div>
-
-      </div>
-
-    </div>
-
-    <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-
-      <div
-        className="h-full bg-[#C8A882] rounded-full"
-        style={{ width: "74%" }}
-      />
-
-    </div>
-
-    <div className="mt-3 text-[11px] text-white/70 leading-relaxed">
-      Spend another <span className="text-white">₹6,580</span> to unlock
-      Signature status and receive priority access to selected collections.
-    </div>
-
-  </div>
-
-  {/* Tiers */}
-
-  <div className="mb-6">
-
-    <div className="text-[11px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-4">
-      Membership Levels
-    </div>
-
-    <div className="space-y-3">
-
-      <div className="flex items-center justify-between p-3 rounded-xl border border-[#ECECEC] bg-[#FAFAFA]">
-
-        <div>
-          <div className="text-sm text-[#1A1A1A]">
-            Essential
-          </div>
-          <div className="text-[11px] text-[#8B6F5E]">
-            Welcome benefits
-          </div>
-        </div>
-
-        <Check className="h-4 w-4 text-[#C8A882]" />
-
-      </div>
-
-      <div className="flex items-center justify-between p-3 rounded-xl border border-[#C8A882] bg-[#C8A882]/10">
-
-        <div>
-          <div className="text-sm text-[#1A1A1A] font-medium">
-            Premium
-          </div>
-          <div className="text-[11px] text-[#8B6F5E]">
-            Current Membership
-          </div>
-        </div>
-
-        <Crown className="h-4 w-4 text-[#8B6F5E]" />
-
-      </div>
-
-      <div className="flex items-center justify-between p-3 rounded-xl border border-[#ECECEC]">
-
-        <div>
-          <div className="text-sm text-[#1A1A1A]">
-            Signature
-          </div>
-          <div className="text-[11px] text-[#8B6F5E]">
-            Exclusive access tier
-          </div>
-        </div>
-
-        <Lock className="h-4 w-4 text-[#BDBDBD]" />
-
-      </div>
-
-    </div>
-
-  </div>
-
-  {/* Active Benefits */}
-
-  <div>
-
-    <div className="text-[11px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-4">
-      Active Benefits
-    </div>
-
-    <div className="grid grid-cols-2 gap-3">
-
-      <div className="bg-[#F8F8F8] rounded-xl p-3 border border-[#ECECEC] text-[12px] text-[#1A1A1A]">
-        Early Collection Access
-      </div>
-
-      <div className="bg-[#F8F8F8] rounded-xl p-3 border border-[#ECECEC] text-[12px] text-[#1A1A1A]">
-        Priority Sale Access
-      </div>
-
-      <div className="bg-[#F8F8F8] rounded-xl p-3 border border-[#ECECEC] text-[12px] text-[#1A1A1A]">
-        Personalised Picks
-      </div>
-
-      <div className="bg-[#F8F8F8] rounded-xl p-3 border border-[#ECECEC] text-[12px] text-[#1A1A1A]">
-        Express Checkout
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-          
-{/* Discover More From MANGO */}
-<div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mx-4 mt-6 p-6">
-
-  {/* Header */}
-  <div className="flex items-center mb-6">
-
-    <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-4">
-      <LayoutGrid className="h-5 w-5 text-[#8B6F5E]" />
-    </div>
-
-    <div>
-      <h3 className="text-[15px] font-medium text-[#1A1A1A]">
-        Discover More
-      </h3>
-
-      <p className="text-[11px] text-[#8B6F5E] mt-1">
-        Explore curated collections from MANGO
-      </p>
-    </div>
-
-  </div>
-
-  {/* Categories */}
-  <div className="grid grid-cols-2 gap-4">
-
-    {/* Dresses */}
-    <a
-      href="https://shop.mango.com/in/en/c/women/dresses-and-jumpsuits/e6bb8705"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group"
-    >
-      <div className="overflow-hidden rounded-2xl border border-[#ECECEC] bg-[#F8F8F8]">
-
-        <div className="relative aspect-[539/754]">
-
-          <Image
-            src="/images/design-mode/Dress.png"
-            alt="Women's Dresses"
-            fill
-            className="object-contain transition-transform duration-500 group-hover:scale-[1.03]"
-          />
-
-        </div>
-
-        <div className="p-4 border-t border-[#ECECEC]">
-
-          <div className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1">
-            Women
-          </div>
-
-          <div className="text-[14px] text-[#1A1A1A]">
-            Dresses
-          </div>
-
-        </div>
-
-      </div>
-    </a>
-
-    {/* Bags */}
-    <a
-      href="https://shop.mango.com/in/en/c/women/bags/8dff98e6"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group"
-    >
-      <div className="overflow-hidden rounded-2xl border border-[#ECECEC] bg-[#F8F8F8]">
-
-        <div className="relative aspect-[539/754]">
-
-          <Image
-            src="/images/design-mode/bag.png"
-            alt="Women's Bags"
-            fill
-            className="object-contain transition-transform duration-500 group-hover:scale-[1.03]"
-          />
-
-        </div>
-
-        <div className="p-4 border-t border-[#ECECEC]">
-
-          <div className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1">
-            Women
-          </div>
-
-          <div className="text-[14px] text-[#1A1A1A]">
-            Bags
-          </div>
-
-        </div>
-
-      </div>
-    </a>
-
-    {/* Teen Trousers */}
-    <a
-      href="https://shop.mango.com/in/en/c/teen/teena/trousers/ab68c0bd"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group"
-    >
-      <div className="overflow-hidden rounded-2xl border border-[#ECECEC] bg-[#F8F8F8]">
-
-        <div className="relative aspect-[539/754]">
-
-          <Image
-            src="/images/design-mode/trouser.png"
-            alt="Teen Trousers"
-            fill
-            className="object-contain transition-transform duration-500 group-hover:scale-[1.03]"
-          />
-
-        </div>
-
-        <div className="p-4 border-t border-[#ECECEC]">
-
-          <div className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1">
-            Teen
-          </div>
-
-          <div className="text-[14px] text-[#1A1A1A]">
-            Trousers
-          </div>
-
-        </div>
-
-      </div>
-    </a>
-
-    {/* Blazers */}
-    <a
-      href="https://shop.mango.com/in/en/c/men/blazers/34c56468"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group"
-    >
-      <div className="overflow-hidden rounded-2xl border border-[#ECECEC] bg-[#F8F8F8]">
-
-        <div className="relative aspect-[539/754]">
-
-          <Image
-            src="/images/design-mode/blazer.png"
-            alt="Men's Blazers"
-            fill
-            className="object-contain transition-transform duration-500 group-hover:scale-[1.03]"
-          />
-
-        </div>
-
-        <div className="p-4 border-t border-[#ECECEC]">
-
-          <div className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1">
-            Men
-          </div>
-
-          <div className="text-[14px] text-[#1A1A1A]">
-            Blazers
-          </div>
-
-        </div>
-
-      </div>
-    </a>
-
-  </div>
-
-  {/* Main CTA */}
-
-  <div className="mt-8 pt-6 border-t border-[#ECECEC]">
-
-    <a
-      href="https://shop.mango.com/in/en"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group flex items-center justify-between w-full h-14 px-5 bg-[#1A1A1A] text-white rounded-2xl transition-all duration-300 hover:bg-black"
-    >
-
-      <span className="text-[12px] uppercase tracking-[0.18em]">
-        Explore Mango
-      </span>
-
-      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-
-    </a>
-
-  </div>
-
-  <p className="text-[10px] text-center text-[#8B6F5E] mt-4 leading-relaxed">
-    Discover new arrivals, seasonal collections and timeless wardrobe essentials.
-  </p>
-
-</div>
-          
-         {/* Receipt Actions */}
-<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-6">
-
-  <div className="mb-5">
-    <h3 className="text-[15px] font-medium text-[#1A1A1A]">
-      Receipt Services
-    </h3>
-
-    <p className="text-[11px] text-[#8B6F5E] mt-1">
-      Access and manage your purchase documents.
-    </p>
-  </div>
-
-  <div className="grid grid-cols-3 gap-4">
-
-    {/* History */}
-    <button
-      ref={historyButtonRef}
-      onClick={handleTransactionHistoryOpen}
-      className="group flex flex-col items-center justify-center bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl py-4 transition-all hover:border-[#C8A882] active:scale-[0.97]"
-    >
-
-      <div className="w-10 h-10 rounded-full bg-white border border-[#ECECEC] flex items-center justify-center mb-3">
-        <History className="h-5 w-5 text-[#8B6F5E]" />
-      </div>
-
-      <span className="text-[11px] text-[#1A1A1A]">
-        History
-      </span>
-
-    </button>
-
-    {/* Email */}
-    <button
-      onClick={handleEmailReceipt}
-      className="group flex flex-col items-center justify-center bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl py-4 transition-all hover:border-[#C8A882] active:scale-[0.97]"
-    >
-
-      <div className="w-10 h-10 rounded-full bg-white border border-[#ECECEC] flex items-center justify-center mb-3">
-        <Mail className="h-5 w-5 text-[#8B6F5E]" />
-      </div>
-
-      <span className="text-[11px] text-[#1A1A1A]">
-        Email
-      </span>
-
-    </button>
-
-    {/* Download */}
-    <button
-      onClick={handleDownloadReceipt}
-      className="group flex flex-col items-center justify-center bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl py-4 transition-all hover:border-[#C8A882] active:scale-[0.97]"
-    >
-
-      <div className="w-10 h-10 rounded-full bg-white border border-[#ECECEC] flex items-center justify-center mb-3">
-        <Download className="h-5 w-5 text-[#8B6F5E]" />
-      </div>
-
-      <span className="text-[11px] text-[#1A1A1A]">
-        Download
-      </span>
-
-    </button>
-
-  </div>
-
-</div>
 
 {/* Customer Care */}
 <div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-6">
