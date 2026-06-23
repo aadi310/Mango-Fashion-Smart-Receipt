@@ -1384,7 +1384,7 @@ body{
 </div>
 
         {/* Returns & Exchange Policy */}
-<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-5 mb-8">
+<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-5">
 
   <button
     className="w-full flex items-center justify-between"
