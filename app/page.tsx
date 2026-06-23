@@ -1187,72 +1187,45 @@ body{
 </div>
 
            {/* Receipt Actions */}
-<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-6">
+<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-3 px-4 py-3">
 
-  <div className="mb-5">
-    <h3 className="text-[15px] font-medium text-[#1A1A1A]">
-      Receipt Services
-    </h3>
+  <div className="flex items-center gap-3">
 
-    <p className="text-[11px] text-[#8B6F5E] mt-1">
-      Access and manage your purchase documents.
-    </p>
-  </div>
+    <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-[#8B6F5E]">Receipt</span>
 
-  <div className="grid grid-cols-3 gap-4">
+    <div className="flex flex-1 gap-2">
 
-    {/* History */}
-    <button
-      ref={historyButtonRef}
-      onClick={handleTransactionHistoryOpen}
-      className="group flex flex-col items-center justify-center bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl py-4 transition-all hover:border-[#C8A882] active:scale-[0.97]"
-    >
+      <button
+        ref={historyButtonRef}
+        onClick={handleTransactionHistoryOpen}
+        className="flex-1 flex items-center justify-center gap-1.5 bg-[#F8F8F8] border border-[#ECECEC] rounded-xl py-2 transition-all hover:border-[#C8A882] active:scale-[0.97]"
+      >
+        <History className="h-3.5 w-3.5 text-[#8B6F5E]" />
+        <span className="text-[10px] text-[#1A1A1A]">History</span>
+      </button>
 
-      <div className="w-10 h-10 rounded-full bg-white border border-[#ECECEC] flex items-center justify-center mb-3">
-        <History className="h-5 w-5 text-[#8B6F5E]" />
-      </div>
+      <button
+        onClick={handleEmailReceipt}
+        className="flex-1 flex items-center justify-center gap-1.5 bg-[#F8F8F8] border border-[#ECECEC] rounded-xl py-2 transition-all hover:border-[#C8A882] active:scale-[0.97]"
+      >
+        <Mail className="h-3.5 w-3.5 text-[#8B6F5E]" />
+        <span className="text-[10px] text-[#1A1A1A]">Email</span>
+      </button>
 
-      <span className="text-[11px] text-[#1A1A1A]">
-        History
-      </span>
+      <button
+        onClick={handleDownloadReceipt}
+        className="flex-1 flex items-center justify-center gap-1.5 bg-[#F8F8F8] border border-[#ECECEC] rounded-xl py-2 transition-all hover:border-[#C8A882] active:scale-[0.97]"
+      >
+        <Download className="h-3.5 w-3.5 text-[#8B6F5E]" />
+        <span className="text-[10px] text-[#1A1A1A]">Download</span>
+      </button>
 
-    </button>
-
-    {/* Email */}
-    <button
-      onClick={handleEmailReceipt}
-      className="group flex flex-col items-center justify-center bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl py-4 transition-all hover:border-[#C8A882] active:scale-[0.97]"
-    >
-
-      <div className="w-10 h-10 rounded-full bg-white border border-[#ECECEC] flex items-center justify-center mb-3">
-        <Mail className="h-5 w-5 text-[#8B6F5E]" />
-      </div>
-
-      <span className="text-[11px] text-[#1A1A1A]">
-        Email
-      </span>
-
-    </button>
-
-    {/* Download */}
-    <button
-      onClick={handleDownloadReceipt}
-      className="group flex flex-col items-center justify-center bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl py-4 transition-all hover:border-[#C8A882] active:scale-[0.97]"
-    >
-
-      <div className="w-10 h-10 rounded-full bg-white border border-[#ECECEC] flex items-center justify-center mb-3">
-        <Download className="h-5 w-5 text-[#8B6F5E]" />
-      </div>
-
-      <span className="text-[11px] text-[#1A1A1A]">
-        Download
-      </span>
-
-    </button>
+    </div>
 
   </div>
 
 </div>
+
           
           {/* MANGO Feedback Section */}
 <div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-5">
@@ -1698,85 +1671,44 @@ body{
 
 </div>
           
-
 {/* Customer Care */}
-<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-6">
+<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-3 p-4">
 
-  {/* Header */}
-  <div className="flex items-center mb-6">
-
-    <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-4">
-      <Headset className="h-5 w-5 text-[#8B6F5E]" />
+  <div className="flex items-center mb-4">
+    <div className="w-9 h-9 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-3 flex-shrink-0">
+      <Headset className="h-4 w-4 text-[#8B6F5E]" />
     </div>
-
     <div>
-
-      <h3 className="text-[15px] font-medium text-[#1A1A1A]">
-        Customer Care
-      </h3>
-
-      <p className="text-[11px] text-[#8B6F5E] mt-1">
-        Assistance for orders, returns and product enquiries.
+      <h3 className="text-[13px] font-medium text-[#1A1A1A]">Customer Care</h3>
+      <p className="text-[10px] text-[#8B6F5E] mt-0.5">
+        Help with orders, returns and product enquiries.
       </p>
-
     </div>
-
   </div>
 
-  {/* Contact Options */}
-  <div className="grid grid-cols-3 gap-4">
+  <div className="grid grid-cols-2 gap-2">
 
-    {/* WhatsApp */}
-    <button
-      onClick={handleWhatsApp}
-      className="flex flex-col items-center justify-center bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl py-4 transition-all hover:border-[#C8A882] active:scale-[0.97]"
-    >
-
-      <MessageSquare className="h-5 w-5 text-[#8B6F5E] mb-3" />
-
-      <span className="text-[11px] text-[#1A1A1A]">
-        WhatsApp
-      </span>
-
-    </button>
-
-    {/* Call */}
     <button
       onClick={handleCall}
-      className="flex flex-col items-center justify-center bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl py-4 transition-all hover:border-[#C8A882] active:scale-[0.97]"
+      className="flex items-center gap-3 bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3 transition-all hover:border-[#C8A882] active:scale-[0.97]"
     >
-
-      <Phone className="h-5 w-5 text-[#8B6F5E] mb-3" />
-
-      <span className="text-[11px] text-[#1A1A1A]">
-        Call
-      </span>
-
+      <Phone className="h-4 w-4 text-[#8B6F5E] flex-shrink-0" />
+      <div className="text-left">
+        <div className="text-[11px] font-medium text-[#1A1A1A]">Call Us</div>
+        <div className="text-[9px] text-[#8B6F5E] mt-0.5">Mon–Fri, 9am–8:30pm</div>
+      </div>
     </button>
 
-    {/* Email */}
     <button
       onClick={handleEmail}
-      className="flex flex-col items-center justify-center bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl py-4 transition-all hover:border-[#C8A882] active:scale-[0.97]"
+      className="flex items-center gap-3 bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3 transition-all hover:border-[#C8A882] active:scale-[0.97]"
     >
-
-      <Mail className="h-5 w-5 text-[#8B6F5E] mb-3" />
-
-      <span className="text-[11px] text-[#1A1A1A]">
-        Email
-      </span>
-
+      <Mail className="h-4 w-4 text-[#8B6F5E] flex-shrink-0" />
+      <div className="text-left">
+        <div className="text-[11px] font-medium text-[#1A1A1A]">Email Us</div>
+        <div className="text-[9px] text-[#8B6F5E] mt-0.5">We'll respond shortly</div>
+      </div>
     </button>
-
-  </div>
-
-  {/* Footer Note */}
-
-  <div className="mt-6 pt-5 border-t border-[#ECECEC] text-center">
-
-    <p className="text-[10px] text-[#8B6F5E] leading-relaxed">
-      Need help with sizing, returns or your recent order? Our team is here to assist.
-    </p>
 
   </div>
 
