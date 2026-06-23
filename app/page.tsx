@@ -1494,7 +1494,7 @@ body{
 </div>          
                
 {/* Reach Us */}
-<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-3 p-4 mb-8">
+<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-5">
 
   {/* Header */}
   <div className="flex items-center mb-4">
@@ -1677,7 +1677,7 @@ body{
       ) : (
 
         /* Powered by — pre-rating state (no star selected yet) */
-        <div className="flex items-center justify-center space-x-2 pt-1 border-t border-[#ECECEC]">
+        <div className="flex items-center justify-center space-x-2 pt-1 mb-3 border-t border-[#ECECEC]">
           <span className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E]">Powered by</span>
           <a href="https://www.rdep.io" target="_blank" rel="noopener noreferrer" className="opacity-80 hover:opacity-100 transition-opacity">
             <Image src="/images/design-mode/RDEP%20cropped.png" alt="RDEP" width={55} height={14} className="object-contain" />
