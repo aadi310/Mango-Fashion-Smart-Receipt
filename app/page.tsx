@@ -164,7 +164,9 @@ const [expandedItemFeedback, setExpandedItemFeedback] = useState([])
   })
 }
 
-  const customerName = "Vikas"
+const customerName = "Vikas"
+const customerAddress = "204, Prestige Falcon Towers, Brigade Road, Bengaluru, Karnataka 560025"
+const customerGstin = "29ABCDE1234F1Z5" // leave empty string "" to hide the row entirely
 
   // Carousel refs and APIs
   const [promoApi, setPromoApi] = useState<CarouselApi>()
@@ -1030,16 +1032,12 @@ body{
       >
         <div className="flex flex-col w-full gap-3 pb-4 px-3">
 
-        {/* MANGO Premium Fashion Header */}
+       {/* MANGO Premium Fashion Header */}
 <div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mt-4 mx-4 overflow-hidden">
 
   {/* Logo only row */}
   <div className="px-5 pt-4 pb-3 bg-white">
-    <img
-      src="/images/design-mode/mango.png"
-      alt="MANGO"
-      className="h-6 w-auto object-contain"
-    />
+    <img src="/images/design-mode/mango.png" alt="MANGO" className="h-6 w-auto object-contain" />
     <p className="mt-1.5 text-[9px] uppercase tracking-[0.22em] text-[#8B6F5E] font-medium">
       Thank you, {customerName}
     </p>
@@ -1047,7 +1045,6 @@ body{
 
   {/* Metadata strip — receipt info left, total right */}
   <div className="px-5 py-3 bg-[#F8F8F8] border-t border-[#ECECEC] flex items-center justify-between">
-
     <div>
       <div className="text-[11px] font-medium text-[#1A1A1A]">
         #{currentReceipt.id.slice(-8)}
@@ -1058,7 +1055,6 @@ body{
         <span>{currentReceipt.time}</span>
       </div>
     </div>
-
     <div className="text-right">
       <div className="text-[9px] uppercase tracking-[0.18em] text-[#8B6F5E] font-medium">
         Total Paid
@@ -1067,8 +1063,36 @@ body{
         ₹{currentReceipt.total.toLocaleString("en-IN")}
       </div>
     </div>
-
   </div>
+
+  {/* NEW — Billed To: Customer Address & GSTIN */}
+  {(customerAddress || customerGstin) && (
+    <div className="px-5 py-4 bg-white border-t border-[#ECECEC]">
+      <div className="text-[9px] uppercase tracking-[0.18em] text-[#8B6F5E] font-medium mb-2">
+        Billed To
+      </div>
+
+      <div className="text-[13px] font-medium text-[#1A1A1A] leading-snug">
+        {customerName}
+      </div>
+
+      {customerAddress && (
+        <div className="text-[11px] text-[#8B6F5E] mt-1 leading-relaxed max-w-[85%]">
+          {customerAddress}
+        </div>
+      )}
+
+      {customerGstin && (
+        <div className="flex items-center gap-1.5 mt-2">
+          <span className="text-[9px] uppercase tracking-[0.14em] text-[#BBBBBB]">GSTIN</span>
+          <span className="text-[9px] text-[#DDDDDD]">·</span>
+          <span className="text-[10px] text-[#1A1A1A] font-medium tracking-wide">
+            {customerGstin}
+          </span>
+        </div>
+      )}
+    </div>
+  )}
 
 </div>
           
