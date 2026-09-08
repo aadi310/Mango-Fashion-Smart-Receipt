@@ -1032,12 +1032,16 @@ body{
       >
         <div className="flex flex-col w-full gap-3 pb-4 px-3">
 
-       {/* MANGO Premium Fashion Header */}
+      {/* MANGO Premium Fashion Header */}
 <div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mt-4 mx-4 overflow-hidden">
 
-  {/* Logo only row */}
+  {/* Logo + greeting */}
   <div className="px-5 pt-4 pb-3 bg-white">
-    <img src="/images/design-mode/mango.png" alt="MANGO" className="h-6 w-auto object-contain" />
+    <img
+      src="/images/design-mode/mango.png"
+      alt="MANGO"
+      className="h-6 w-auto object-contain"
+    />
     <p className="mt-1.5 text-[9px] uppercase tracking-[0.22em] text-[#8B6F5E] font-medium">
       Thank you, {customerName}
     </p>
@@ -1055,6 +1059,7 @@ body{
         <span>{currentReceipt.time}</span>
       </div>
     </div>
+
     <div className="text-right">
       <div className="text-[9px] uppercase tracking-[0.18em] text-[#8B6F5E] font-medium">
         Total Paid
@@ -1065,32 +1070,28 @@ body{
     </div>
   </div>
 
-  {/* NEW — Billed To: Customer Address & GSTIN */}
+  {/* NEW — Invoice details: address + GSTIN as icon rows */}
   {(customerAddress || customerGstin) && (
-    <div className="px-5 py-4 bg-white border-t border-[#ECECEC]">
-      <div className="text-[9px] uppercase tracking-[0.18em] text-[#8B6F5E] font-medium mb-2">
-        Billed To
-      </div>
-
-      <div className="text-[13px] font-medium text-[#1A1A1A] leading-snug">
-        {customerName}
-      </div>
+    <div className="px-5 py-3 bg-white border-t border-[#ECECEC] divide-y divide-[#F2F2F2]">
 
       {customerAddress && (
-        <div className="text-[11px] text-[#8B6F5E] mt-1 leading-relaxed max-w-[85%]">
-          {customerAddress}
+        <div className="flex items-start gap-2.5 py-2 first:pt-0 last:pb-0">
+          <MapPin className="h-3 w-3 text-[#C8A882] mt-0.5 flex-shrink-0" />
+          <span className="text-[10.5px] text-[#8B6F5E] leading-relaxed">
+            {customerAddress}
+          </span>
         </div>
       )}
 
       {customerGstin && (
-        <div className="flex items-center gap-1.5 mt-2">
-          <span className="text-[9px] uppercase tracking-[0.14em] text-[#BBBBBB]">GSTIN</span>
-          <span className="text-[9px] text-[#DDDDDD]">·</span>
-          <span className="text-[10px] text-[#1A1A1A] font-medium tracking-wide">
-            {customerGstin}
+        <div className="flex items-center gap-2.5 py-2 first:pt-0 last:pb-0">
+          <ReceiptIcon className="h-3 w-3 text-[#C8A882] flex-shrink-0" />
+          <span className="text-[10.5px] text-[#8B6F5E]">
+            GSTIN <span className="text-[#1A1A1A] font-medium tracking-wide ml-1">{customerGstin}</span>
           </span>
         </div>
       )}
+
     </div>
   )}
 
