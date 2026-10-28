@@ -8,10 +8,11 @@
  * soft shadows pop off the canvas; Mango brown is used for emphasis, black for the main actions.
  * After the receipt: rate your visit (stars flash until the first tap), profile, exchange,
  * "Reach us" and a Mango brand card for the store (brown header band, address always visible,
- * contact rows / associate / GSTIN copy expand). The page closes with a dark panel carrying a large
- * white Mango wordmark, a two-tone thank-you, the registered office, a back-to-top button and a
- * single "Powered by [RDEP]" line. Popups are rounded white sheets with a grab handle; the history
- * popup lists purchases as date tiles.
+ * contact rows / associate / GSTIN copy expand). The page closes with a light warm-tint panel:
+ * the Mango wordmark, a two-tone thank-you, the registered office in a white card, a back-to-top
+ * button and a single "Powered by [RDEP]" line. Popups are light rounded sheets with a grab
+ * handle; the history popup shows two summary tiles and the purchases as date tiles, with the
+ * open receipt outlined in brown.
  *
  * Mango allows curves, so cards, buttons, chips and switches are rounded.
  *
@@ -102,9 +103,9 @@ const theme = {
   "--mg-canvas": "#F5F5F5", // the receipt column background
   "--mg-page": "#E8E5E2", // page behind the column on desktop
   "--mg-wash": "#F3EEEA", // tiles and hovers inside white cards
+  "--mg-tint": "#E9DFD7", // pressed tiles, closing panel background
   "--mg-line": "rgba(139,111,94,0.3)", // hairlines
   "--mg-edge": "rgba(139,111,94,0.75)", // input underlines
-  "--mg-sand": "#D8C3B4", // light brown accent on dark panels
 } as CSSProperties;
 
 /* Assets + links */
@@ -559,7 +560,7 @@ function Heading({ children, sub, size = 22 }: { children: ReactNode; sub?: stri
   );
 }
 
-/** Popups are rounded white sheets with a grab handle. */
+/** Popups are light rounded sheets with a grab handle. */
 function Modal({
   title,
   subtitle,
@@ -594,7 +595,7 @@ function Modal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-[#1A1A1A]/60 backdrop-blur-[2px] sm:items-center sm:p-4"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-[#1A1A1A]/45 backdrop-blur-[2px] sm:items-center sm:p-4"
       onMouseDown={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
@@ -613,13 +614,14 @@ function Modal({
                 <h2 id={titleId} className="mg-display text-[22px] uppercase leading-[1.1] tracking-[0.05em] text-[var(--mg-ink)]">
                   {title}
                 </h2>
-                {subtitle && <p className="mt-2 text-[14px] leading-snug">{subtitle}</p>}
+                <span aria-hidden="true" className="mt-3 block h-1 w-10 rounded-full bg-[var(--mg-brown)]" />
+                {subtitle && <p className="mt-3 text-[14px] leading-snug">{subtitle}</p>}
               </div>
               <button
                 type="button"
                 onClick={onClose}
                 aria-label="Close"
-                className={`grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[var(--mg-wash)] text-[var(--mg-ink)] transition-colors active:bg-[var(--mg-ink)] active:text-white [@media(hover:hover)]:hover:bg-[var(--mg-ink)] [@media(hover:hover)]:hover:text-white motion-reduce:transition-none ${onPaper}`}
+                className={`grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[var(--mg-wash)] text-[var(--mg-ink)] transition-colors active:bg-[var(--mg-tint)] [@media(hover:hover)]:hover:bg-[var(--mg-tint)] motion-reduce:transition-none ${onPaper}`}
               >
                 <Icon name="close" className="h-4 w-4" />
               </button>
@@ -1027,6 +1029,7 @@ function ReceiptView({
 
   const { store, exchange } = data;
   const t = useMemo(() => totalsOf(data), [data]);
+  const historyTotal = useMemo(() => history.reduce((a, h) => a + h.amount, 0), [history]);
   const firstName = data.customer.name.trim().split(/\s+/)[0] || data.customer.name;
   /* MangoSans is wide: ~0.72em per uppercase character. Fits ~180px next to the logo. */
   const nameSize = Math.min(30, Math.max(18, Math.floor(180 / (0.72 * (firstName.length + 1)))));
@@ -1279,7 +1282,7 @@ function ReceiptView({
                 aria-expanded={storeOpen}
                 aria-controls={storeId}
                 className={`mt-4 flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3.5 text-left ${onPaper} ${
-                  storeOpen ? "bg-[var(--mg-ink)] text-white" : "bg-[var(--mg-wash)] text-[var(--mg-ink)] active:bg-[#E9DFD7]"
+                  storeOpen ? "bg-[var(--mg-brown)] text-white" : "bg-[var(--mg-wash)] text-[var(--mg-ink)] active:bg-[var(--mg-tint)]"
                 }`}
               >
                 <span className="mg-display text-[13px] uppercase tracking-[0.08em]">
@@ -1287,7 +1290,7 @@ function ReceiptView({
                 </span>
                 <span
                   aria-hidden="true"
-                  className={`grid h-7 w-7 shrink-0 place-items-center rounded-full ${storeOpen ? "bg-white text-[var(--mg-ink)]" : "bg-[var(--mg-ink)] text-white"}`}
+                  className={`grid h-7 w-7 shrink-0 place-items-center rounded-full ${storeOpen ? "bg-white text-[var(--mg-brown)]" : "bg-[var(--mg-brown)] text-white"}`}
                 >
                   <Icon name="close" className={`h-3.5 w-3.5 transition-transform duration-300 motion-reduce:transition-none ${storeOpen ? "rotate-0" : "rotate-45"}`} />
                 </span>
@@ -1304,7 +1307,7 @@ function ReceiptView({
                     <li key={r.label}>
                       <a
                         href={r.href}
-                        className={`flex items-center gap-3 rounded-2xl bg-[var(--mg-wash)] p-3 active:bg-[#E9DFD7] [@media(hover:hover)]:hover:bg-[#E9DFD7] ${onPaper}`}
+                        className={`flex items-center gap-3 rounded-2xl bg-[var(--mg-wash)] p-3 active:bg-[var(--mg-tint)] [@media(hover:hover)]:hover:bg-[var(--mg-tint)] ${onPaper}`}
                       >
                         <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-[var(--mg-brown)]">
                           <Icon name={r.icon} className="h-[18px] w-[18px]" />
@@ -1319,7 +1322,7 @@ function ReceiptView({
                   ))}
 
                   <li className="flex items-center gap-3 rounded-2xl bg-[var(--mg-wash)] p-3">
-                    <span className="mg-display grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[var(--mg-ink)] text-[16px] uppercase text-white">
+                    <span className="mg-display grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[var(--mg-brown)] text-[16px] uppercase text-white">
                       {store.associate.charAt(0)}
                     </span>
                     <span className="min-w-0 flex-1">
@@ -1348,10 +1351,10 @@ function ReceiptView({
           </section>
         </div>
 
-        {/* ---------- Closing panel ---------- */}
-        <footer className="relative mt-10 overflow-hidden rounded-t-[40px] bg-[var(--mg-ink)] px-6 pb-10 pt-11 text-white">
-          <span aria-hidden="true" className="pointer-events-none absolute -right-16 -top-16 h-52 w-52 rounded-full border-[26px]" style={{ borderColor: "rgba(139,111,94,0.35)" }} />
-          <span aria-hidden="true" className="pointer-events-none absolute -right-3 top-24 h-20 w-20 rounded-full border-[10px]" style={{ borderColor: "rgba(139,111,94,0.35)" }} />
+        {/* ---------- Closing panel: light warm tint, rounded top ---------- */}
+        <footer className="relative mt-10 overflow-hidden rounded-t-[40px] bg-[var(--mg-tint)] px-5 pb-10 pt-10 text-[var(--mg-ink)]">
+          <span aria-hidden="true" className="pointer-events-none absolute -right-14 -top-14 h-48 w-48 rounded-full border-[22px] border-[var(--mg-brown)]/15" />
+          <span aria-hidden="true" className="pointer-events-none absolute -right-2 top-24 h-16 w-16 rounded-full border-[9px] border-[var(--mg-brown)]/15" />
 
           <div className="relative">
             <BrandImage
@@ -1359,18 +1362,19 @@ function ReceiptView({
               alt="MANGO"
               width={320}
               height={80}
-              className="h-12 w-auto max-w-full object-contain object-left brightness-0 invert"
-              fallbackClassName="mg-display inline-block text-[40px] uppercase leading-none tracking-[0.14em] text-white"
+              className="h-12 w-auto max-w-[80%] object-contain object-left"
+              fallbackClassName="mg-display inline-block text-[40px] uppercase leading-none tracking-[0.14em] text-[var(--mg-ink)]"
             />
 
-            <h2 className="mg-display mt-8 text-[24px] uppercase leading-[1.1] tracking-[0.04em]">
+            <h2 className="mg-display mt-7 text-[24px] uppercase leading-[1.1] tracking-[0.04em] text-[var(--mg-ink)]">
               Thank you
-              <span className="block text-[var(--mg-sand)]">for shopping with us</span>
+              <span className="block text-[var(--mg-brown)]">for shopping with us</span>
             </h2>
-            <p className="mt-3 text-[14px] text-white/70">See you in store soon.</p>
+            <span aria-hidden="true" className="mt-4 block h-1 w-10 rounded-full bg-[var(--mg-brown)]" />
+            <p className="mt-4 text-[15px] text-[var(--mg-brown-dark)]">See you in store soon.</p>
 
-            <div className="mt-8 flex items-center justify-between gap-4">
-              <p className={`${m} text-[11px] leading-relaxed text-white/60`}>
+            <div className="mt-7 flex items-center justify-between gap-4">
+              <p className={`${m} text-[11px] leading-relaxed text-[var(--mg-brown-dark)]`}>
                 Invoice {data.invoiceNo}
                 <br />
                 {data.date.split(" ")[0]}
@@ -1379,43 +1383,47 @@ function ReceiptView({
                 type="button"
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                 aria-label="Back to top"
-                className={`grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white text-[var(--mg-ink)] active:bg-[var(--mg-sand)] ${onDark}`}
+                className={`grid h-11 w-11 shrink-0 place-items-center rounded-full border-2 border-[var(--mg-ink)] bg-white text-[var(--mg-ink)] active:bg-[var(--mg-ink)] active:text-white [@media(hover:hover)]:hover:bg-[var(--mg-ink)] [@media(hover:hover)]:hover:text-white ${onPaper}`}
               >
                 <Icon name="arrow" className="h-5 w-5 -rotate-90" />
               </button>
             </div>
 
-            <div className="mt-7 rounded-2xl border border-white/15 bg-white/5 p-4">
-              <h3 className="mg-display text-[11px] uppercase tracking-[0.2em] text-[var(--mg-sand)]">Registered office</h3>
-              <p className={`${m} mt-2 text-xs leading-relaxed text-white/75`}>{data.registeredOffice}</p>
+            <div className={`mt-6 rounded-3xl bg-white p-5 ${lift}`}>
+              <h3 className="mg-display text-[12px] uppercase tracking-[0.2em] text-[var(--mg-ink)]">Registered office</h3>
+              <p className={`${m} mt-2.5 text-xs leading-relaxed text-[var(--mg-brown)]`}>{data.registeredOffice}</p>
             </div>
 
-            <div className="mt-8 flex items-center justify-center gap-2.5 border-t border-white/15 pt-7 text-[13px] text-white/70">
+            <div className="mt-8 flex items-center justify-center gap-2.5 border-t border-[var(--mg-line)] pt-7 text-[13px] text-[var(--mg-brown-dark)]">
               <span>Powered by</span>
-              <span className="inline-flex items-center rounded-full bg-white px-3.5 py-1.5">
-                <BrandImage
-                  src={rdepLogoSrc}
-                  alt="rdep"
-                  width={240}
-                  height={80}
-                  className="h-5 w-auto"
-                  fallbackClassName="text-base font-bold tracking-tight text-[var(--mg-ink)]"
-                />
-              </span>
+              <BrandImage
+                src={rdepLogoSrc}
+                alt="rdep"
+                width={240}
+                height={80}
+                className="h-7 w-auto"
+                fallbackClassName="text-lg font-bold tracking-tight text-[var(--mg-ink)]"
+              />
             </div>
           </div>
         </footer>
       </main>
 
-      {/* ---------------------------- Popups: rounded sheets ---------------------------- */}
+      {/* ---------------------------- Popups: light rounded sheets ---------------------------- */}
       {modal === "history" && (
-        <Modal
-          title="Your purchases"
-          subtitle={`${history.length} ${history.length === 1 ? "receipt" : "receipts"} · ₹${inr(history.reduce((a, h) => a + h.amount, 0))} spent`}
-          onClose={closeModal}
-          scale={scale}
-        >
-          <ol className="space-y-3">
+        <Modal title="Your purchases" onClose={closeModal} scale={scale}>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="rounded-2xl bg-[var(--mg-wash)] px-4 py-3.5">
+              <p className="text-[12px] text-[var(--mg-brown)]">Receipts</p>
+              <p className="mg-display mt-1 text-[24px] leading-none tabular-nums text-[var(--mg-ink)]">{history.length}</p>
+            </div>
+            <div className="rounded-2xl bg-[var(--mg-wash)] px-4 py-3.5">
+              <p className="text-[12px] text-[var(--mg-brown)]">Total spent</p>
+              <p className="mg-display mt-1 text-[20px] leading-[1.2] tabular-nums text-[var(--mg-ink)]">₹{inr(historyTotal)}</p>
+            </div>
+          </div>
+
+          <ol className="mt-4 space-y-3">
             {history.map((h) => {
               const d = splitDate(h.date);
               return (
@@ -1423,21 +1431,28 @@ function ReceiptView({
                   <button
                     type="button"
                     disabled={h.current}
+                    aria-current={h.current ? "true" : undefined}
                     onClick={() => {
                       closeModal();
                       onSelect(h.invoiceNo);
                     }}
                     className={`flex w-full items-center gap-3.5 rounded-2xl p-3 text-left transition-colors motion-reduce:transition-none ${onPaper} ${
                       h.current
-                        ? "cursor-default bg-[var(--mg-ink)] text-white"
-                        : "bg-[var(--mg-wash)] text-[var(--mg-ink)] active:bg-[#E9DFD7] [@media(hover:hover)]:hover:bg-[#E9DFD7]"
+                        ? "cursor-default bg-white text-[var(--mg-ink)] shadow-[inset_0_0_0_2px_var(--mg-brown)]"
+                        : "bg-[var(--mg-wash)] text-[var(--mg-ink)] active:bg-[var(--mg-tint)] [@media(hover:hover)]:hover:bg-[var(--mg-tint)]"
                     }`}
                   >
-                    <span className="grid h-[68px] w-[60px] shrink-0 place-items-center rounded-xl bg-white text-center leading-none text-[var(--mg-ink)]">
+                    <span
+                      className={`grid h-[68px] w-[60px] shrink-0 place-items-center rounded-xl text-center leading-none ${
+                        h.current ? "bg-[var(--mg-brown)] text-white" : "bg-white text-[var(--mg-ink)]"
+                      }`}
+                    >
                       <span>
                         <span className="mg-display block text-[24px]">{d.day}</span>
-                        <span className="mg-display mt-1.5 block text-[11px] uppercase tracking-[0.14em] text-[var(--mg-brown)]">{d.mon}</span>
-                        <span className="mt-0.5 block text-[10px] text-[var(--mg-brown)]">{d.year}</span>
+                        <span className={`mg-display mt-1.5 block text-[11px] uppercase tracking-[0.14em] ${h.current ? "text-white/85" : "text-[var(--mg-brown)]"}`}>
+                          {d.mon}
+                        </span>
+                        <span className={`mt-0.5 block text-[10px] ${h.current ? "text-white/75" : "text-[var(--mg-brown)]"}`}>{d.year}</span>
                       </span>
                     </span>
 
@@ -1445,17 +1460,15 @@ function ReceiptView({
                       <span className="mg-display block text-[13px] uppercase tracking-[0.06em]">
                         {h.items} {h.items === 1 ? "item" : "items"}
                       </span>
-                      <span className={`${m} mt-1.5 block truncate text-[11px] ${h.current ? "text-white/70" : "text-[var(--mg-brown)]"}`}>
-                        No. {h.invoiceNo}
-                      </span>
+                      <span className={`${m} mt-1.5 block truncate text-[11px] text-[var(--mg-brown)]`}>No. {h.invoiceNo}</span>
                     </span>
 
                     <span className="flex shrink-0 flex-col items-end gap-1.5">
                       <span className={`${m} text-[15px] font-bold tabular-nums`}>₹{inr(h.amount)}</span>
                       {h.current ? (
-                        <span className="rounded-full bg-white px-2.5 py-0.5 text-[11px] font-bold text-[var(--mg-ink)]">Viewing</span>
+                        <span className="rounded-full bg-[var(--mg-brown)] px-2.5 py-0.5 text-[11px] font-bold text-white">Viewing</span>
                       ) : (
-                        <span className="grid h-6 w-6 place-items-center rounded-full bg-[var(--mg-ink)] text-white">
+                        <span className="grid h-6 w-6 place-items-center rounded-full bg-white text-[var(--mg-ink)]">
                           <Icon name="arrow" className="h-3.5 w-3.5" />
                         </span>
                       )}
