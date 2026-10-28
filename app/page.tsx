@@ -3,11 +3,10 @@
 /**
  * Mango x RDEP — Smart receipt
  *
- * Concept: a poster on a light canvas. Logo + greeting, a "total paid" card, then the actual
- * receipt as torn thermal paper (mono lines, dotted leaders, [+] / [−] toggles). White cards with
- * soft shadows pop off the canvas. After the receipt: rate your visit (stars flash until the first
- * tap), profile, exchange, "Reach us" and a store card (address always visible, one toggle shows /
- * hides only the contact details).
+ * Concept: a poster on a light canvas. Logo + greeting, a sleek interactive rating card right at
+ * the top, then the actual receipt as torn thermal paper (mono lines, dotted leaders, [+] / [−] toggles).
+ * White cards with soft shadows pop off the canvas. After the receipt: profile, exchange, "Reach us"
+ * and a store card (address always visible, one toggle shows / hides only the contact details).
  */
 
 import {
@@ -132,8 +131,8 @@ export interface MangoReceiptProps {
 
 type IconName =
   | "history" | "mail" | "download" | "phone" | "instagram" | "pin" | "store"
-  | "close" | "check" | "arrow" | "chevron" | "user" | "receipt" | "tax" | "directions" | "call";
-type ModalId = "history" | "email" | null;
+  | "close" | "check" | "arrow" | "chevron" | "user" | "receipt" | "tax" | "directions" | "call" | "qr";
+type ModalId = "history" | "email" | "qr" | null;
 
 interface HistoryRow {
   invoiceNo: string;
@@ -389,6 +388,14 @@ const PATHS: Record<IconName, ReactNode> = {
   call: (
     <>
       <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z" />
+    </>
+  ),
+  qr: (
+    <>
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <path d="M14 14h3v3h-3zM17 17h4v4h-4zM14 21h3" />
     </>
   ),
   close: <path d="M18 6 6 18M6 6l12 12" />,
@@ -677,62 +684,25 @@ function PaperItem({ item, open, onToggle }: { item: MangoItem; open: boolean; o
   );
 }
 
-/* ------------------------------- star rating ------------------------------------- */
+/* ------------------------------- sleek top rating card ---------------------------- */
 const RATING_WORDS = ["Poor", "Fair", "Good", "Very good", "Excellent"];
 
-function StarRow({
-  value, onChange, label, size = "lg", pulse = false,
-}: {
-  value: number; onChange: (v: number) => void; label: string; size?: "lg" | "sm"; pulse?: boolean;
-}) {
-  const [hover, setHover] = useState(0);
-  const shown = hover || value;
-  const flashing = pulse && !hover && value === 0;
-  return (
-    <div role="radiogroup" aria-label={label} className={`flex ${size === "lg" ? "gap-1" : "gap-0"}`} onMouseLeave={() => setHover(0)}>
-      {[1, 2, 3, 4, 5].map((n) => (
-        <button
-          key={n}
-          type="button"
-          role="radio"
-          aria-checked={value === n}
-          aria-label={`${n} ${n === 1 ? "star" : "stars"}${size === "lg" ? `, ${RATING_WORDS[n - 1]}` : ""}`}
-          onMouseEnter={() => setHover(n)}
-          onClick={() => onChange(n)}
-          className={`grid place-items-center rounded-lg ${size === "lg" ? "h-12 w-12" : "h-8 w-8"} ${onPaper}`}
-        >
-          <svg
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            strokeLinejoin="round"
-            style={flashing ? { animationDelay: `${(n - 1) * 0.18}s` } : undefined}
-            className={`${size === "lg" ? "h-9 w-9" : "h-6 w-6"} stroke-[var(--mg-brown)] transition-colors motion-reduce:transition-none ${
-              n <= shown ? "fill-[var(--mg-brown)]" : "fill-[var(--mg-wash)]"
-            } ${flashing ? "mg-star-flash" : ""}`}
-          >
-            <path d={STAR_PATH} />
-          </svg>
-        </button>
-      ))}
-    </div>
-  );
-}
-
-const FEEDBACK_CATEGORIES = [
-  { key: "service", label: "Service quality" },
-  { key: "product", label: "Product offering" },
-  { key: "sizes", label: "Sizes availability" },
-  { key: "value", label: "Value for money" },
-] as const;
-
-function RateVisit({ data, onSubmit }: { data: MangoReceiptData; onSubmit?: (v: FeedbackValues) => void }) {
+function SleekRateCard({ data, onSubmit }: { data: MangoReceiptData; onSubmit?: (v: FeedbackValues) => void }) {
   const [overall, setOverall] = useState(0);
+  const [hover, setHover] = useState(0);
+  const [expanded, setExpanded] = useState(false);
   const [cats, setCats] = useState({ service: 0, product: 0, sizes: 0, value: 0 });
   const [comment, setComment] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const panelId = useId();
   const commentId = useId();
+  const detailId = useId();
   const m = monoClass;
+  const shown = hover || overall;
+
+  const handleStarClick = (n: number) => {
+    setOverall(n);
+    setExpanded(true);
+  };
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
@@ -741,70 +711,149 @@ function RateVisit({ data, onSubmit }: { data: MangoReceiptData; onSubmit?: (v: 
   };
 
   return (
-    <section aria-label="Rate your visit" className={`rounded-3xl bg-white p-5 text-[var(--mg-brown)] ${lift}`}>
-      <Heading sub="How was your experience at Mango?">Rate your visit</Heading>
+    <section aria-label="Rate your visit" className={`rounded-3xl bg-white p-6 text-[var(--mg-brown)] ${lift} relative overflow-hidden`}>
+      <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--mg-wash)] rounded-full -mr-10 -mt-10 pointer-events-none opacity-60" />
+
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <span className="mg-display text-[10px] uppercase tracking-[0.2em] text-[var(--mg-brown)]">Quick Feedback</span>
+          <h2 className="mg-display text-[18px] uppercase leading-tight tracking-[0.04em] text-[var(--mg-ink)] mt-0.5">
+            How was your visit?
+          </h2>
+        </div>
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[var(--mg-wash)] text-[var(--mg-ink)] border border-black/5">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5 text-[var(--mg-brown)]">
+            <path d={STAR_PATH} />
+          </svg>
+        </span>
+      </div>
 
       {submitted ? (
-        <div className="mt-6 flex items-start gap-4" aria-live="polite">
-          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[var(--mg-ink)] text-white">
-            <Icon name="check" className="h-6 w-6" />
+        <div className="mt-5 flex items-start gap-3 rounded-2xl bg-[var(--mg-wash)] p-4 border border-black/5" aria-live="polite">
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[var(--mg-ink)] text-white">
+            <Icon name="check" className="h-4 w-4" />
           </span>
-          <div>
-            <p className="mg-display text-[18px] uppercase leading-tight tracking-[0.05em] text-[var(--mg-ink)]">Thank you</p>
-            <p className="mt-1.5 text-[15px] leading-snug">
-              You rated this visit {overall} out of 5 ({RATING_WORDS[overall - 1].toLowerCase()}).
+          <div className="min-w-0 flex-1">
+            <p className="mg-display text-[14px] uppercase tracking-wider text-[var(--mg-ink)]">Thank you for rating!</p>
+            <p className="mt-0.5 text-[12px] text-[var(--mg-brown)]">
+              You gave {overall} stars ({RATING_WORDS[overall - 1].toLowerCase()}).
             </p>
             <button
               type="button"
-              onClick={() => setSubmitted(false)}
-              className={`${m} mt-2 rounded py-1 text-[13px] font-semibold text-[var(--mg-ink)] underline underline-offset-4 active:no-underline [@media(hover:hover)]:hover:no-underline ${onPaper}`}
+              onClick={() => { setSubmitted(false); setExpanded(false); setOverall(0); }}
+              className={`${m} mt-1.5 text-[11px] font-bold text-[var(--mg-ink)] underline underline-offset-2`}
             >
-              [ Edit feedback ]
+              [ Edit rating ]
             </button>
           </div>
         </div>
       ) : (
-        <form onSubmit={submit} noValidate>
-          <div className="mt-4 flex flex-col items-start">
-            <div className="-ml-1.5">
-              <StarRow value={overall} onChange={setOverall} label="Overall rating" pulse={overall === 0} />
+        <div className="mt-5">
+          <div className="flex items-center justify-between bg-[var(--mg-wash)] px-4 py-3.5 rounded-2xl border border-black/5">
+            <div role="radiogroup" aria-label="Overall rating" className="flex gap-1.5" onMouseLeave={() => setHover(0)}>
+              {[1, 2, 3, 4, 5].map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  role="radio"
+                  aria-checked={overall === n}
+                  aria-label={`${n} ${n === 1 ? "star" : "stars"}, ${RATING_WORDS[n - 1]}`}
+                  onMouseEnter={() => setHover(n)}
+                  onClick={() => handleStarClick(n)}
+                  className={`grid h-9 w-9 place-items-center rounded-lg transition-transform active:scale-95 ${onPaper}`}
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                    className={`h-7 w-7 stroke-[var(--mg-brown)] transition-colors ${
+                      n <= shown ? "fill-[var(--mg-brown)]" : "fill-white"
+                    } ${!overall && !hover ? "mg-star-flash" : ""}`}
+                    style={!overall && !hover ? { animationDelay: `${(n - 1) * 0.18}s` } : undefined}
+                  >
+                    <path d={STAR_PATH} />
+                  </svg>
+                </button>
+              ))}
             </div>
-            <p aria-live="polite" className="mt-1 h-5 text-[15px]">
-              {overall ? RATING_WORDS[overall - 1] : "Tap a star to rate"}
-            </p>
+            <div className="text-right pl-2">
+              <p className="mg-display text-[12px] uppercase text-[var(--mg-ink)] tracking-wider">
+                {overall ? RATING_WORDS[overall - 1] : "Tap to rate"}
+              </p>
+              <p className="text-[10px] text-[var(--mg-brown)] font-medium">
+                {overall ? `${overall}/5 stars` : "Instant feedback"}
+              </p>
+            </div>
           </div>
 
-          <Collapse open={overall > 0} id={panelId}>
-            <div className="pt-5">
-              <ul className="border-t-2 border-[var(--mg-ink)]">
-                {FEEDBACK_CATEGORIES.map((c) => (
-                  <li key={c.key} className="flex items-center justify-between gap-2 border-b border-dashed border-black/40 py-1.5">
-                    <span className={`${m} text-[13px] uppercase text-[var(--mg-ink)]`}>{c.label}</span>
-                    <div className="-mr-1">
-                      <StarRow size="sm" label={c.label} value={cats[c.key]} onChange={(v) => setCats((p) => ({ ...p, [c.key]: v }))} />
+          <Collapse open={expanded} id={detailId}>
+            <form onSubmit={submit} noValidate className="mt-4 pt-4 border-t border-[var(--mg-line)] space-y-4">
+              <div>
+                <p className={`${m} text-[11px] uppercase tracking-wider text-[var(--mg-brown)] mb-2.5 font-bold`}>Rate specific categories</p>
+                <div className="space-y-2">
+                  {[
+                    { key: "service", label: "Service quality" },
+                    { key: "product", label: "Product offering" },
+                    { key: "sizes", label: "Sizes availability" },
+                    { key: "value", label: "Value for money" },
+                  ].map((c) => (
+                    <div key={c.key} className="flex items-center justify-between bg-[var(--mg-wash)] px-3 py-2 rounded-xl border border-black/5">
+                      <span className={`${m} text-[11px] uppercase font-semibold text-[var(--mg-ink)]`}>{c.label}</span>
+                      <div className="flex gap-0.5">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button
+                            key={star}
+                            type="button"
+                            onClick={() => setCats((p) => ({ ...p, [c.key]: star }))}
+                            className="p-1"
+                            aria-label={`${star} stars for ${c.label}`}
+                          >
+                            <svg
+                              viewBox="0 0 24 24"
+                              strokeWidth="1.5"
+                              className={`h-4 w-4 stroke-[var(--mg-brown)] ${
+                                star <= cats[c.key as keyof typeof cats] ? "fill-[var(--mg-brown)]" : "fill-white"
+                              }`}
+                            >
+                              <path d={STAR_PATH} />
+                            </svg>
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </li>
-                ))}
-              </ul>
+                  ))}
+                </div>
+              </div>
 
-              <label htmlFor={commentId} className={`${fieldLabel} mt-5`}>
-                Additional comments (optional)
-              </label>
-              <textarea
-                id={commentId}
-                rows={3}
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="What stood out, good or bad?"
-                className={`${fieldInput} resize-none`}
-              />
-              <button type="submit" className={`${solidBtn} mt-5`}>
-                Submit feedback
-              </button>
-              <p className="mt-3 text-center text-[13px]">Your feedback helps us improve every store.</p>
-            </div>
+              <div>
+                <label htmlFor={commentId} className={`${fieldLabel} text-[11px] uppercase font-bold tracking-wider`}>
+                  Any additional thoughts? (Optional)
+                </label>
+                <textarea
+                  id={commentId}
+                  rows={2}
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Tell us what you liked or how we can improve..."
+                  className={`${fieldInput} text-[13px] resize-none`}
+                />
+              </div>
+
+              <div className="flex items-center gap-2 pt-1">
+                <button type="submit" className={`${solidBtn} !py-3 text-[12px]`}>
+                  Submit rating
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setExpanded(false)}
+                  className="rounded-xl border border-black/10 bg-[var(--mg-wash)] px-4 py-3 text-[12px] font-bold uppercase tracking-wider text-[var(--mg-brown)] active:bg-[var(--mg-press)]"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </Collapse>
-        </form>
+        </div>
       )}
     </section>
   );
@@ -1023,7 +1072,7 @@ function ReceiptView({
         className="mx-auto w-[400px] overflow-hidden bg-[var(--mg-canvas)] pb-0 sm:rounded-3xl sm:shadow-[0_24px_60px_-24px_rgba(26,26,26,0.3)]"
       >
         {/* ---------- Compact hero: logo left, greeting right ---------- */}
-        <header className="flex items-center justify-between gap-4 px-5 pb-7 pt-6">
+        <header className="flex items-center justify-between gap-4 px-5 pb-5 pt-6">
           <BrandImage
             src={logoSrc}
             alt="MANGO"
@@ -1044,24 +1093,40 @@ function ReceiptView({
           </h1>
         </header>
 
-        {/* ---------- Total paid card ---------- */}
+        {/* ---------- Sleek Top Rating Card (Placed right below header where total paid card used to be) ---------- */}
+        <div className="px-4 mb-5">
+          <SleekRateCard data={data} onSubmit={onSubmitFeedback} />
+        </div>
+
+        {/* ---------- Total paid card summary with quick QR popup trigger ---------- */}
         <div className="px-4">
           <section aria-label="Total paid" className={`rounded-3xl bg-white p-5 text-[var(--mg-ink)] ${lift}`}>
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center justify-between gap-4">
               <div className="min-w-0">
                 <p className="text-[13px] text-[var(--mg-brown)]">Total paid</p>
-                <p className="mg-display mt-1.5 text-[34px] leading-none tabular-nums">₹{inr(t.total)}</p>
+                <p className="mg-display mt-1 text-[32px] leading-none tabular-nums">₹{inr(t.total)}</p>
               </div>
-              <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-white ring-1 ring-black/15">
-                {qrSrc ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={qrSrc} alt="Receipt QR code" className="h-full w-full object-contain" />
-                ) : (
-                  <PlaceholderQR seed={data.invoiceNo} />
-                )}
-              </div>
+              <button
+                type="button"
+                onClick={() => setModal("qr")}
+                aria-label="View QR code"
+                className="flex items-center gap-2 rounded-2xl bg-[var(--mg-wash)] px-3.5 py-3 border border-black/5 active:bg-[var(--mg-press)] transition-colors"
+              >
+                <div className="h-8 w-8 shrink-0 overflow-hidden rounded-md bg-white ring-1 ring-black/10">
+                  {qrSrc ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={qrSrc} alt="Receipt QR code" className="h-full w-full object-contain" />
+                  ) : (
+                    <PlaceholderQR seed={data.invoiceNo} />
+                  )}
+                </div>
+                <div className="text-left">
+                  <span className="mg-display block text-[10px] uppercase tracking-wider text-[var(--mg-ink)]">QR Code</span>
+                  <span className="text-[10px] text-[var(--mg-brown)] font-medium">Tap to view</span>
+                </div>
+              </button>
             </div>
-            <dl className={`${m} mt-5 space-y-1.5 border-t border-dashed border-black/40 pt-4 text-xs text-[var(--mg-brown)]`}>
+            <dl className={`${m} mt-4 space-y-1.5 border-t border-dashed border-black/40 pt-3.5 text-xs text-[var(--mg-brown)]`}>
               <Leader label="Invoice no" value={data.invoiceNo} strong />
               <Leader label="Date" value={data.date} strong />
             </dl>
@@ -1138,8 +1203,6 @@ function ReceiptView({
 
         {/* ---------- After the receipt ---------- */}
         <div className="space-y-7 px-4 pt-8">
-          <RateVisit data={data} onSubmit={onSubmitFeedback} />
-
           <ProfileCard data={data} onSave={onSaveProfile} />
 
           {/* Exchange */}
@@ -1205,7 +1268,7 @@ function ReceiptView({
             </a>
           </section>
 
-          {/* ---------- Store Card (Completely reimagined for elevated boutique feel) ---------- */}
+          {/* ---------- Store Card ---------- */}
           <section aria-label="Store" className={`rounded-3xl bg-white p-6 text-[var(--mg-ink)] ${lift}`}>
             <div className="flex items-center justify-between border-b border-[var(--mg-line)] pb-5">
               <div className="flex items-center gap-3">
@@ -1316,7 +1379,7 @@ function ReceiptView({
             </Collapse>
           </section>
 
-          {/* ---------- Light Closing Card (Refined, fully visible original logo & clean aesthetic) ---------- */}
+          {/* ---------- Light Closing Card ---------- */}
           <section className={`rounded-3xl bg-white p-6 text-[var(--mg-ink)] ${lift}`}>
             <div className="flex items-center justify-between">
               <BrandImage
@@ -1374,7 +1437,7 @@ function ReceiptView({
         </footer>
       </main>
 
-      {/* ---------------------------- Transaction History Popup (With receipt-matching accent colors) ---------------------------- */}
+      {/* ---------------------------- Transaction History Popup ---------------------------- */}
       {modal === "history" && (
         <Modal title="TRANSACTION HISTORY" onClose={closeModal} scale={scale}>
           <div className="mb-4 flex items-center justify-between rounded-2xl bg-[var(--mg-wash)] p-4 border border-black/5">
@@ -1440,6 +1503,24 @@ function ReceiptView({
               </li>
             ))}
           </ol>
+        </Modal>
+      )}
+
+      {/* ---------------------------- QR Code Popup Modal ---------------------------- */}
+      {modal === "qr" && (
+        <Modal title="RECEIPT QR CODE" onClose={closeModal} scale={scale}>
+          <div className="flex flex-col items-center text-center py-2">
+            <div className="w-48 h-48 rounded-2xl bg-white p-3 shadow-inner border border-black/10 flex items-center justify-center mb-4">
+              {qrSrc ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={qrSrc} alt="Receipt QR code" className="h-full w-full object-contain" />
+              ) : (
+                <PlaceholderQR seed={data.invoiceNo} />
+              )}
+            </div>
+            <p className="mg-display text-[14px] uppercase text-[var(--mg-ink)] tracking-wider">Invoice #{data.invoiceNo}</p>
+            <p className="mt-1 text-[13px] text-[var(--mg-brown)]">Scan this code at the store counter for instant returns or inquiries.</p>
+          </div>
         </Modal>
       )}
 
