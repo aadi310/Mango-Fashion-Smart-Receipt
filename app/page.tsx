@@ -626,13 +626,11 @@ function PaperItem({ item, open, onToggle }: { item: MangoItem; open: boolean; o
             <dd className="text-[13px] font-bold tracking-wide text-[var(--mg-ink)]">{item.sku}</dd>
           </dl>
 
-          <dl className="grid grid-cols-4 divide-x divide-black/15 rounded-md border border-black/15">
+          <dl className="grid grid-cols-2 divide-x divide-black/15 rounded-md border border-black/15">
             {(
               [
                 ["HSN", item.hsn],
                 ["UoM", "Pcs"],
-                ["Size", item.size],
-                ["Qty", String(item.qty)],
               ] as [string, string][]
             ).map(([k, v]) => (
               <div key={k} className="min-w-0 px-1.5 py-1.5">
