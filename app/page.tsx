@@ -724,18 +724,6 @@ function SleekRateCard({ data, onSubmit }: { data: MangoReceiptData; onSubmit?: 
       How was your visit?
     </h2>
   </div>
-
-  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-[var(--mg-line)] bg-[var(--mg-wash)] text-[var(--mg-brown)]">
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      className="h-4 w-4"
-    >
-      <path d={STAR_PATH} />
-    </svg>
-  </span>
 </div>
 
       {submitted ? (
