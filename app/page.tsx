@@ -1,1995 +1,1390 @@
-"use client"
-import { useState, useEffect, useRef } from "react"
-import type React from "react"
+"use client";
 
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
+/**
+ * Mango x RDEP — Smart receipt (same design language as the Levi's "Red Tab, Light" receipt)
+ *
+ * Concept: a poster on a light canvas. Logo + greeting, a "total paid" card, then the actual
+ * receipt as torn thermal paper (mono lines, dotted leaders, [+] / [−] toggles). White cards with
+ * soft shadows pop off the canvas; Mango brown is used for emphasis, black for the main actions.
+ * After the receipt: rate your visit, profile, exchange, "Reach us" and a care-label style store
+ * card (address always visible, details expand). The bottom is a white torn stub with the
+ * registered office and the "Powered by" logo. Popups are white slips with the same torn top edge.
+ *
+ * Mango allows curves, so cards, buttons, chips and switches are rounded like the Levi's design.
+ *
+ * Fixed layout: designed at 400px wide. On phones (<= 520px) it is scaled with CSS `zoom` to fill
+ * the screen, on larger screens it stays a centred 400px column, so it looks identical everywhere.
+ *
+ * Stars: nothing redirects. Tapping an overall star opens the detailed ratings (service, product,
+ * sizes, value), the comment box and Submit, all in place.
+ *
+ * Colours (brand): background #F5F5F5, headings #1A1A1A, text #8B6F5E.
+ *
+ * FONTS (MangoSans, .ttf, already in /public/fonts)
+ *   MangoSans Regular.ttf   (400)   <- the file name has a space; it is URL-encoded below.
+ *   MangoSans-Bold.ttf      (700)      If you rename it to MangoSans-Regular.ttf, update FONT_FACES.
+ *   No italics are used anywhere.
+ *
+ * ASSETS (in /public/images/design-mode)
+ *   mango.png       the Mango logo
+ *   RDEP-logo.png   the RDEP logo
+ *
+ * Stack: Next.js (app router) + Tailwind. No other dependencies.
+ *
+ * Usage:  app/mango-receipt/page.tsx
+ *   import MangoReceipt from "@/components/MangoReceipt";
+ *   export default function Page() { return <MangoReceipt />; }
+ *
+ * With real data: <MangoReceipt receipts={[...]} data={currentReceipt} />
+ *   `receipts` = every receipt of this customer (the history popup is built from it).
+ *   `data`     = the receipt to open first (defaults to the newest one in `receipts`).
+ */
+
 import {
-  ChevronRight,
-  Crown,
-  Heart,
-  LayoutGrid,
-  Headset,
-  Check,
-  Lock,
-  ArrowRight,
-  ArrowUpRight,
-  Gift,
-  Trophy,
-  Ticket,
-  Zap,
-  CreditCard,
-  Download,
-  ExternalLink,
-  FileText,
-  History,
-  Instagram,
-  Mail,
-  MessageSquare,
-  Phone,
-  Send,
-  Star,
-  User2,
-  ThumbsUp,
-  Share2,
-  Facebook,
-  Sparkles,
-  MapPin,
-  ShoppingBagIcon,
-  Utensils,
-  Package,
-  Receipt as ReceiptIcon,
-} from "lucide-react"
+  useCallback,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type FormEvent,
+  type ReactNode,
+} from "react";
+import Image from "next/image";
+import { JetBrains_Mono } from "next/font/google";
 
-interface Receipt {
-  id: string
-  date: string
-  time: string
-  associate: string
-  branch?: string
+/* Type system: MangoSans (Bold for headings and numbers, Regular for everything else).
+ * The printed-receipt lines keep the monospace face from the Levi's design; set
+ * USE_RECEIPT_MONO to false to print them in MangoSans too.
+ * MangoSans is a wide geometric face, so headings are kept at 18-24px and big numbers at 30-40px
+ * (the Levi's poster sizes are too large for it). Body copy is 15px, captions 13px, receipt 12-13px. */
+const mono = JetBrains_Mono({ subsets: ["latin"], display: "swap" });
+const USE_RECEIPT_MONO = true;
+const monoClass = USE_RECEIPT_MONO ? mono.className : "tabular-nums";
 
-  items: Array<{
-    id: number
-    name: string
+const BRAND_STACK = `"MangoSans", Arial, "Helvetica Neue", Helvetica, sans-serif`;
 
-    // Fashion-specific details
-    color?: string
-    size?: string
-    material?: string
+const FONT_FACES = `
+@font-face{font-family:"MangoSans";font-weight:400;font-style:normal;font-display:swap;src:url("/fonts/MangoSans%20Regular.ttf") format("truetype")}
+@font-face{font-family:"MangoSans";font-weight:700;font-style:normal;font-display:swap;src:url("/fonts/MangoSans-Bold.ttf") format("truetype")}
+.mg-root{font-family:${BRAND_STACK}}
+.mg-display{font-family:${BRAND_STACK};font-weight:700}
+`;
 
-    // Product information
-    category?: string
-    itemCode?: string
+/* Brand tokens. Tints are variables (Tailwind cannot apply opacity modifiers to var() colours). */
+const theme = {
+  "--mg-brown": "#8B6F5E", // text, accents
+  "--mg-brown-dark": "#6E5445", // hover / pressed, small captions on the canvas
+  "--mg-ink": "#1A1A1A", // headings, outlines, main buttons
+  "--mg-canvas": "#F5F5F5", // the receipt column background
+  "--mg-page": "#E8E5E2", // page behind the column on desktop
+  "--mg-wash": "#F3EEEA", // tiles and hovers inside white cards
+  "--mg-line": "rgba(139,111,94,0.3)", // hairlines
+  "--mg-edge": "rgba(139,111,94,0.75)", // input underlines
+} as CSSProperties;
 
-    // Pricing
-    price: number
-    quantity: number
-    baseAmount?: number
-    tax?: number
-    discount?: number
+/* Assets + links */
+const DEFAULT_MANGO_LOGO = "/images/design-mode/mango.png";
+const DEFAULT_RDEP_LOGO = "/images/design-mode/RDEP-logo.png";
+const DEFAULT_INSTAGRAM_URL = "https://www.instagram.com/mango/";
+const DEFAULT_STORE_LOCATOR_URL = "https://shop.mango.com/in";
 
-    // Optional merchandising fields
-    description?: string
-  }>
-
-  subtotal: number
-  tax: number
-  total: number
-}
-export default function Home() {
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [showTerms, setShowTerms] = useState(true)
-  const [showFeedbackModal, setShowFeedbackModal] = useState(false)
-  const [expandedProducts, setExpandedProducts] = useState<number[]>([])
-  const [expandedSections, setExpandedSections] = useState<{ [key: number]: string[] }>({})
-  const [currentReceiptId, setCurrentReceiptId] = useState("current")
-  const [showTransactionHistory, setShowTransactionHistory] = useState(false)
-  const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 })
-  const [showReferModal, setShowReferModal] = useState(false)
-  const [showStoreLocation, setShowStoreLocation] = useState(false)
-  const receiptContainerRef = useRef<HTMLDivElement>(null)
-const [selectedTags, setSelectedTags] = useState<string[]>([])
-const [couponToast, setCouponToast] = useState(false)
-  const [itemFeedback, setItemFeedback] = useState({})
-const [expandedItemFeedback, setExpandedItemFeedback] = useState([])
-  const [feedback, setFeedback] = useState({
-    service: 0,
-    quality: 0,
-    style: 0,
-    pricing: 0,
-    store: 0,
-    comments: "",
-  })
-  const [profile, setProfile] = useState({
-    mobile: "",
-    name: "",
-    email: "",
-    gender: "",
-    promoOptIn: false,
-    birthday: "",
-    anniversary: "",
-  })
-  const [profileUpdateSuccess, setProfileUpdateSuccess] = useState(false)
-  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false)
-  const [rating, setRating] = useState(0)
-  const [feedbackText, setFeedbackText] = useState("")
-
-  const copyCoupon = (code: string) => {
-  navigator.clipboard.writeText(code)
-
-  setCouponToast(true)
-
-  setTimeout(() => {
-    setCouponToast(false)
-  }, 2000)
+/* ------------------------------- types ------------------------------------------- */
+export interface MangoItem {
+  name: string;
+  size: string;
+  sku: string;
+  hsn: string;
+  qty: number;
+  /** Unit price (MRP) */
+  mrp: number;
+  /** Total discount on this line */
+  discount: number;
 }
 
-  const toggleItemFeedback = (id) => {
-  setExpandedItemFeedback((prev) =>
-    prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-  )
+export interface MangoReceiptData {
+  invoiceNo: string;
+  /** "DD-MM-YYYY HH:mm:ss" — the date part is used to sort the history */
+  date: string;
+  customer: { name: string; mobile: string; email: string };
+  items: MangoItem[];
+  sgst: number;
+  cgst: number;
+  payment: { mode: string; ref: string };
+  store: { name: string; address: string; email: string; phone: string; gstin: string; associate: string };
+  registeredOffice: string;
+  exchange: { days: number; points: string[] };
+  /** Number opened by "Call us" */
+  callTo: string;
+  /** Address opened by "Email us" */
+  emailTo: string;
 }
 
-  const setItemRating = (itemId, rating) => {
-  setItemFeedback((prev) => ({
-    ...prev,
-    [itemId]: {
-      ...prev[itemId],
-      rating,
-    },
-  }))
+export interface ProfileValues {
+  name: string;
+  email: string;
+  gender: string;
+  birthday: string;
+  anniversary: string;
+  offers: boolean;
 }
 
-  const toggleItemTag = (itemId, tag) => {
-  setItemFeedback((prev) => {
-    const currentTags = prev[itemId]?.tags || []
-
-    const newTags = currentTags.includes(tag)
-      ? currentTags.filter((t) => t !== tag)
-      : [...currentTags, tag]
-
-    return {
-      ...prev,
-      [itemId]: {
-        ...prev[itemId],
-        tags: newTags,
-      },
-    }
-  })
+export interface FeedbackValues {
+  invoiceNo: string;
+  overall: number;
+  categories: { service: number; product: number; sizes: number; value: number };
+  comment: string;
 }
 
-const customerName = "Vikas"
-const customerAddress = "204, Prestige Falcon Towers, Brigade Road, Bengaluru, Karnataka 560025"
-const customerGstin = "29ABCDE1234F1Z5" // leave empty string "" to hide the row entirely
-
-  // Carousel refs and APIs
-  const [promoApi, setPromoApi] = useState<CarouselApi>()
-  const feedbackButtonRef = useRef<HTMLButtonElement>(null)
-  const historyButtonRef = useRef<HTMLButtonElement>(null)
-  const referButtonRef = useRef<HTMLButtonElement>(null)
-
-  // Auto-play effect for promo carousel
-  useEffect(() => {
-    if (!promoApi) return
-    const interval = setInterval(() => {
-      promoApi.scrollNext()
-    }, 4000)
-    return () => clearInterval(interval)
-  }, [promoApi])
-
-  useEffect(() => {
-  setItemFeedback({})
-  setExpandedItemFeedback([])
-}, [currentReceiptId])
-
-  // Simple auto-height for WordPress iframe
-  useEffect(() => {
-    const postHeight = () => {
-      const marker = document.getElementById("height-marker")
-      if (marker && window.parent) {
-        const rect = marker.getBoundingClientRect()
-        const newHeight = Math.ceil(rect.top + rect.height + window.scrollY)
-        window.parent.postMessage({ frameHeight: newHeight }, "*")
-      }
-    }
-
-    // Run on load
-    postHeight()
-
-    // Observe changes to the DOM
-    const ro = new ResizeObserver(postHeight)
-    ro.observe(document.body)
-
-    // Re-run on resize
-    window.addEventListener("resize", postHeight)
-
-    return () => {
-      ro.disconnect()
-      window.removeEventListener("resize", postHeight)
-    }
-  }, [])
-
-  // Update current slide when carousel changes
-  useEffect(() => {
-    if (!promoApi) return
-    promoApi.on("select", () => {
-      setCurrentSlide(promoApi.selectedScrollSnap())
-    })
-  }, [promoApi])
-
-const receipts = {
-  current: {
-    id: "MNG-BR7891XQ12",
-    date: "05-04-2026",
-    time: "19:22:18",
-    associate: "Priya Mehta",
-    branch: "UB City, BLR",
-    items: [
-      {
-        id: 0,
-        name: "Long Satin Dress",
-        color: "Burnt Orange",
-        size: "M",
-        material: "Silk Mix Satin",
-        fit: "Fitted",
-        price: 11990,
-        discount: 1199,
-        quantity: 1,
-        category: "Women > Dresses",
-        itemCode: "27034440",
-        baseAmount: 10161.02,
-        tax: 1828.98,
-      },
-      {
-        id: 1,
-        name: "Boat-Neck Ruched Dress",
-        color: "Red",
-        size: "M",
-        material: "Woven Fabric",
-        fit: "Regular Fit",
-        price: 5990,
-        discount: 0,
-        quantity: 1,
-        category: "Women > Dresses",
-        itemCode: "27014089",
-        baseAmount: 5076.27,
-        tax: 913.73,
-      },
-      {
-        id: 2,
-        name: "Satin Dress with Gathered V-Neckline",
-        color: "Orange",
-        size: "S",
-        material: "Satin",
-        fit: "Regular Fit",
-        price: 7990,
-        discount: 0,
-        quantity: 1,
-        category: "Women > Dresses",
-        itemCode: "27009090",
-        baseAmount: 6771.19,
-        tax: 1218.81,
-      },
-    ],
-    // MRP total: 25970 — discount: 1199 = 24771
-    subtotal: 20977.54, // 22008.48 - (1199 × 10161.02/11990) ≈ keep GST same, reduce base
-    tax: 3961.52,       // GST unchanged
-    discount: 1199,
-    total: 24771,       // 25970 - 1199
-  },
-
-  hist1: {
-    id: "MNG-IN6719YT92",
-    date: "20-03-2026",
-    time: "14:22:18",
-    associate: "Anjali Kapoor",
-    branch: "Indiranagar, BLR",
-    items: [
-      {
-        id: 0,
-        name: "Slim Fit T-Shirt 180gsm",
-        color: "Dark Green",
-        size: "M",
-        material: "100% Organic Cotton",
-        fit: "Slim Fit",
-        price: 1290,
-        discount: 0,
-        quantity: 1,
-        category: "Men > T-Shirts",
-        itemCode: "37011432",
-        baseAmount: 1093.22,
-        tax: 196.78,
-      },
-      {
-        id: 1,
-        name: "Henley Linen-Blend T-Shirt",
-        color: "Navy",
-        size: "L",
-        material: "Linen Blend",
-        fit: "Slim Fit",
-        price: 4290,
-        discount: 429,
-        quantity: 1,
-        category: "Men > T-Shirts",
-        itemCode: "27035965",
-        baseAmount: 3635.59,
-        tax: 654.41,
-      },
-      {
-        id: 2,
-        name: "Moby Straight-Fit Dark-Wash Jeans",
-        color: "Dark Blue",
-        size: "42",
-        material: "Denim",
-        fit: "Straight Fit",
-        price: 4990,
-        discount: 0,
-        quantity: 1,
-        category: "Men > Jeans",
-        itemCode: "27041249",
-        baseAmount: 4228.81,
-        tax: 761.19,
-      },
-    ],
-    // MRP total: 10570 — discount: 429 = 10141
-    subtotal: 8528.62,  // unchanged
-    tax: 1612.38,       // GST unchanged
-    discount: 429,
-    total: 10141,       // 10570 - 429
-  },
-
-  hist2: {
-    id: "MNG-KM5590LP33",
-    date: "15-02-2026",
-    time: "12:45:33",
-    associate: "Rohit Nair",
-    branch: "Koramangala, BLR",
-    items: [
-      {
-        id: 0,
-        name: "Floral Linen-Blend Dress",
-        color: "Pink",
-        size: "10 Years",
-        material: "Linen Blend",
-        fit: "A-Line",
-        price: 3590,
-        discount: 0,
-        quantity: 1,
-        category: "Kids > Girls",
-        itemCode: "27076746",
-        baseAmount: 3042.37,
-        tax: 547.63,
-      },
-      {
-        id: 1,
-        name: "Long Printed Jumpsuit",
-        color: "Pink",
-        size: "11 Years",
-        material: "Printed Fabric",
-        fit: "Regular Fit",
-        price: 3890,
-        discount: 0,
-        quantity: 1,
-        category: "Kids > Girls",
-        itemCode: "27086748",
-        baseAmount: 3296.61,
-        tax: 593.39,
-      },
-      {
-        id: 2,
-        name: "Tropical Print Dress",
-        color: "Green",
-        size: "9 Years",
-        material: "Cotton Blend",
-        fit: "Regular Fit",
-        price: 3290,
-        discount: 0,
-        quantity: 1,
-        category: "Kids > Girls",
-        itemCode: "27027948",
-        baseAmount: 2788.14,
-        tax: 501.86,
-      },
-    ],
-    // No discounts
-    subtotal: 9127.12,
-    tax: 1642.88,
-    discount: 0,
-    total: 10770,
-  },
+export interface MangoReceiptProps {
+  /** Receipt to open first. Defaults to the newest receipt in `receipts`. */
+  data?: MangoReceiptData;
+  /** All receipts of this customer. Drives the history popup; tapping a row opens that receipt. */
+  receipts?: MangoReceiptData[];
+  /** Real QR image URL (a placeholder is drawn if omitted) */
+  qrSrc?: string;
+  logoSrc?: string;
+  rdepLogoSrc?: string;
+  instagramUrl?: string;
+  storeLocatorUrl?: string;
+  /** Overrides the built-in download. Receives the receipt currently on screen. */
+  onDownload?: (receipt: MangoReceiptData) => void;
+  onSendEmail?: (email: string, receipt: MangoReceiptData) => void;
+  onSaveProfile?: (values: ProfileValues) => void;
+  onSubmitFeedback?: (values: FeedbackValues) => void;
+  /** Fires when a receipt is opened from the history popup */
+  onSelectReceipt?: (invoiceNo: string) => void;
 }
-const currentReceipt = receipts[currentReceiptId]
 
-const totalSlides = 2
+type IconName = "history" | "mail" | "download" | "phone" | "instagram" | "pin" | "close" | "check" | "arrow";
+type ModalId = "history" | "email" | null;
 
-const transactionHistory = [
-  {
-    id: "current",
-    date: "05-04-2026",
-    branch: "MANGO",
-    amount: currentReceiptId === "current"
-      ? receipts.current.total
-      : 24771,
-  },
-  {
-    id: "hist1",
-    date: "20-03-2026",
-    branch: "MANGO",
-    amount: 10141,
-  },
-  {
-    id: "hist2",
-    date: "15-02-2026",
-    branch: "MANGO",
-    amount: 10770,
-  },
-]
-  
-  const toggleProductExpansion = (productId: number) => {
-    setExpandedProducts((prev) =>
-      prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId],
+/* ------------------------------- helpers ----------------------------------------- */
+const inr = (n: number): string => n.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const trim = (n: number): string => String(Number(n.toFixed(2)));
+const round2 = (n: number): number => Math.round(n * 100) / 100;
+const netOf = (i: MangoItem): number => round2(i.mrp * i.qty - i.discount);
+const emailOk = (s: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+
+function totalsOf(r: MangoReceiptData) {
+  const subtotal = round2(r.items.reduce((a, i) => a + i.mrp * i.qty, 0));
+  const discount = round2(r.items.reduce((a, i) => a + i.discount, 0));
+  return { subtotal, discount, total: round2(subtotal - discount), pieces: r.items.reduce((a, i) => a + i.qty, 0) };
+}
+
+/** "14-07-2026 11:14:04" -> timestamp (date part only), used to sort the history newest first. */
+function dateValue(d: string): number {
+  const [dd, mm, yyyy] = d.split(" ")[0].split("-").map(Number);
+  return Date.UTC(yyyy, (mm || 1) - 1, dd || 1);
+}
+
+function seeded(seed: string): () => number {
+  let s = 2166136261;
+  for (let i = 0; i < seed.length; i++) {
+    s ^= seed.charCodeAt(i);
+    s = Math.imul(s, 16777619);
+  }
+  s = s || 1;
+  return () => {
+    s ^= s << 13;
+    s ^= s >>> 17;
+    s ^= s << 5;
+    return ((s >>> 0) % 100000) / 100000;
+  };
+}
+
+/* ---------------------------- downloadable receipt ------------------------------- */
+const esc = (s: string): string =>
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+/** Standalone, print-ready HTML for one receipt. The "Save as PDF" button inside it opens the print dialog. */
+function buildReceiptHtml(r: MangoReceiptData, logoSrc: string, rdepLogoSrc: string): string {
+  const abs = (p: string) => (/^(https?:|data:)/.test(p) ? p : `${window.location.origin}${encodeURI(p)}`);
+  const t = totalsOf(r);
+  const rows = r.items
+    .map(
+      (i) => `<tr>
+      <td><div class="n">${esc(i.name)}</div><div class="s">Size ${esc(i.size)} &middot; SKU ${esc(i.sku)} &middot; HSN ${esc(i.hsn)}</div></td>
+      <td class="r">${i.qty}</td><td class="r">${inr(i.mrp)}</td><td class="r">&minus;${inr(i.discount)}</td><td class="r b">${inr(netOf(i))}</td></tr>`,
     )
-  }
-
-  const handleProfileUpdate = () => {
-    setProfileUpdateSuccess(true)
-    setTimeout(() => setProfileUpdateSuccess(false), 3000)
-  }
-
-  const getModalPositionRelativeToContainer = (buttonRef: React.RefObject<HTMLButtonElement>) => {
-    if (!buttonRef.current || !receiptContainerRef.current) {
-      return { top: "50%", left: "50%", transform: "translate(-50%, -50%)" }
-    }
-
-    const button = buttonRef.current
-    const container = receiptContainerRef.current
-
-    const buttonRect = button.getBoundingClientRect()
-    const containerRect = container.getBoundingClientRect()
-
-    // Calculate position relative to container
-    const relativeTop = buttonRect.top - containerRect.top
-    const relativeLeft = buttonRect.left - containerRect.left
-
-    // Modal dimensions (approximate)
-    const modalWidth = Math.min(400, containerRect.width - 32)
-    const modalHeight = 400
-
-    // Calculate ideal top position (above button, with offset)
-    let top = Math.max(16, relativeTop - modalHeight - 8)
-
-    // If modal would go off top, place it below button
-    if (top < 16) {
-      top = relativeTop + buttonRect.height + 8
-    }
-
-    // If still too high, center it vertically
-    if (top + modalHeight > containerRect.height) {
-      top = Math.max(16, (containerRect.height - modalHeight) / 2)
-    }
-
-    // Calculate ideal left position (centered on button)
-    let left = relativeLeft + buttonRect.width / 2 - modalWidth / 2
-
-    // Keep modal within horizontal bounds
-    left = Math.max(16, Math.min(left, containerRect.width - modalWidth - 16))
-
-    return {
-      position: "absolute" as const,
-      top: `${top}px`,
-      left: `${left}px`,
-      width: `${modalWidth}px`,
-      maxHeight: "85vh",
-    }
-  }
-
-  const handleFeedbackModalOpen = () => {
-    setShowFeedbackModal(true)
-  }
-
-  const handleTransactionHistoryOpen = () => {
-    setShowTransactionHistory(true)
-  }
-
-  const handleReferModalOpen = () => {
-    setShowReferModal(true)
-  }
-
-  const handleFeedbackSubmit = () => {
-    setFeedbackSubmitted(true)
-    setShowFeedbackModal(false)
-    setTimeout(() => setFeedbackSubmitted(false), 5000)
-  }
-
-  const handleShare = () => {
-    handleReferModalOpen()
-  }
-
-  const handleEmailReceipt = () => {
-    window.open(`mailto:?subject=Receipt from Mango Bangalore&body=Receipt ID: ${currentReceipt.id}`)
-  }
-
-  const handleDownloadReceipt = () => {
-    const receiptContent = `
-  <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>MANGO Official Digital Receipt</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+    .join("");
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mango Receipt ${esc(r.invoiceNo)}</title>
 <style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,'Helvetica Neue',sans-serif;font-size:14px;color:#8B6F5E;background:#F5F5F5;max-width:760px;margin:0 auto;padding:24px}
+.bar{display:flex;justify-content:flex-end;margin-bottom:16px}
+.bar button{background:#1A1A1A;color:#fff;border:0;border-radius:10px;padding:10px 18px;font:700 13px Arial,sans-serif;cursor:pointer}
+.sheet{background:#fff;border-radius:20px;padding:28px}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;padding-bottom:16px;border-bottom:3px solid #1A1A1A}
+.head img{height:34px;width:auto}
+h1{font-size:22px;color:#1A1A1A;text-transform:uppercase;letter-spacing:1px;margin-top:12px}
+.meta{text-align:right;font-size:12px;line-height:1.8}
+table{width:100%;border-collapse:collapse;margin-top:20px}
+th{text-align:left;font-size:11px;letter-spacing:.8px;padding:8px;background:#F5F5F5;border-bottom:1px solid rgba(139,111,94,.3)}
+td{padding:12px 8px;border-bottom:1px solid rgba(139,111,94,.3);vertical-align:top;font-size:13px}
+.r{text-align:right}.b{font-weight:700;color:#1A1A1A}.n{text-transform:uppercase;font-weight:700;color:#1A1A1A}.s{font-size:11px;margin-top:3px}
+.sum{margin:18px 0 0 auto;width:300px}
+.row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px}
+.total{display:flex;justify-content:space-between;align-items:baseline;border-top:3px solid #1A1A1A;margin-top:10px;padding-top:12px;color:#1A1A1A;font-weight:700}
+.total strong{font-size:26px}
+.pay{margin-top:18px;background:#1A1A1A;color:#fff;border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;font-size:14px}
+.store{margin-top:24px;font-size:12px;line-height:1.7;border-top:1px solid rgba(139,111,94,.3);padding-top:14px}
+.foot{margin-top:22px;text-align:center;font-size:12px}.foot img{height:20px;vertical-align:middle;margin-left:6px}
+@media print{.bar{display:none}body{max-width:none;padding:0;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}.sheet{border-radius:0}}
+</style></head><body>
+<div class="bar"><button onclick="window.print()">Save as PDF</button></div>
+<div class="sheet">
+<div class="head"><div><img src="${esc(abs(logoSrc))}" alt="Mango" onerror="this.style.display='none'"><h1>Tax invoice</h1></div>
+<div class="meta"><div><b>Invoice no:</b> ${esc(r.invoiceNo)}</div><div><b>Date:</b> ${esc(r.date)}</div><div><b>Customer:</b> ${esc(r.customer.name)}</div><div><b>Mobile:</b> ${esc(r.customer.mobile)}</div></div></div>
+<table><thead><tr><th style="width:44%">ITEM</th><th class="r">QTY</th><th class="r">UNIT PRICE</th><th class="r">DISCOUNT</th><th class="r">NET AMOUNT</th></tr></thead><tbody>${rows}</tbody></table>
+<div class="sum">
+<div class="row"><span>Subtotal (MRP)</span><b>&#8377;${inr(t.subtotal)}</b></div>
+<div class="row"><span>Discount</span><b>&minus;&#8377;${inr(t.discount)}</b></div>
+<div class="row"><span>Includes SGST</span><b>&#8377;${inr(r.sgst)}</b></div>
+<div class="row"><span>Includes CGST</span><b>&#8377;${inr(r.cgst)}</b></div>
+<div class="total"><span>Total paid</span><strong>&#8377;${inr(t.total)}</strong></div></div>
+<div class="pay"><span>Payment method &middot; ${esc(r.payment.mode)} &ndash; ${esc(r.payment.ref)}</span><b>&#8377;${inr(t.total)}</b></div>
+<div class="store"><b>${esc(r.store.name)}</b><br>${esc(r.store.address)}<br>${esc(r.store.email)} &middot; ${esc(r.store.phone)}<br>GSTIN: ${esc(r.store.gstin)}<br>Registered office: ${esc(r.registeredOffice)}</div>
+<div class="foot">Thank you for shopping at Mango<br><br>Powered by <img src="${esc(abs(rdepLogoSrc))}" alt="rdep" onerror="this.style.display='none'"></div>
+</div></body></html>`;
 }
 
-body{
-    font-family:'Poppins',sans-serif;
-    background:#ffffff;
-    color:#1A1A1A;
-    width:800px;
-    margin:0 auto;
-    padding:40px;
+function downloadReceipt(r: MangoReceiptData, logoSrc: string, rdepLogoSrc: string) {
+  const blob = new Blob([buildReceiptHtml(r, logoSrc, rdepLogoSrc)], { type: "text/html" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `Mango_Receipt_${r.invoiceNo}.html`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
-/* Header */
+/* ----------------------------------------------------------------------------------
+ * Sample data (shape mirrors the current receipt). The first receipt is the real one; the other
+ * two (and the exchange copy) are SAMPLE values. Replace with the real API response.
+ * -------------------------------------------------------------------------------- */
+/** 18% GST included in the price, split equally into SGST / CGST. */
+const halfTax = (total: number): number => Math.floor(((total - total / 1.18) / 2) * 100) / 100;
 
-.receipt-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    padding-bottom:24px;
-    border-bottom:1px solid #E8E8E8;
-    margin-bottom:30px;
+const SAMPLE_COMMON = {
+  customer: { name: "Sagar H P", mobile: "9620921294", email: "sagar.p@proenx.com" },
+  store: {
+    name: "Mango Store Ambience Mall",
+    address: "C-36, Ambience Mall, Gurgaon, NH-8 122010, Gurugram, Haryana",
+    email: "contact@mango.com",
+    phone: "01244665318",
+    gstin: "06AAOCR0097H1Z4",
+    associate: "Rohit",
+  },
+  registeredOffice:
+    "1/1, 4th Floor, Cabin 1, Vinayaka Towers, Gandhinagar, K. G. Road, Bangalore, Bangalore North, Karnataka, India, 560009",
+  exchange: {
+    days: 30,
+    points: [
+      "Items can be exchanged within 30 days of purchase with this receipt.",
+      "Products must be unworn, unwashed and carry all original tags.",
+      "Exchange is for the same or a higher value item; any price difference is payable.",
+      "Items bought during the end of season sale, innerwear and accessories are not exchangeable.",
+    ],
+  },
+  callTo: "+911244665318",
+  emailTo: "contact@mango.com",
+};
+
+export const sampleMangoReceipts: MangoReceiptData[] = [
+  {
+    ...SAMPLE_COMMON,
+    invoiceNo: "20260626000154",
+    date: "14-07-2026 11:14:04",
+    items: [{ name: "LINEN-COTTON BLEND STRIPE SHIRT", size: "M", sku: "27061231", hsn: "62032090", qty: 1, mrp: 4290, discount: 1716 }],
+    sgst: halfTax(2574),
+    cgst: halfTax(2574),
+    payment: { mode: "CASH", ref: "REF98765" },
+  },
+  {
+    ...SAMPLE_COMMON,
+    invoiceNo: "20260526000112",
+    date: "26-05-2026 18:41:22",
+    items: [
+      { name: "RELAXED FIT STRAIGHT JEANS", size: "32", sku: "17081052", hsn: "62034200", qty: 1, mrp: 5990, discount: 1200 },
+      { name: "TEXTURED COTTON T-SHIRT", size: "L", sku: "27045518", hsn: "61091000", qty: 1, mrp: 2290, discount: 0 },
+    ],
+    sgst: halfTax(7080),
+    cgst: halfTax(7080),
+    payment: { mode: "CARD", ref: "REF40211" },
+  },
+  {
+    ...SAMPLE_COMMON,
+    invoiceNo: "20260203000047",
+    date: "03-02-2026 14:09:50",
+    items: [{ name: "BELTED MIDI DRESS", size: "S", sku: "37057903", hsn: "62044990", qty: 1, mrp: 7990, discount: 0 }],
+    sgst: halfTax(7990),
+    cgst: halfTax(7990),
+    payment: { mode: "UPI", ref: "REF77310" },
+  },
+];
+
+/* -------------------------------- icons ------------------------------------------ */
+const STAR_PATH = "m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.2-6.2 3.2L7 14.2 2 9.3l6.9-1z";
+const PATHS: Record<IconName, ReactNode> = {
+  history: (
+    <>
+      <path d="M3 12a9 9 0 1 0 3-6.7" />
+      <path d="M3 4v5h5" />
+      <path d="M12 7v5l3 2" />
+    </>
+  ),
+  mail: (
+    <>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="m3 7 9 6 9-6" />
+    </>
+  ),
+  download: (
+    <>
+      <path d="M12 3v12" />
+      <path d="m7 11 5 5 5-5" />
+      <path d="M5 20h14" />
+    </>
+  ),
+  phone: (
+    <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z" />
+  ),
+  instagram: (
+    <>
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <path d="M17.5 6.5h.01" />
+    </>
+  ),
+  pin: (
+    <>
+      <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z" />
+      <circle cx="12" cy="10" r="3" />
+    </>
+  ),
+  close: <path d="M18 6 6 18M6 6l12 12" />,
+  check: <path d="m5 12 5 5 9-10" />,
+  arrow: <path d="M5 12h14M13 6l6 6-6 6" />,
+};
+
+function Icon({ name, className = "h-5 w-5" }: { name: IconName; className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      {PATHS[name]}
+    </svg>
+  );
 }
 
-.logo{
-    font-size:42px;
-    letter-spacing:6px;
-    font-weight:500;
-    margin-bottom:12px;
+/* ------------------------- placeholder QR ---------------------------------------- */
+function PlaceholderQR({ seed }: { seed: string }) {
+  const N = 25;
+  const cells = useMemo(() => {
+    const rnd = seeded(seed);
+    const inFinder = (x: number, y: number) => (x < 8 && y < 8) || (x >= N - 8 && y < 8) || (x < 8 && y >= N - 8);
+    const out: [number, number][] = [];
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) if (!inFinder(x, y) && rnd() > 0.5) out.push([x, y]);
+    return out;
+  }, [seed]);
+  const finder = (x: number, y: number) => (
+    <g key={`${x}-${y}`}>
+      <rect x={x} y={y} width="7" height="7" />
+      <rect x={x + 1} y={y + 1} width="5" height="5" fill="#fff" />
+      <rect x={x + 2} y={y + 2} width="3" height="3" />
+    </g>
+  );
+  return (
+    <svg viewBox={`-1 -1 ${N + 2} ${N + 2}`} fill="#1A1A1A" shapeRendering="crispEdges" role="img" aria-label="Receipt QR code" className="h-full w-full">
+      <rect x="-1" y="-1" width={N + 2} height={N + 2} fill="#fff" />
+      {cells.map(([x, y]) => (
+        <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" />
+      ))}
+      {finder(0, 0)}
+      {finder(N - 7, 0)}
+      {finder(0, N - 7)}
+    </svg>
+  );
 }
 
-.store-info{
-    font-size:12px;
-    line-height:1.8;
-    color:#6F6F6F;
+/* --------------------------------- shared ---------------------------------------- */
+const onPaper = "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--mg-ink)]";
+const onDark = "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+
+/** Soft lift so white cards pop off the light canvas. */
+const lift = "border border-black/5 shadow-[0_10px_28px_-14px_rgba(26,26,26,0.35)]";
+
+/* Inputs use 16px text so iOS does not zoom the page on focus. */
+const fieldInput =
+  "w-full rounded-none border-0 border-b-2 border-[var(--mg-edge)] bg-transparent px-0 py-2.5 text-base text-[var(--mg-ink)] outline-none transition-colors [-webkit-appearance:none] [appearance:none] placeholder:text-[var(--mg-brown)] focus:border-[var(--mg-ink)]";
+const fieldLabel = "mb-1 block text-[13px] text-[var(--mg-brown)]";
+const solidBtn = `w-full rounded-xl bg-[var(--mg-ink)] py-4 text-[13px] font-bold uppercase tracking-[0.12em] text-white transition-colors active:bg-[var(--mg-brown)] [@media(hover:hover)]:hover:bg-[var(--mg-brown)] motion-reduce:transition-none ${onPaper}`;
+const outlineBtn = `flex items-center justify-center gap-2 rounded-xl border-2 border-[var(--mg-ink)] bg-white py-4 text-[13px] font-bold uppercase tracking-[0.08em] text-[var(--mg-ink)] transition-colors active:border-[var(--mg-ink)] [@media(hover:hover)]:hover:border-[var(--mg-ink)] active:bg-[var(--mg-ink)] [@media(hover:hover)]:hover:bg-[var(--mg-ink)] active:text-white [@media(hover:hover)]:hover:text-white motion-reduce:transition-none ${onPaper}`;
+
+/* ---------- fixed-width scaling ---------- */
+const DESIGN_W = 400;
+const PHONE_MAX = 520;
+const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+/** 1 on tablets/desktop (centred 400px column); viewport/400 on phones so the layout is identical. */
+function useFitScale(): number {
+  const [scale, setScale] = useState(1);
+  useIsoLayoutEffect(() => {
+    const update = () => {
+      const w = document.documentElement.clientWidth;
+      setScale(w <= PHONE_MAX ? w / DESIGN_W : 1);
+    };
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("orientationchange", update);
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("orientationchange", update);
+    };
+  }, []);
+  return scale;
+}
+const zoomStyle = (scale: number): CSSProperties | undefined => (scale === 1 ? undefined : ({ zoom: scale } as CSSProperties));
+
+/** Logo image that falls back to a text wordmark instead of a broken-image icon. */
+function BrandImage({
+  src, alt, width, height, className, fallbackClassName, priority = false,
+}: {
+  src: string; alt: string; width: number; height: number; className: string; fallbackClassName: string; priority?: boolean;
+}) {
+  const [failed, setFailed] = useState(false);
+  if (failed) return <span className={fallbackClassName}>{alt}</span>;
+  return (
+    <Image
+      ref={(img: HTMLImageElement | null) => {
+        if (img && img.complete && img.naturalWidth === 0) setFailed(true);
+      }}
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      priority={priority}
+      onError={() => setFailed(true)}
+      className={className}
+    />
+  );
 }
 
-.store-info strong{
-    color:#1A1A1A;
-    font-weight:600;
+/** Label ...... value, like a printed receipt line. */
+function Leader({ label, value, strong = false, className = "" }: { label: ReactNode; value: ReactNode; strong?: boolean; className?: string }) {
+  return (
+    <div className={`flex items-baseline gap-2 ${className}`}>
+      <dt className="flex min-w-0 flex-1 items-baseline gap-2 after:mb-[3px] after:h-0 after:min-w-3 after:flex-1 after:border-b after:border-dotted after:border-current after:opacity-40 after:content-['']">
+        {label}
+      </dt>
+      <dd className={`shrink-0 text-right tabular-nums ${strong ? "font-bold text-[var(--mg-ink)]" : ""}`}>{value}</dd>
+    </div>
+  );
 }
 
-.bill-info{
-    text-align:right;
+/** Height-animated disclosure body (respects reduced motion). Closed content is also hidden from
+ *  keyboard and screen readers via `visibility`. */
+function Collapse({ open, id, children }: { open: boolean; id: string; children: ReactNode }) {
+  return (
+    <div
+      id={id}
+      aria-hidden={!open}
+      className={`grid transition-[grid-template-rows,visibility] duration-300 motion-reduce:transition-none ${
+        open ? "visible grid-rows-[1fr]" : "invisible grid-rows-[0fr]"
+      }`}
+    >
+      <div className="overflow-hidden">{children}</div>
+    </div>
+  );
 }
 
-.bill-label{
-    font-size:10px;
-    text-transform:uppercase;
-    letter-spacing:2px;
-    color:#8B6F5E;
-    margin-bottom:3px;
+/** Torn-paper edge (white teeth). */
+function ZigZag({ down = false }: { down?: boolean }) {
+  const id = useId().replace(/:/g, "");
+  return (
+    <svg aria-hidden="true" className="block h-2.5 w-full">
+      <defs>
+        <pattern id={id} width="16" height="10" patternUnits="userSpaceOnUse">
+          <path d={down ? "M0 0 L8 10 L16 0 Z" : "M0 10 L8 0 L16 10 Z"} fill="#fff" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="10" fill={`url(#${id})`} />
+    </svg>
+  );
 }
 
-.bill-value{
-    font-size:13px;
-    color:#1A1A1A;
-    margin-bottom:12px;
-    font-weight:500;
-}
-
-/* Customer */
-
-.customer-section{
-    background:#F8F8F8;
-    border:1px solid #ECECEC;
-    border-radius:18px;
-    padding:20px;
-    margin-bottom:30px;
-}
-
-.customer-title{
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:2px;
-    color:#8B6F5E;
-    margin-bottom:8px;
-}
-
-.customer-name{
-    font-size:22px;
-    font-weight:400;
-    color:#1A1A1A;
-}
-
-.customer-status{
-    font-size:12px;
-    color:#8B6F5E;
-    margin-top:6px;
-}
-
-/* Table */
-
-.items-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-bottom:30px;
-}
-
-.items-table th{
-    text-align:left;
-    font-size:10px;
-    text-transform:uppercase;
-    letter-spacing:2px;
-    color:#8B6F5E;
-    padding-bottom:12px;
-    border-bottom:1px solid #E8E8E8;
-    font-weight:500;
-}
-
-.items-table td{
-    padding:18px 0;
-    border-bottom:1px solid #F0F0F0;
-    vertical-align:top;
-}
-
-.item-name{
-    font-size:14px;
-    color:#1A1A1A;
-    font-weight:500;
-    margin-bottom:6px;
-}
-
-.item-meta{
-    font-size:11px;
-    color:#8B6F5E;
-    line-height:1.8;
-}
-
-.qty{
-    text-align:center;
-    font-size:13px;
-}
-
-.price{
-    text-align:right;
-    font-size:14px;
-    font-weight:500;
-}
-
-/* Totals */
-
-.totals{
-    margin-top:20px;
-    border-top:1px solid #E8E8E8;
-    padding-top:20px;
-}
-
-.total-row{
-    display:flex;
-    justify-content:space-between;
-    margin-bottom:12px;
-    font-size:13px;
-}
-
-.total-row span:first-child{
-    color:#8B6F5E;
-}
-
-.grand-total{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-top:20px;
-    padding-top:20px;
-    border-top:1px solid #E8E8E8;
-}
-
-.grand-total-label{
-    font-size:12px;
-    text-transform:uppercase;
-    letter-spacing:2px;
-    color:#8B6F5E;
-}
-
-.grand-total-value{
-    font-size:32px;
-    font-weight:300;
-    color:#1A1A1A;
-}
-
-/* Payment */
-
-.payment-box{
-    background:#1A1A1A;
-    border-radius:20px;
-    padding:18px 22px;
-    margin-top:30px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-.payment-label{
-    font-size:10px;
-    text-transform:uppercase;
-    letter-spacing:2px;
-    color:#C8A882;
-    margin-bottom:6px;
-}
-
-.payment-method{
-    color:white;
-    font-size:14px;
-}
-
-.payment-amount{
-    color:white;
-    font-size:20px;
-    font-weight:500;
-}
-
-/* Footer */
-
-.footer{
-    margin-top:50px;
-    padding-top:30px;
-    border-top:1px solid #ECECEC;
-    text-align:center;
-}
-
-.footer-title{
-    font-size:18px;
-    color:#1A1A1A;
-    margin-bottom:10px;
-}
-
-.footer-text{
-    color:#8B6F5E;
-    font-size:12px;
-    line-height:1.8;
-}
-
-.powered{
-    margin-top:25px;
-    font-size:10px;
-    letter-spacing:3px;
-    color:#BBBBBB;
-}
-
-@media print{
-
-    body{
-        width:100%;
-        padding:20px;
-        -webkit-print-color-adjust:exact;
-    }
-
-}
-
-</style>
-</head>
-
-<body>
-
-<div class="receipt-header">
-
+/** Heading with the short brown bar underneath. */
+function Heading({ children, sub, size = 22 }: { children: ReactNode; sub?: string; size?: number }) {
+  return (
     <div>
-
-        <div class="logo">MANGO</div>
-
-        <div class="store-info">
-            <strong>MANGO UB City</strong><br>
-            UB City Mall<br>
-            24 Vittal Mallya Road<br>
-            Ashok Nagar<br>
-            Bengaluru, Karnataka 560001
-        </div>
-
+      <h2 className="mg-display uppercase leading-[1.1] tracking-[0.05em] text-[var(--mg-ink)]" style={{ fontSize: size }}>
+        {children}
+      </h2>
+      <span aria-hidden="true" className="mt-3 block h-1 w-10 rounded-full bg-[var(--mg-brown)]" />
+      {sub && <p className="mt-3 text-[15px] leading-snug text-[var(--mg-brown)]">{sub}</p>}
     </div>
-
-    <div class="bill-info">
-
-        <div class="bill-label">Receipt ID</div>
-        <div class="bill-value">#MNG-BR7891XQ12</div>
-
-        <div class="bill-label">Date</div>
-        <div class="bill-value">05 April 2026</div>
-
-        <div class="bill-label">Store Associate</div>
-        <div class="bill-value">Priya Mehta</div>
-
-    </div>
-
-</div>
-
-<div class="customer-section">
-
-    <div class="customer-title">
-        Customer
-    </div>
-
-    <div class="customer-name">
-        Vikas
-    </div>
-
-    <div class="customer-status">
-        Verified Purchase
-    </div>
-
-</div>
-
-<table class="items-table">
-
-    <thead>
-
-        <tr>
-            <th style="width:55%">Product</th>
-            <th style="width:15%">Qty</th>
-            <th style="width:30%; text-align:right;">Amount</th>
-        </tr>
-
-    </thead>
-
-    <tbody>
-
-        <tr>
-
-            <td>
-
-                <div class="item-name">
-                    Long Satin Dress
-                </div>
-
-                <div class="item-meta">
-                    Colour: Burnt Orange<br>
-                    Size: M<br>
-                    Fit: Fitted<br>
-                    Material: Silk Mix Satin
-                </div>
-
-            </td>
-
-            <td class="qty">1</td>
-
-            <td class="price">
-                ₹11,990
-            </td>
-
-        </tr>
-
-        <tr>
-
-            <td>
-
-                <div class="item-name">
-                    Boat-Neck Ruched Dress
-                </div>
-
-                <div class="item-meta">
-                    Colour: Red<br>
-                    Size: M<br>
-                    Fit: Regular Fit<br>
-                    Material: Woven Fabric
-                </div>
-
-            </td>
-
-            <td class="qty">1</td>
-
-            <td class="price">
-                ₹5,990
-            </td>
-
-        </tr>
-
-        <tr>
-
-            <td>
-
-                <div class="item-name">
-                    Satin Dress with Gathered V-Neckline
-                </div>
-
-                <div class="item-meta">
-                    Colour: Orange<br>
-                    Size: S<br>
-                    Fit: Regular Fit<br>
-                    Material: Satin
-                </div>
-
-            </td>
-
-            <td class="qty">1</td>
-
-            <td class="price">
-                ₹7,990
-            </td>
-
-        </tr>
-
-    </tbody>
-
-</table>
-
-<div class="totals">
-
-    <div class="total-row">
-        <span>Subtotal</span>
-        <span>₹22,008.48</span>
-    </div>
-
-    <div class="total-row">
-        <span>GST</span>
-        <span>₹3,961.52</span>
-    </div>
-
-    <div class="total-row">
-        <span>Total Units</span>
-        <span>3</span>
-    </div>
-
-    <div class="grand-total">
-
-        <div class="grand-total-label">
-            Total Paid
-        </div>
-
-        <div class="grand-total-value">
-            ₹25,970
-        </div>
-
-    </div>
-
-</div>
-
-<div class="payment-box">
-
-    <div>
-
-        <div class="payment-label">
-            Payment Method
-        </div>
-
-        <div class="payment-method">
-            Card •••• 4532
-        </div>
-
-    </div>
-
-    <div class="payment-amount">
-        ₹25,970
-    </div>
-
-</div>
-
-<div class="footer">
-
-    <div class="footer-title">
-        Thank You For Shopping With MANGO
-    </div>
-
-    <div class="footer-text">
-        Explore new arrivals, seasonal collections and timeless wardrobe essentials at<br>
-        shop.mango.com/in/en
-    </div>
-
-    <div class="powered">
-        POWERED BY RDEP
-    </div>
-
-</div>
-
-</body>
-</html>
-`
-
-    const blob = new Blob([receiptContent], { type: "text/html" })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement("a")
-    link.href = url
-    link.download = "Mango_Receipt_S001.html"
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
-  }
-
-  const handleWhatsApp = () => {
-    window.open("https://wa.me/+919620921294", "_blank")
-  }
-
-  const handleCall = () => {
-    window.open("tel:+919620921294", "_blank")
-  }
-
-  const handleEmail = () => {
-    window.open("mailto:sagar.p@proenx.com", "_blank")
-  }
-
-  const handleSocialLink = (url: string) => {
-    window.open(url, "_blank")
-  }
+  );
+}
+
+/** Popups are white slips with a torn top edge, matching the receipt paper. */
+function Modal({ title, onClose, scale, children }: { title: string; onClose: () => void; scale: number; children: ReactNode }) {
+  const panelRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
+
+  useEffect(() => {
+    const previous = document.activeElement;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    panelRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && closeRef.current();
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = overflow;
+      (previous as HTMLElement | null)?.focus?.();
+    };
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex justify-center">
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-[#1A1A1A]/55 sm:items-center sm:p-4"
+      onMouseDown={(e) => e.target === e.currentTarget && onClose()}
+    >
       <div
-        id="receipt-root"
-        ref={receiptContainerRef}
-        className="w-full max-w-md mx-auto bg-white shadow-lg relative overflow-hidden"
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+        className="mg-root max-h-[88vh] w-full overflow-y-auto outline-none sm:w-[400px]"
       >
-        <div className="flex flex-col w-full gap-3 pb-4 px-3">
-
-      {/* MANGO Premium Fashion Header */}
-<div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mt-4 mx-4 overflow-hidden">
-
-  {/* Logo + greeting */}
-  <div className="px-5 pt-4 pb-3 bg-white">
-    <img
-      src="/images/design-mode/mango.png"
-      alt="MANGO"
-      className="h-6 w-auto object-contain"
-    />
-    <p className="mt-1.5 text-[9px] uppercase tracking-[0.22em] text-[#8B6F5E] font-medium">
-      Thank you, {customerName}
-    </p>
-  </div>
-
-  {/* Metadata strip — receipt info left, total right */}
-  <div className="px-5 py-3 bg-[#F8F8F8] border-t border-[#ECECEC] flex items-center justify-between">
-    <div>
-      <div className="text-[11px] font-medium text-[#1A1A1A]">
-        #{currentReceipt.id.slice(-8)}
-      </div>
-      <div className="flex items-center gap-2 mt-0.5 text-[10px] text-[#8B6F5E]">
-        <span>{currentReceipt.date}</span>
-        <span className="text-[#C8A882]">•</span>
-        <span>{currentReceipt.time}</span>
+        <div className="w-full sm:w-[400px]" style={zoomStyle(scale)}>
+          <ZigZag />
+          <div className="bg-white px-5 pb-7 pt-4 text-[var(--mg-brown)] sm:rounded-b-3xl">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 id={titleId} className="mg-display text-[22px] uppercase leading-[1.1] tracking-[0.05em] text-[var(--mg-ink)]">
+                  {title}
+                </h2>
+                <span aria-hidden="true" className="mt-3 block h-1 w-10 rounded-full bg-[var(--mg-brown)]" />
+              </div>
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close"
+                className={`grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[var(--mg-ink)] text-white transition-colors active:bg-[var(--mg-brown)] [@media(hover:hover)]:hover:bg-[var(--mg-brown)] motion-reduce:transition-none ${onPaper}`}
+              >
+                <Icon name="close" className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="mt-6">{children}</div>
+          </div>
+        </div>
       </div>
     </div>
+  );
+}
 
-    <div className="text-right">
-      <div className="text-[9px] uppercase tracking-[0.18em] text-[#8B6F5E] font-medium">
-        Total Paid
-      </div>
-      <div className="text-[18px] leading-none font-light tracking-[-0.03em] text-[#000000] tabular-nums mt-1">
-        ₹{currentReceipt.total.toLocaleString("en-IN")}
-      </div>
-    </div>
-  </div>
-
-  {/* NEW — Invoice details: address + GSTIN as icon rows */}
-  {(customerAddress || customerGstin) && (
-    <div className="px-5 py-3 bg-white border-t border-[#ECECEC] divide-y divide-[#F2F2F2]">
-
-      {customerAddress && (
-        <div className="flex items-start gap-2.5 py-2 first:pt-0 last:pb-0">
-          <MapPin className="h-3 w-3 text-[#C8A882] mt-0.5 flex-shrink-0" />
-          <span className="text-[10.5px] text-[#8B6F5E] leading-relaxed">
-            {customerAddress}
+/* ------------------------------ paper item row ----------------------------------- */
+function PaperItem({ item, open, onToggle }: { item: MangoItem; open: boolean; onToggle: () => void }) {
+  const panelId = useId();
+  const m = monoClass;
+  const net = netOf(item);
+  const gross = item.mrp * item.qty;
+  const pct = gross > 0 ? (item.discount / gross) * 100 : 0;
+  return (
+    <li className="border-b border-dashed border-black/40 py-3.5 last:border-b-0">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        aria-controls={panelId}
+        className={`grid w-full grid-cols-[auto_minmax(0,1fr)_auto] gap-x-2.5 rounded text-left ${onPaper}`}
+      >
+        <span aria-hidden="true" className={`${m} text-[13px] font-bold leading-snug text-[var(--mg-brown)]`}>
+          [{open ? "−" : "+"}]
+        </span>
+        <span className="min-w-0">
+          <span className={`${m} block text-[13px] font-semibold uppercase leading-snug text-[var(--mg-ink)]`}>{item.name}</span>
+          <span className={`${m} mt-1 block text-xs text-[var(--mg-brown)]`}>
+            SIZE {item.size} &nbsp; QTY {item.qty} &nbsp; MRP {item.mrp.toLocaleString("en-IN")}
           </span>
-        </div>
-      )}
+        </span>
+        <span className={`${m} text-sm font-bold leading-snug tabular-nums text-[var(--mg-ink)]`}>{inr(net)}</span>
+      </button>
 
-      {customerGstin && (
-        <div className="flex items-center gap-2.5 py-2 first:pt-0 last:pb-0">
-          <ReceiptIcon className="h-3 w-3 text-[#C8A882] flex-shrink-0" />
-          <span className="text-[10.5px] text-[#8B6F5E]">
-            GSTIN <span className="text-[#1A1A1A] font-medium tracking-wide ml-1">{customerGstin}</span>
-          </span>
-        </div>
-      )}
+      <Collapse open={open} id={panelId}>
+        <div className={`${m} ml-8 mt-3 space-y-2.5 border-l-2 border-[var(--mg-brown)] pl-3 text-xs`}>
+          <dl className="flex items-baseline justify-between gap-3">
+            <dt className="text-[var(--mg-brown)]">SKU</dt>
+            <dd className="text-[13px] font-bold tracking-wide text-[var(--mg-ink)]">{item.sku}</dd>
+          </dl>
 
-    </div>
-  )}
-
-</div>
-          
-       {/* MANGO Purchase Details Section */}
-<div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mt-3 mx-4 p-4">
-
-  {/* Header */}
-  <div className="flex items-center justify-between mb-3">
-    <h3 className="text-[13px] font-medium uppercase tracking-[0.18em] flex items-center text-[#1A1A1A]">
-      <Package className="mr-2 h-4 w-4 text-[#C8A882]" />
-      Purchase Summary
-    </h3>
-    <span className="text-[10px] font-medium bg-[#F5F5F5] text-[#8B6F5E] border border-[#E7E7E7] px-3 py-1 rounded-full uppercase tracking-[0.12em]">
-      {currentReceipt.items.length} Items
-    </span>
-  </div>
-
-  {/* Items */}
-  <div className="space-y-2">
-    {currentReceipt.items.map((product) => (
-      <div key={product.id} className="bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl p-3">
-
-        <div className="flex items-start justify-between">
-
-          <div className="flex-1">
-            <div className="font-medium text-[13px] text-[#1A1A1A] tracking-[-0.01em] leading-snug">
-              {product.name}
-            </div>
-            <div className="text-[10px] text-[#8B6F5E] uppercase tracking-[0.10em] mt-0.5 flex items-center gap-1.5">
-              <span>Size {product.size}</span>
-              {product.discount > 0 && (
-                <>
-                  <span className="text-[#DDDDDD]">•</span>
-                  <span className="text-[#B05E2F]">−₹{product.discount.toLocaleString("en-IN")} off</span>
-                </>
-              )}
-            </div>
-            <div className="mt-1 flex items-center gap-1">
-              <span className="text-[9px] uppercase tracking-[0.15em] text-[#BBBBBB]">SKU</span>
-              <span className="text-[9px] text-[#DDDDDD]">·</span>
-              <span className="text-[10px] text-[#BBBBBB] font-medium">{product.itemCode}</span>
-            </div>
-          </div>
-
-          <div className="text-right ml-3 flex-shrink-0">
-            <div className="text-[10px] uppercase tracking-[0.12em] text-[#8B6F5E]">Qty {product.quantity}</div>
-            {product.discount > 0 ? (
-              <div className="mt-0.5">
-                <div className="text-[11px] text-[#AAAAAA] line-through leading-none">₹{product.price.toLocaleString("en-IN")}</div>
-                <div className="font-semibold text-[13px] text-[#1A1A1A] leading-snug">₹{(product.price - product.discount).toLocaleString("en-IN")}</div>
+          <dl className="grid grid-cols-4 divide-x divide-black/15 rounded-md border border-black/15">
+            {(
+              [
+                ["HSN", item.hsn],
+                ["UoM", "Pcs"],
+                ["Size", item.size],
+                ["Qty", String(item.qty)],
+              ] as [string, string][]
+            ).map(([k, v]) => (
+              <div key={k} className="min-w-0 px-1.5 py-1.5">
+                <dt className="text-[var(--mg-brown)]">{k}</dt>
+                <dd className="mt-0.5 break-words font-bold tabular-nums text-[var(--mg-ink)]">{v}</dd>
               </div>
-            ) : (
-              <div className="font-semibold text-[13px] text-[#1A1A1A] mt-0.5">₹{product.price.toLocaleString("en-IN")}</div>
-            )}
-          </div>
+            ))}
+          </dl>
 
-        </div>
-
-      </div>
-    ))}
-  </div>
-
-  {/* Totals */}
-  <div className="mt-4 pt-4 border-t border-[#ECECEC] space-y-2">
-
-    <div className="flex justify-between text-[11px] uppercase tracking-[0.08em] text-[#8B6F5E]">
-      <span>Subtotal (MRP)</span>
-      <span className="text-[#1A1A1A]">₹{currentReceipt.items.reduce((acc, i) => acc + i.price * i.quantity, 0).toLocaleString("en-IN")}</span>
-    </div>
-
-    {currentReceipt.discount > 0 && (
-      <div className="flex justify-between text-[11px] uppercase tracking-[0.08em] text-[#B05E2F]">
-        <span>Discount</span>
-        <span>−₹{currentReceipt.discount.toLocaleString("en-IN")}</span>
-      </div>
-    )}
-
-    <div className="flex justify-between text-[11px] uppercase tracking-[0.08em] text-[#8B6F5E]">
-      <span>GST</span>
-      <span className="text-[#1A1A1A]">₹{currentReceipt.tax.toLocaleString("en-IN")}</span>
-    </div>
-
-    <div className="flex justify-between items-end pt-3 border-t border-[#E5E5E5]">
-      <span className="text-[13px] uppercase tracking-[0.12em] text-[#8B6F5E]">Total Paid</span>
-      <span className="text-[24px] leading-none font-light tracking-[-0.02em] text-[#000000]">₹{currentReceipt.total.toLocaleString("en-IN")}</span>
-    </div>
-
-  </div>
-
-  {/* Payment */}
-  <div className="mt-4">
-    <div className="bg-[#1A1A1A] rounded-2xl p-4 flex items-center justify-between">
-      <div className="flex items-center">
-        <div className="w-10 h-10 bg-[#C8A882]/15 rounded-xl flex items-center justify-center mr-3">
-          <CreditCard className="w-5 h-5 text-[#C8A882]" />
-        </div>
-        <div>
-          <div className="text-[10px] uppercase tracking-[0.12em] text-[#C8A882]">Payment Method</div>
-          <div className="text-sm text-white mt-1">Card •••• 4532</div>
-        </div>
-      </div>
-      <div className="text-right">
-        <div className="text-[18px] font-medium text-white">₹{currentReceipt.total.toLocaleString("en-IN")}</div>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-           {/* Receipt Actions */}
-<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-3 px-4 py-3">
-
-  <div className="flex items-center gap-3">
-
-
-      <button
-        ref={historyButtonRef}
-        onClick={handleTransactionHistoryOpen}
-        className="flex-1 flex items-center justify-center gap-1.5 bg-[#F8F8F8] border border-[#ECECEC] rounded-xl py-2 transition-all hover:border-[#C8A882] active:scale-[0.97]"
-      >
-        <History className="h-3.5 w-3.5 text-[#8B6F5E]" />
-        <span className="text-[10px] text-[#1A1A1A]">History</span>
-      </button>
-
-      <button
-        onClick={handleEmailReceipt}
-        className="flex-1 flex items-center justify-center gap-1.5 bg-[#F8F8F8] border border-[#ECECEC] rounded-xl py-2 transition-all hover:border-[#C8A882] active:scale-[0.97]"
-      >
-        <Mail className="h-3.5 w-3.5 text-[#8B6F5E]" />
-        <span className="text-[10px] text-[#1A1A1A]">Email</span>
-      </button>
-
-      <button
-        onClick={handleDownloadReceipt}
-        className="flex-1 flex items-center justify-center gap-1.5 bg-[#F8F8F8] border border-[#ECECEC] rounded-xl py-2 transition-all hover:border-[#C8A882] active:scale-[0.97]"
-      >
-        <Download className="h-3.5 w-3.5 text-[#8B6F5E]" />
-        <span className="text-[10px] text-[#1A1A1A]">Download</span>
-      </button>
-
-  </div>
-
-</div>
-
-            {/* Profile & Preferences */}
-<div className="bg-white rounded-3xl shadow-xl border border-[#ECECEC] mx-4 mt-6 p-5">
-
-  {profileUpdateSuccess ? (
-
-    <div className="text-center py-8 bg-[#FAFAFA] rounded-2xl border border-[#ECECEC]">
-      <div className="w-14 h-14 bg-[#C8A882]/15 rounded-full flex items-center justify-center mx-auto mb-4">
-        <Check className="w-6 h-6 text-[#8B6F5E]" />
-      </div>
-      <div className="text-[16px] font-medium text-[#1A1A1A]">Details Saved</div>
-      <div className="text-[11px] text-[#8B6F5E] mt-2 max-w-[240px] mx-auto leading-relaxed">
-        Your profile and communication preferences have been updated.
-      </div>
-    </div>
-
-  ) : (
-
-    <>
-
-      {/* Header */}
-      <div className="flex items-start mb-4">
-        <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-3 flex-shrink-0">
-          <User2 className="h-4 w-4 text-[#8B6F5E]" />
-        </div>
-        <div>
-          <h3 className="text-[14px] font-medium text-[#1A1A1A]">Your Profile</h3>
-          <p className="text-[11px] text-[#8B6F5E] mt-0.5 leading-relaxed">
-            Save your details for faster service and personalised updates.
-          </p>
-        </div>
-      </div>
-
-      {/* Form */}
-      <div className="space-y-2.5">
-
-        <div>
-          <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1.5">Full Name</label>
-          <input
-            type="text"
-            placeholder="Enter your full name"
-            value={profile.name}
-            onChange={(e) => setProfile((prev) => ({ ...prev, name: e.target.value }))}
-            className="w-full h-11 px-4 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:outline-none focus:border-[#C8A882] focus:bg-white transition-all placeholder:text-[#B8B8B8]"
-          />
-        </div>
-
-        <div>
-          <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1.5">Email Address</label>
-          <input
-            type="email"
-            placeholder="name@email.com"
-            value={profile.email}
-            onChange={(e) => setProfile((prev) => ({ ...prev, email: e.target.value }))}
-            className="w-full h-11 px-4 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:outline-none focus:border-[#C8A882] focus:bg-white transition-all placeholder:text-[#B8B8B8]"
-          />
-        </div>
-
-        <div>
-          <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1.5">Mobile Number</label>
-          <input
-            type="tel"
-            placeholder="+91"
-            value={profile.mobile}
-            onChange={(e) => setProfile((prev) => ({ ...prev, mobile: e.target.value }))}
-            className="w-full h-11 px-4 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:outline-none focus:border-[#C8A882] focus:bg-white transition-all placeholder:text-[#B8B8B8]"
-          />
-        </div>
-
-        {/* Birthday + Anniversary side by side */}
-        <div className="grid grid-cols-2 gap-2.5">
-
-          <div>
-            <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1.5">
-              Birthday
-            </label>
-            <input
-              type="date"
-              value={profile.birthday || ""}
-              onChange={(e) => setProfile((prev) => ({ ...prev, birthday: e.target.value }))}
-              className="w-full h-11 px-3 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:outline-none focus:border-[#C8A882] focus:bg-white transition-all text-[#1A1A1A] [&::-webkit-calendar-picker-indicator]:opacity-40"
-            />
-            <p className="text-[9px] text-[#B8B8B8] mt-1 pl-1">For birthday offers</p>
-          </div>
-
-          <div>
-            <label className="block text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-1.5">
-              Anniversary
-            </label>
-            <input
-              type="date"
-              value={profile.anniversary || ""}
-              onChange={(e) => setProfile((prev) => ({ ...prev, anniversary: e.target.value }))}
-              className="w-full h-11 px-3 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:outline-none focus:border-[#C8A882] focus:bg-white transition-all text-[#1A1A1A] [&::-webkit-calendar-picker-indicator]:opacity-40"
-            />
-            <p className="text-[9px] text-[#B8B8B8] mt-1 pl-1">Optional</p>
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* Communication Preferences */}
-      <div className="mt-4 pt-4 border-t border-[#ECECEC]">
-
-        <div className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E] mb-2.5">
-          Communication Preferences
-        </div>
-
-        <div className="space-y-2">
-
-          {/* Transactional — always on */}
-          <div className="flex items-center justify-between bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-2.5">
-            <div className="flex-1 mr-3">
-              <div className="text-[12px] font-medium text-[#1A1A1A]">Purchase & Order Updates</div>
-              <div className="text-[10px] text-[#8B6F5E] mt-0.5">Receipts and return confirmations. Always on.</div>
+          <dl className="grid grid-cols-2 gap-2">
+            <div className="rounded-md bg-[var(--mg-wash)] px-2.5 py-1.5 text-[var(--mg-brown-dark)]">
+              <dt>Discount %</dt>
+              <dd className="mt-0.5 text-[13px] font-bold tabular-nums">{trim(pct)}</dd>
             </div>
-            <div className="flex-shrink-0">
-              <div className="w-9 h-5 bg-[#C8A882] rounded-full flex items-center justify-end px-0.5 opacity-60 cursor-not-allowed">
-                <div className="w-4 h-4 bg-white rounded-full shadow-sm" />
-              </div>
+            <div className="rounded-md bg-[var(--mg-wash)] px-2.5 py-1.5 text-[var(--mg-brown-dark)]">
+              <dt>Discount amount</dt>
+              <dd className="mt-0.5 text-[13px] font-bold tabular-nums">{trim(item.discount)}</dd>
             </div>
-          </div>
-
-          {/* Promotional opt-in */}
-          <div
-            className="flex items-center justify-between bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-2.5 cursor-pointer"
-            onClick={() => setProfile((prev) => ({ ...prev, promoOptIn: !prev.promoOptIn }))}
-          >
-            <div className="flex-1 mr-3">
-              <div className="text-[12px] font-medium text-[#1A1A1A]">New Arrivals & Offers</div>
-              <div className="text-[10px] text-[#8B6F5E] mt-0.5">Collections, member offers and seasonal edits.</div>
-            </div>
-            <div className="flex-shrink-0">
-              <div className={`w-9 h-5 rounded-full flex items-center px-0.5 transition-all duration-200 ${profile.promoOptIn ? "bg-[#C8A882] justify-end" : "bg-[#E0E0E0] justify-start"}`}>
-                <div className="w-4 h-4 bg-white rounded-full shadow-sm" />
-              </div>
-            </div>
-          </div>
-
+          </dl>
         </div>
+      </Collapse>
+    </li>
+  );
+}
 
-      </div>
+/* ------------------------------- star rating ------------------------------------- */
+const RATING_WORDS = ["Poor", "Fair", "Good", "Very good", "Excellent"];
 
-      {/* CTA */}
-      <button
-        className="w-full mt-4 h-11 bg-[#1A1A1A] text-white rounded-2xl text-[12px] uppercase tracking-[0.18em] hover:bg-black transition-all"
-        onClick={handleProfileUpdate}
-      >
-        Save Details
-      </button>
-
-      <div className="text-[10px] text-[#8B6F5E] text-center mt-3 leading-relaxed">
-        Your information is used only for purchase communication and personalisation.
-        We never share your data with third parties.
-      </div>
-
-    </>
-
-  )}
-
-</div>
-
-        {/* Returns & Exchange Policy */}
-<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-5">
-
-  <button
-    className="w-full flex items-center justify-between"
-    onClick={() => setShowTerms(!showTerms)}
-  >
-    <div className="flex items-center">
-      <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-3">
-        <FileText className="h-5 w-5 text-[#8B6F5E]" />
-      </div>
-      <div className="text-left">
-        <h3 className="text-[14px] font-medium text-[#1A1A1A]">Returns & Exchange</h3>
-        <p className="text-[11px] text-[#8B6F5E] mt-0.5">30-day exchange policy</p>
-      </div>
-    </div>
-    <span className="text-[10px] text-[#8B6F5E]">{showTerms ? "▲" : "▼"}</span>
-  </button>
-
-  {showTerms && (
-    <div className="mt-4 pt-4 border-t border-[#ECECEC] text-[11px] text-[#8B6F5E] leading-relaxed space-y-2.5">
-      <p className="font-medium text-[#1A1A1A] text-[12px]">In-Store Exchanges & Returns</p>
-      <p>{"• You have "}<span className="text-[#1A1A1A] font-medium">30 days</span>{" from the date of purchase to exchange items at any MANGO store in India. Bring this receipt (digital or printed) along with the items."}</p>
-      <p>{"• For hygiene reasons, "}<span className="text-[#1A1A1A]">swimwear, lingerie, underwear and earrings</span>{" cannot be exchanged or returned."}</p>
-      <p>• Personalised or altered items cannot be exchanged or returned.</p>
-      <p>• Fragrances, candles and cosmetics must be returned in original sealed packaging.</p>
-      <p>• Gift cards are non-exchangeable and non-returnable.</p>
-      <a href="https://shop.mango.com/in/en/help/returns/store-returns" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[#C8A882] mt-3 hover:underline">
-        Full returns policy
-        <ArrowUpRight className="h-3 w-3" />
-      </a>
-    </div>
-  )}
-
-</div>
-
-        
-          
-          
-{/* MANGO Editorial Carousel */}
-<div className="bg-white rounded-3xl overflow-hidden mx-4 mt-6 relative shadow-xl border border-[#ECECEC]">
-
-  <Carousel
-    className="w-full"
-    setApi={setPromoApi}
-    opts={{
-      loop: true,
-    }}
-  >
-
-    <CarouselContent>
-
-      {/* Banner 1 - Kids World Cup Collection */}
-      <CarouselItem>
-        <div className="relative w-full aspect-[5/3]">
-          <Image
-            src="/images/design-mode/mango-banner-1.png"
-            alt="MANGO Kids World Cup Collection"
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
-      </CarouselItem>
-
-      {/* Banner 2 - Total White */}
-      <CarouselItem>
-        <div className="relative w-full aspect-[5/3]">
-          <Image
-            src="/images/design-mode/mango-banner-2.png"
-            alt="MANGO Total White"
-            fill
-            className="object-cover"
-          />
-        </div>
-      </CarouselItem>
-
-      {/* Banner 3 - Suit Guide */}
-      <CarouselItem>
-        <div className="relative w-full aspect-[5/3]">
-          <Image
-            src="/images/design-mode/mango-banner-3.png"
-            alt="MANGO Suit Guide"
-            fill
-            className="object-cover"
-          />
-        </div>
-      </CarouselItem>
-
-    </CarouselContent>
-
-    {/* Indicators */}
-    <div className="absolute bottom-4 right-5 flex gap-2 z-10">
-      {[0, 1, 2].map((index) => (
+function StarRow({ value, onChange, label, size = "lg" }: { value: number; onChange: (v: number) => void; label: string; size?: "lg" | "sm" }) {
+  const [hover, setHover] = useState(0);
+  const shown = hover || value;
+  return (
+    <div role="radiogroup" aria-label={label} className={`flex ${size === "lg" ? "gap-1" : "gap-0"}`} onMouseLeave={() => setHover(0)}>
+      {[1, 2, 3, 4, 5].map((n) => (
         <button
-          key={index}
-          onClick={() => promoApi?.scrollTo(index)}
-          className={`transition-all duration-300 rounded-full ${
-            currentSlide === index
-              ? "w-8 h-2 bg-[#C8A882]"
-              : "w-2 h-2 bg-white/60"
-          }`}
-        />
+          key={n}
+          type="button"
+          role="radio"
+          aria-checked={value === n}
+          aria-label={`${n} ${n === 1 ? "star" : "stars"}${size === "lg" ? `, ${RATING_WORDS[n - 1]}` : ""}`}
+          onMouseEnter={() => setHover(n)}
+          onClick={() => onChange(n)}
+          className={`grid place-items-center rounded-lg ${size === "lg" ? "h-12 w-12" : "h-8 w-8"} ${onPaper}`}
+        >
+          <svg
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            strokeLinejoin="round"
+            className={`${size === "lg" ? "h-9 w-9" : "h-6 w-6"} stroke-[var(--mg-brown)] transition-colors motion-reduce:transition-none ${
+              n <= shown ? "fill-[var(--mg-brown)]" : "fill-[var(--mg-wash)]"
+            }`}
+          >
+            <path d={STAR_PATH} />
+          </svg>
+        </button>
       ))}
     </div>
+  );
+}
 
-  </Carousel>
+const FEEDBACK_CATEGORIES = [
+  { key: "service", label: "Service quality" },
+  { key: "product", label: "Product offering" },
+  { key: "sizes", label: "Sizes availability" },
+  { key: "value", label: "Value for money" },
+] as const;
 
-</div>          
-               
-{/* Reach Us */}
-<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-5">
+function RateVisit({ data, onSubmit }: { data: MangoReceiptData; onSubmit?: (v: FeedbackValues) => void }) {
+  const [overall, setOverall] = useState(0);
+  const [cats, setCats] = useState({ service: 0, product: 0, sizes: 0, value: 0 });
+  const [comment, setComment] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const panelId = useId();
+  const commentId = useId();
+  const m = monoClass;
 
-  {/* Header */}
-  <div className="flex items-center mb-4">
-    <div className="w-9 h-9 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-3 flex-shrink-0">
-      <Headset className="h-4 w-4 text-[#8B6F5E]" />
-    </div>
-    <div>
-      <h3 className="text-[13px] font-medium text-[#1A1A1A]">Reach Us</h3>
-      <p className="text-[11px] text-[#8B6F5E] mt-0.5">Get in touch or find us online.</p>
-    </div>
-  </div>
+  const submit = (e: FormEvent) => {
+    e.preventDefault();
+    onSubmit?.({ invoiceNo: data.invoiceNo, overall, categories: cats, comment: comment.trim() });
+    setSubmitted(true);
+  };
 
-  {/* Row — Instagram, Call, Email */}
-  <div className="grid grid-cols-3 gap-2 mb-2">
-    <button
-      onClick={() => handleSocialLink("https://www.instagram.com/mango/?hl=en")}
-      className="flex flex-col items-center gap-2 bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-3 py-3 transition-all hover:border-[#C8A882] active:scale-[0.97]"
-    >
-      <Instagram className="h-4 w-4 text-[#8B6F5E]" />
-      <span className="text-[10px] text-[#8B6F5E]">Instagram</span>
-    </button>
-    <button
-      onClick={handleCall}
-      className="flex flex-col items-center gap-2 bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-3 py-3 transition-all hover:border-[#C8A882] active:scale-[0.97]"
-    >
-      <Phone className="h-4 w-4 text-[#8B6F5E]" />
-      <span className="text-[10px] text-[#8B6F5E]">Call Us</span>
-    </button>
-    <button
-      onClick={handleEmail}
-      className="flex flex-col items-center gap-2 bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-3 py-3 transition-all hover:border-[#C8A882] active:scale-[0.97]"
-    >
-      <Mail className="h-4 w-4 text-[#8B6F5E]" />
-      <span className="text-[10px] text-[#8B6F5E]">Email Us</span>
-    </button>
-  </div>
+  return (
+    <section aria-label="Rate your visit" className={`rounded-3xl bg-white p-5 text-[var(--mg-brown)] ${lift}`}>
+      <Heading sub="How was your experience at Mango?">Rate your visit</Heading>
 
-  {/* Store Locator — full width */}
-  <a
-    href="https://shop.mango.com/in/en/stores"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="flex items-center justify-between w-full bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl px-4 py-3.5 hover:border-[#C8A882] transition-all group"
-  >
-    <div className="flex items-center">
-      <div className="w-10 h-10 rounded-xl bg-white border border-[#ECECEC] flex items-center justify-center mr-3">
-        <MapPin className="h-5 w-5 text-[#C8A882]" />
-      </div>
-      <div>
-        <div className="text-[12px] font-medium text-[#1A1A1A]">Find a MANGO Store</div>
-        <div className="text-[10px] text-[#8B6F5E] mt-0.5">Locate your nearest store in India</div>
-      </div>
-    </div>
-    <ArrowRight className="h-4 w-4 text-[#8B6F5E] group-hover:translate-x-0.5 transition-transform" />
-  </a>
-</div>
-        
-          {/* MANGO Feedback Section */}
-<div className="bg-white rounded-3xl border border-[#ECECEC] shadow-xl mx-4 mt-6 p-5">
-
-  {feedbackSubmitted ? (
-
-    <div className="text-center py-8 bg-[#FAFAFA] rounded-2xl border border-[#ECECEC]">
-
-      <div className="w-14 h-14 bg-[#C8A882]/15 rounded-full flex items-center justify-center mx-auto mb-4">
-        <Check className="w-6 h-6 text-[#8B6F5E]" />
-      </div>
-
-      <div className="text-[16px] font-medium text-[#1A1A1A]">Thank You</div>
-
-      <div className="text-[11px] text-[#8B6F5E] mt-2 max-w-[240px] mx-auto leading-relaxed">
-        Your feedback helps us create a better experience at every MANGO store.
-      </div>
-
-      <button
-        onClick={() => window.open("https://www.google.com/maps/search/Mango+UB+City+Bangalore", "_blank")}
-        className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-[#ECECEC] rounded-full text-[11px] text-[#1A1A1A] hover:border-[#C8A882] transition-all shadow-sm"
-      >
-        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none">
-          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-        </svg>
-        Also leave a Google Review
-      </button>
-
-      {/* Powered by — thank you state */}
-      <div className="flex items-center justify-center space-x-2 mt-6 pt-5 border-t border-[#ECECEC]">
-        <span className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E]">Powered by</span>
-        <a href="https://www.rdep.io" target="_blank" rel="noopener noreferrer" className="opacity-80 hover:opacity-100 transition-opacity">
-          <Image src="/images/design-mode/RDEP%20cropped.png" alt="RDEP" width={55} height={14} className="object-contain" />
-        </a>
-      </div>
-
-    </div>
-
-  ) : (
-
-    <div className="space-y-4">
-
-      {/* Header */}
-      <div className="flex items-center">
-        <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-3">
-          <MessageSquare className="h-4 w-4 text-[#8B6F5E]" />
-        </div>
-        <div>
-          <h3 className="text-[14px] font-medium text-[#1A1A1A]">Rate Your Visit</h3>
-          <p className="text-[11px] text-[#8B6F5E] mt-0.5">
-            How was your experience at MANGO {currentReceipt.branch}?
-          </p>
-        </div>
-      </div>
-
-      {/* Stars — always visible */}
-      <div className="flex justify-center gap-4 py-1">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <button
-            key={star}
-            onClick={() => setRating(star)}
-            className="transition-all duration-200 hover:scale-105"
-          >
-            <Star className={`h-7 w-7 transition-colors ${star <= rating ? "fill-[#C8A882] text-[#C8A882]" : "text-[#D8D8D8]"}`} />
-          </button>
-        ))}
-      </div>
-
-      {/* Everything below — only after star selected */}
-      {rating > 0 ? (
-
-        <div className="space-y-3">
-
-          {/* Comment Box */}
-          <textarea
-            rows={3}
-            placeholder="Additional comments (optional)..."
-            className="w-full p-3 text-sm bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl focus:bg-white focus:border-[#C8A882] outline-none resize-none transition-all text-[#1A1A1A] placeholder:text-[#B5B5B5]"
-            value={feedbackText}
-            onChange={(e) => setFeedbackText(e.target.value)}
-          />
-
-          {/* Submit */}
-          <button
-            className="w-full h-11 bg-[#1A1A1A] text-white rounded-2xl text-[12px] uppercase tracking-[0.18em] hover:bg-black transition-all"
-            onClick={handleFeedbackSubmit}
-          >
-            Submit Feedback
-          </button>
-
-          {/* Google Review — only 4 or 5 stars */}
-          {rating >= 4 && (
-            <button
-              onClick={() => window.open("https://www.google.com/maps/search/Mango+UB+City+Bangalore", "_blank")}
-              className="w-full h-11 rounded-2xl border border-[#ECECEC] bg-[#F8F8F8] text-[11px] text-[#1A1A1A] flex items-center justify-center gap-2 hover:border-[#C8A882] transition-all"
-            >
-              <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none">
-                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-              </svg>
-              Leave a Google Review for this store
-            </button>
-          )}
-
-          <p className="text-center text-[10px] text-[#8B6F5E]">
-            Your feedback helps us refine every collection and in-store experience.
-          </p>
-
-          {/* Powered by — post-rating state */}
-          <div className="flex items-center justify-center space-x-2 pt-3 mt-3 border-t border-[#ECECEC]">
-            <span className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E]">Powered by</span>
-            <a href="https://www.rdep.io" target="_blank" rel="noopener noreferrer" className="opacity-80 hover:opacity-100 transition-opacity">
-              <Image src="/images/design-mode/RDEP%20cropped.png" alt="RDEP" width={55} height={14} className="object-contain" />
-            </a>
-          </div>
-
-        </div>
-
-      ) : (
-
-        /* Powered by — pre-rating state (no star selected yet) */
-        <div className="flex items-center justify-center space-x-2 pt-3 mt-3 border-t border-[#ECECEC]">
-          <span className="text-[10px] uppercase tracking-[0.15em] text-[#8B6F5E]">Powered by</span>
-          <a href="https://www.rdep.io" target="_blank" rel="noopener noreferrer" className="opacity-80 hover:opacity-100 transition-opacity">
-            <Image src="/images/design-mode/RDEP%20cropped.png" alt="RDEP" width={55} height={14} className="object-contain" />
-          </a>
-        </div>
-
-      )}
-
-    </div>
-
-  )}
-
-</div>
-          <div id="height-marker" style={{ height: "1px" }} />
-        </div>
-
-        {/* Feedback Modal */}
-        {showFeedbackModal && (
-          <div
-            style={getModalPositionRelativeToContainer(feedbackButtonRef)}
-            className="bg-white rounded-lg w-full overflow-hidden shadow-xl z-[9999] max-w-sm"
-          >
-            <div className="flex justify-between items-center p-4 border-b bg-blue-700 text-white">
-              <h3 className="text-lg font-semibold">How was your shopping experience?</h3>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-white"
-                onClick={() => setShowFeedbackModal(false)}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-4 w-4"
-                >
-                  <path d="M18 6 6 18"></path>
-                  <path d="m6 6 12 12"></path>
-                </svg>
-              </Button>
-            </div>
-
-            <div className="p-4 space-y-4 max-h-80 overflow-y-auto">
-              {[
-                { key: "service", label: "Service Quality" },
-                { key: "quality", label: "Product Quality" },
-                { key: "style", label: "Shoe Style/Design" },
-                { key: "pricing", label: "Value for Money" },
-                { key: "store", label: "Store Ambiance" },
-              ].map((category) => (
-                <div key={category.key} className="flex items-center justify-between">
-                  <span className="text-sm">{category.label}</span>
-                  <div className="flex">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Button
-                        key={star}
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 p-0"
-                        onClick={() =>
-                          setFeedback((prev) => ({
-                            ...prev,
-                            [category.key as keyof typeof feedback]: star,
-                          }))
-                        }
-                      >
-                        <Star
-                          className={`h-5 w-5 ${
-                            feedback[category.key as keyof typeof feedback] >= star
-                              ? "text-yellow-400 fill-yellow-400"
-                              : "text-gray-300"
-                          }`}
-                        />
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-
-              <Textarea
-                placeholder="Please share your feedback about your purchase (optional)"
-                className="mt-2"
-                value={feedback.comments}
-                onChange={(e) => setFeedback((prev) => ({ ...prev, comments: e.target.value }))}
-              />
-            </div>
-
-            <div className="p-4 border-t">
-              <Button className="w-full bg-blue-700 hover:bg-blue-800 text-white" onClick={handleFeedbackSubmit}>
-                Submit Feedback
-              </Button>
-            </div>
-          </div>
-        )}
-
-  {/* Transaction History Modal */}
-{showTransactionHistory && (
-  <div className="fixed inset-0 z-[9999] flex items-center justify-center">
-
-    {/* Backdrop */}
-    <div
-      className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-      onClick={() => setShowTransactionHistory(false)}
-    />
-
-    {/* Modal */}
-    <div className="relative bg-white rounded-3xl w-full max-w-sm mx-4 shadow-2xl border border-[#ECECEC] overflow-hidden">
-
-      {/* Header */}
-      <div className="flex justify-between items-center p-5 border-b border-[#ECECEC]">
-
-        <div className="flex items-center">
-
-          <div className="w-10 h-10 rounded-xl bg-[#C8A882]/15 flex items-center justify-center mr-3">
-            <History className="h-5 w-5 text-[#8B6F5E]" />
-          </div>
-
+      {submitted ? (
+        <div className="mt-6 flex items-start gap-4" aria-live="polite">
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[var(--mg-ink)] text-white">
+            <Icon name="check" className="h-6 w-6" />
+          </span>
           <div>
+            <p className="mg-display text-[18px] uppercase leading-tight tracking-[0.05em] text-[var(--mg-ink)]">Thank you</p>
+            <p className="mt-1.5 text-[15px] leading-snug">
+              You rated this visit {overall} out of 5 ({RATING_WORDS[overall - 1].toLowerCase()}).
+            </p>
+            <button
+              type="button"
+              onClick={() => setSubmitted(false)}
+              className={`${m} mt-2 rounded py-1 text-[13px] font-semibold text-[var(--mg-ink)] underline underline-offset-4 active:no-underline [@media(hover:hover)]:hover:no-underline ${onPaper}`}
+            >
+              [ Edit feedback ]
+            </button>
+          </div>
+        </div>
+      ) : (
+        <form onSubmit={submit} noValidate>
+          <div className="mt-4 flex flex-col items-start">
+            <div className="-ml-1.5">
+              <StarRow value={overall} onChange={setOverall} label="Overall rating" />
+            </div>
+            <p aria-live="polite" className="mt-1 h-5 text-[15px]">
+              {overall ? RATING_WORDS[overall - 1] : "Tap a star to rate"}
+            </p>
+          </div>
 
-            <h3 className="text-[15px] font-medium text-[#1A1A1A]">
-              Purchase History
-            </h3>
+          <Collapse open={overall > 0} id={panelId}>
+            <div className="pt-5">
+              <ul className="border-t-2 border-[var(--mg-ink)]">
+                {FEEDBACK_CATEGORIES.map((c) => (
+                  <li key={c.key} className="flex items-center justify-between gap-2 border-b border-dashed border-black/40 py-1.5">
+                    <span className={`${m} text-[13px] uppercase text-[var(--mg-ink)]`}>{c.label}</span>
+                    <div className="-mr-1">
+                      <StarRow size="sm" label={c.label} value={cats[c.key]} onChange={(v) => setCats((p) => ({ ...p, [c.key]: v }))} />
+                    </div>
+                  </li>
+                ))}
+              </ul>
 
-            <p className="text-[11px] text-[#8B6F5E] mt-0.5">
-              View previous purchases
+              <label htmlFor={commentId} className={`${fieldLabel} mt-5`}>
+                Additional comments (optional)
+              </label>
+              <textarea
+                id={commentId}
+                rows={3}
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="What stood out, good or bad?"
+                className={`${fieldInput} resize-none`}
+              />
+              <button type="submit" className={`${solidBtn} mt-5`}>
+                Submit feedback
+              </button>
+              <p className="mt-3 text-center text-[13px]">Your feedback helps us improve every store.</p>
+            </div>
+          </Collapse>
+        </form>
+      )}
+    </section>
+  );
+}
+
+/* ------------------------------- profile ----------------------------------------- */
+const GENDERS = ["Male", "Female", "Non-binary", "Prefer not to say"];
+
+function Toggle({ checked, onChange, disabled = false, label }: { checked: boolean; onChange?: (v: boolean) => void; disabled?: boolean; label: string }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-label={label}
+      disabled={disabled}
+      onClick={() => onChange?.(!checked)}
+      className={`relative h-7 w-[52px] shrink-0 rounded-full border-2 transition-colors motion-reduce:transition-none ${
+        checked ? "border-[var(--mg-brown)] bg-[var(--mg-brown)]" : "border-[var(--mg-edge)] bg-white"
+      } ${disabled ? "opacity-70" : ""} ${onPaper}`}
+    >
+      <span
+        aria-hidden="true"
+        className={`absolute top-[3px] h-4 w-4 rounded-full transition-all motion-reduce:transition-none ${checked ? "left-[27px] bg-white" : "left-[3px] bg-[var(--mg-brown)]"}`}
+      />
+    </button>
+  );
+}
+
+function ProfileCard({ data, onSave }: { data: MangoReceiptData; onSave?: (v: ProfileValues) => void }) {
+  const [form, setForm] = useState<ProfileValues>({
+    name: data.customer.name,
+    email: data.customer.email,
+    gender: "",
+    birthday: "",
+    anniversary: "",
+    offers: false,
+  });
+  const [saved, setSaved] = useState(false);
+  const [emailErr, setEmailErr] = useState("");
+  const upd = <K extends keyof ProfileValues>(k: K, v: ProfileValues[K]) => {
+    setSaved(false);
+    setForm((f) => ({ ...f, [k]: v }));
+  };
+
+  const submit = (e: FormEvent) => {
+    e.preventDefault();
+    if (form.email && !emailOk(form.email)) {
+      setEmailErr("Enter a valid email address, like name@example.com.");
+      return;
+    }
+    setEmailErr("");
+    onSave?.(form);
+    setSaved(true);
+  };
+
+  return (
+    <section aria-label="Your profile" className={`rounded-3xl bg-white p-5 text-[var(--mg-brown)] ${lift}`}>
+      <Heading sub="Save your details for faster service and personalised updates.">Your profile</Heading>
+      <form onSubmit={submit} noValidate className="mt-6 space-y-6">
+        <label className="block">
+          <span className={fieldLabel}>Full name</span>
+          <input className={fieldInput} value={form.name} onChange={(e) => upd("name", e.target.value)} autoComplete="name" />
+        </label>
+
+        <label className="block">
+          <span className={fieldLabel}>Email address</span>
+          <input
+            type="email"
+            className={fieldInput}
+            value={form.email}
+            onChange={(e) => {
+              setEmailErr("");
+              upd("email", e.target.value);
+            }}
+            autoComplete="email"
+            aria-invalid={!!emailErr}
+          />
+          {emailErr && (
+            <span role="alert" className="mt-1.5 block text-[13px] font-bold text-[var(--mg-ink)]">
+              {emailErr}
+            </span>
+          )}
+        </label>
+
+        <div>
+          <span className={fieldLabel}>Mobile number</span>
+          <p className="text-base font-bold tabular-nums text-[var(--mg-ink)]">{data.customer.mobile}</p>
+        </div>
+
+        <fieldset>
+          <legend className={`${fieldLabel} mb-2`}>Gender</legend>
+          <div className="flex flex-wrap gap-2">
+            {GENDERS.map((g) => {
+              const on = form.gender === g;
+              return (
+                <button
+                  key={g}
+                  type="button"
+                  aria-pressed={on}
+                  onClick={() => upd("gender", on ? "" : g)}
+                  className={`rounded-full border-2 px-4 py-2 text-[14px] transition-colors motion-reduce:transition-none ${onPaper} ${
+                    on
+                      ? "border-[var(--mg-ink)] bg-[var(--mg-ink)] text-white"
+                      : "border-[var(--mg-edge)] bg-white text-[var(--mg-brown-dark)] [@media(hover:hover)]:hover:border-[var(--mg-ink)]"
+                  }`}
+                >
+                  {g}
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
+
+        <div className="grid grid-cols-2 gap-x-4 gap-y-6">
+          <label className="block min-w-0">
+            <span className={fieldLabel}>Birthday</span>
+            <input type="date" className={fieldInput} value={form.birthday} onChange={(e) => upd("birthday", e.target.value)} autoComplete="bday" />
+            <span className="mt-1.5 block text-[13px]">For birthday offers</span>
+          </label>
+          <label className="block min-w-0">
+            <span className={fieldLabel}>Anniversary</span>
+            <input type="date" className={fieldInput} value={form.anniversary} onChange={(e) => upd("anniversary", e.target.value)} />
+            <span className="mt-1.5 block text-[13px]">Optional</span>
+          </label>
+        </div>
+
+        <fieldset>
+          <legend className={`${fieldLabel} mb-1`}>Communication preferences</legend>
+          <ul className="border-y-2 border-[var(--mg-ink)]">
+            <li className="flex items-center justify-between gap-4 border-b border-dashed border-black/40 py-4">
+              <div>
+                <p className="text-[15px] font-bold text-[var(--mg-ink)]">Purchase and order updates</p>
+                <p className="mt-0.5 text-[14px] leading-snug">Receipts and return confirmations. Always on.</p>
+              </div>
+              <Toggle checked disabled label="Purchase and order updates, always on" />
+            </li>
+            <li className="flex items-center justify-between gap-4 py-4">
+              <div>
+                <p className="text-[15px] font-bold text-[var(--mg-ink)]">New arrivals and offers</p>
+                <p className="mt-0.5 text-[14px] leading-snug">Collections, member offers and seasonal edits.</p>
+              </div>
+              <Toggle checked={form.offers} onChange={(v) => upd("offers", v)} label="New arrivals and offers" />
+            </li>
+          </ul>
+        </fieldset>
+
+        <button type="submit" className={solidBtn}>
+          Save details
+        </button>
+        <p aria-live="polite" className="flex min-h-5 items-center justify-center gap-1.5 text-center text-sm font-bold text-[var(--mg-ink)]">
+          {saved && (
+            <>
+              <Icon name="check" className="h-4 w-4 text-[var(--mg-brown)]" /> Details saved
+            </>
+          )}
+        </p>
+        <p className="text-center text-[13px] leading-relaxed">
+          Your information is used only for purchase communication and personalisation. We never share your data with third parties.
+        </p>
+      </form>
+    </section>
+  );
+}
+
+/* ------------------------------ receipt view ------------------------------------- */
+interface ReceiptViewProps extends Omit<MangoReceiptProps, "data" | "receipts" | "onSelectReceipt"> {
+  data: MangoReceiptData;
+  history: { invoiceNo: string; date: string; amount: number; items: number; current: boolean }[];
+  onSelect: (invoiceNo: string) => void;
+}
+
+function ReceiptView({
+  data,
+  history,
+  onSelect,
+  qrSrc,
+  logoSrc = DEFAULT_MANGO_LOGO,
+  rdepLogoSrc = DEFAULT_RDEP_LOGO,
+  instagramUrl = DEFAULT_INSTAGRAM_URL,
+  storeLocatorUrl = DEFAULT_STORE_LOCATOR_URL,
+  onDownload,
+  onSendEmail,
+  onSaveProfile,
+  onSubmitFeedback,
+}: ReceiptViewProps) {
+  const [openItem, setOpenItem] = useState(-1);
+  const [modal, setModal] = useState<ModalId>(null);
+  const [exchangeOpen, setExchangeOpen] = useState(false);
+  const [storeOpen, setStoreOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [sentTo, setSentTo] = useState("");
+  const [emailErr, setEmailErr] = useState("");
+  const closeModal = useCallback(() => setModal(null), []);
+  const exchangeId = useId();
+  const storeId = useId();
+  const scale = useFitScale();
+  const m = monoClass;
+
+  const { store, exchange } = data;
+  const t = useMemo(() => totalsOf(data), [data]);
+  const firstName = data.customer.name.trim().split(/\s+/)[0] || data.customer.name;
+  /* MangoSans is wide: ~0.72em per uppercase character. Fits ~180px next to the logo. */
+  const nameSize = Math.min(30, Math.max(18, Math.floor(180 / (0.72 * (firstName.length + 1)))));
+  const handleDownload = () => (onDownload ? onDownload(data) : downloadReceipt(data, logoSrc, rdepLogoSrc));
+
+  return (
+    <div
+      style={theme}
+      onTouchStart={() => {}} /* lets :active press states fire on iOS Safari */
+      className="mg-root min-h-screen overflow-x-hidden bg-[var(--mg-page)] text-[var(--mg-brown)] antialiased [-webkit-text-size-adjust:100%] sm:py-8"
+    >
+      <style>{FONT_FACES}</style>
+
+      <main
+        style={zoomStyle(scale)}
+        className="mx-auto w-[400px] overflow-hidden bg-[var(--mg-canvas)] pb-0 sm:rounded-3xl sm:shadow-[0_24px_60px_-24px_rgba(26,26,26,0.3)]"
+      >
+        {/* ---------- Compact hero: logo left, greeting right ---------- */}
+        <header className="flex items-center justify-between gap-4 px-5 pb-7 pt-6">
+          <BrandImage
+            src={logoSrc}
+            alt="MANGO"
+            width={320}
+            height={80}
+            priority
+            className="h-9 w-auto max-w-[46%] shrink-0 object-contain object-left"
+            fallbackClassName="mg-display inline-block text-[26px] uppercase leading-none tracking-[0.12em] text-[var(--mg-ink)]"
+          />
+          <h1 className="min-w-0 text-right uppercase">
+            <span className="mg-display block text-[12px] leading-none tracking-[0.2em] text-[var(--mg-brown-dark)]">Thank you</span>
+            <span
+              className="mg-display mt-1.5 block leading-[1.05] tracking-[0.02em] text-[var(--mg-ink)] [overflow-wrap:anywhere]"
+              style={{ fontSize: nameSize }}
+            >
+              {firstName}
+            </span>
+          </h1>
+        </header>
+
+        {/* ---------- Total paid card ---------- */}
+        <div className="px-4">
+          <section aria-label="Total paid" className={`rounded-3xl bg-white p-5 text-[var(--mg-ink)] ${lift}`}>
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <p className="text-[13px] text-[var(--mg-brown)]">Total paid</p>
+                <p className="mg-display mt-1.5 text-[34px] leading-none tabular-nums">₹{inr(t.total)}</p>
+              </div>
+              <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-white ring-1 ring-black/15">
+                {qrSrc ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={qrSrc} alt="Receipt QR code" className="h-full w-full object-contain" />
+                ) : (
+                  <PlaceholderQR seed={data.invoiceNo} />
+                )}
+              </div>
+            </div>
+            <dl className={`${m} mt-5 space-y-1.5 border-t border-dashed border-black/40 pt-4 text-xs text-[var(--mg-brown)]`}>
+              <Leader label="Invoice no" value={data.invoiceNo} strong />
+              <Leader label="Date" value={data.date} strong />
+            </dl>
+          </section>
+        </div>
+
+        {/* ---------- The receipt: thermal paper ---------- */}
+        <section
+          aria-label="Purchase summary"
+          className="mx-3 mt-8 text-[var(--mg-brown)]"
+          style={{ filter: "drop-shadow(0 12px 14px rgba(26,26,26,0.16))" }}
+        >
+          <ZigZag />
+          <div className="bg-white px-5 pb-6 pt-4">
+            <h2 className="mg-display text-[22px] uppercase leading-[1.1] tracking-[0.05em] text-[var(--mg-ink)]">Purchase summary</h2>
+            <p className={`${m} mt-2 text-xs`}>
+              {t.pieces} {t.pieces === 1 ? "item" : "items"}
             </p>
 
-          </div>
+            <div className={`${m} mt-4 flex justify-between border-y-2 border-[var(--mg-ink)] py-2 text-xs font-semibold uppercase tracking-wide text-[var(--mg-ink)]`}>
+              <span>Item name</span>
+              <span>Net amount</span>
+            </div>
+            <ul aria-label="Items purchased">
+              {data.items.map((item, i) => (
+                <PaperItem key={`${item.sku}-${i}`} item={item} open={openItem === i} onToggle={() => setOpenItem(openItem === i ? -1 : i)} />
+              ))}
+            </ul>
 
+            {/* totals */}
+            <dl className={`${m} space-y-2 border-t-2 border-[var(--mg-ink)] pt-3.5 text-sm`}>
+              <Leader label="Subtotal (MRP)" value={`₹${inr(t.subtotal)}`} strong />
+              <Leader label="Discount" value={`− ₹${inr(t.discount)}`} strong />
+              <Leader label="SGST" value={`₹${inr(data.sgst)}`} strong />
+              <Leader label="CGST" value={`₹${inr(data.cgst)}`} strong />
+            </dl>
+
+            <div className="mt-3.5 border-y-2 border-[var(--mg-ink)] py-3.5">
+              <div className="flex flex-wrap items-end justify-between gap-x-3 gap-y-1">
+                <span className="mg-display text-[15px] uppercase leading-none tracking-[0.06em] text-[var(--mg-ink)]">Total paid</span>
+                <span className="mg-display text-[30px] leading-none tabular-nums text-[var(--mg-brown)]">₹{inr(t.total)}</span>
+              </div>
+            </div>
+
+            {/* payment */}
+            <h3 className="mg-display mt-5 text-[15px] uppercase leading-none tracking-[0.06em] text-[var(--mg-ink)]">Payment method</h3>
+            <div className={`${m} mt-3 flex items-baseline justify-between gap-3 rounded-xl bg-[var(--mg-ink)] px-4 py-3.5 text-white`}>
+              <span className="text-sm">
+                {data.payment.mode} &ndash; {data.payment.ref}
+              </span>
+              <span className="text-base font-bold tabular-nums">₹{inr(t.total)}</span>
+            </div>
+
+            {/* actions */}
+            <div className="mt-6 grid grid-cols-3 gap-2">
+              {(
+                [
+                  { icon: "history", label: "History", onClick: () => setModal("history") },
+                  { icon: "mail", label: "Email", onClick: () => setModal("email") },
+                  { icon: "download", label: "Download", onClick: handleDownload },
+                ] as { icon: IconName; label: string; onClick: () => void }[]
+              ).map((a) => (
+                <button
+                  key={a.label}
+                  type="button"
+                  onClick={a.onClick}
+                  className={`flex flex-col items-center gap-2 rounded-xl border-2 border-[var(--mg-ink)] px-1 py-3.5 text-center text-[11px] font-bold uppercase leading-tight tracking-[0.08em] text-[var(--mg-ink)] transition-colors active:bg-[var(--mg-ink)] [@media(hover:hover)]:hover:bg-[var(--mg-ink)] active:text-white [@media(hover:hover)]:hover:text-white motion-reduce:transition-none ${onPaper}`}
+                >
+                  <Icon name={a.icon} className="h-5 w-5" />
+                  {a.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <ZigZag down />
+        </section>
+
+        {/* ---------- After the receipt ---------- */}
+        <div className="space-y-7 px-4 pt-8">
+          <RateVisit data={data} onSubmit={onSubmitFeedback} />
+
+          <ProfileCard data={data} onSave={onSaveProfile} />
+
+          {/* Exchange */}
+          <section aria-label="Exchange" className={`rounded-3xl bg-white text-[var(--mg-brown)] ${lift}`}>
+            <h2>
+              <button
+                type="button"
+                onClick={() => setExchangeOpen((o) => !o)}
+                aria-expanded={exchangeOpen}
+                aria-controls={exchangeId}
+                className={`flex w-full items-center justify-between gap-4 rounded-3xl p-5 text-left ${onPaper}`}
+              >
+                <span>
+                  <span className="mg-display block text-[22px] uppercase leading-[1.1] tracking-[0.05em] text-[var(--mg-ink)]">Exchange</span>
+                  <span className="mt-2 block text-[15px] font-normal">{exchange.days}-day exchange policy</span>
+                </span>
+                <span aria-hidden="true" className={`${m} text-sm font-bold text-[var(--mg-ink)]`}>
+                  [{exchangeOpen ? "−" : "+"}]
+                </span>
+              </button>
+            </h2>
+            <Collapse open={exchangeOpen} id={exchangeId}>
+              <ol className={`${m} list-decimal space-y-2.5 border-t border-dashed border-black/40 py-5 pl-10 pr-5 text-xs leading-relaxed`}>
+                {exchange.points.map((p) => (
+                  <li key={p}>{p}</li>
+                ))}
+              </ol>
+            </Collapse>
+          </section>
+
+          {/* Reach us */}
+          <section aria-label="Reach us">
+            <h2 className="mg-display text-[22px] uppercase leading-[1.1] tracking-[0.05em] text-[var(--mg-ink)]">Reach us</h2>
+            <p className="mt-2 text-[15px] text-[var(--mg-brown-dark)]">Get in touch or find us online.</p>
+            <div className="mt-5 grid grid-cols-3 gap-3">
+              <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className={`${outlineBtn} flex-col gap-1.5 !px-1 !py-3.5 !text-[11px]`}>
+                <Icon name="instagram" className="h-[18px] w-[18px]" />
+                Instagram
+              </a>
+              <a href={`tel:${data.callTo}`} className={`${outlineBtn} flex-col gap-1.5 !px-1 !py-3.5 !text-[11px]`}>
+                <Icon name="phone" className="h-[18px] w-[18px]" />
+                Call us
+              </a>
+              <a href={`mailto:${data.emailTo}`} className={`${outlineBtn} flex-col gap-1.5 !px-1 !py-3.5 !text-[11px]`}>
+                <Icon name="mail" className="h-[18px] w-[18px]" />
+                Email us
+              </a>
+            </div>
+
+            <a
+              href={storeLocatorUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`group mt-3 flex items-center justify-between gap-4 rounded-3xl bg-[var(--mg-ink)] p-5 text-white shadow-[0_14px_28px_-14px_rgba(26,26,26,0.7)] transition-colors active:bg-white [@media(hover:hover)]:hover:bg-white active:text-[var(--mg-ink)] [@media(hover:hover)]:hover:text-[var(--mg-ink)] motion-reduce:transition-none ${onDark}`}
+            >
+              <span>
+                <span className="mg-display block text-[18px] uppercase leading-[1.15] tracking-[0.05em]">Find a MANGO store</span>
+                <span className="mt-2 block text-[14px] leading-snug">Locate your nearest store in India</span>
+              </span>
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white text-[var(--mg-ink)] transition-colors group-active:bg-[var(--mg-ink)] [@media(hover:hover)]:group-hover:bg-[var(--mg-ink)] group-active:text-white [@media(hover:hover)]:group-hover:text-white motion-reduce:transition-none">
+                <Icon name="arrow" className="h-5 w-5" />
+              </span>
+            </a>
+          </section>
+
+          {/* ---------- Store: care label (details expand / collapse) ---------- */}
+          <section
+            aria-label="Store"
+            className="rotate-1 bg-white p-1.5 text-[var(--mg-ink)] shadow-[0_14px_30px_-14px_rgba(26,26,26,0.45)]"
+          >
+            <div className="border-2 border-dashed border-black/50 px-4 py-3.5">
+              <h2 className="mg-display text-[18px] uppercase leading-[1.15] tracking-[0.05em]">{store.name}</h2>
+              <p className={`${m} mb-3 mt-1.5 border-b border-dashed border-black/30 pb-3 text-xs font-semibold uppercase tracking-wide text-[var(--mg-brown)]`}>
+                Store details
+              </p>
+              <p className="flex items-start gap-2.5 text-[15px] font-bold leading-snug">
+                <Icon name="pin" className="mt-0.5 h-5 w-5 shrink-0 text-[var(--mg-brown)]" />
+                {store.address}
+              </p>
+
+              <button
+                type="button"
+                onClick={() => setStoreOpen((o) => !o)}
+                aria-expanded={storeOpen}
+                aria-controls={storeId}
+                className={`mt-3 flex w-full items-center justify-between border-t-2 border-[var(--mg-ink)] pt-3 text-left ${onPaper}`}
+              >
+                <span className={`${m} text-[13px] font-semibold uppercase tracking-wide`}>Contact and associate</span>
+                <span aria-hidden="true" className={`${m} text-sm font-bold text-[var(--mg-brown)]`}>
+                  [{storeOpen ? "−" : "+"}]
+                </span>
+              </button>
+              <Collapse open={storeOpen} id={storeId}>
+                <dl className={`${m} space-y-2 pb-1 pt-3 text-[13px]`}>
+                  <Leader
+                    label="Email"
+                    value={
+                      <a href={`mailto:${store.email}`} className={`rounded active:text-[var(--mg-brown)] [@media(hover:hover)]:hover:text-[var(--mg-brown)] ${onPaper}`}>
+                        {store.email}
+                      </a>
+                    }
+                    strong
+                  />
+                  <Leader
+                    label="Phone no."
+                    value={
+                      <a href={`tel:${store.phone}`} className={`rounded active:text-[var(--mg-brown)] [@media(hover:hover)]:hover:text-[var(--mg-brown)] ${onPaper}`}>
+                        {store.phone}
+                      </a>
+                    }
+                    strong
+                  />
+                  <Leader label="GSTIN" value={store.gstin} strong />
+                  <Leader label="Sales associate" value={store.associate} strong />
+                </dl>
+              </Collapse>
+            </div>
+          </section>
         </div>
 
-        <button
-          className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F8F8F8]"
-          onClick={() => setShowTransactionHistory(false)}
-        >
+        {/* ---------- Bottom stub: registered office, powered by ---------- */}
+        <footer className="mt-10 text-[var(--mg-ink)]" style={{ filter: "drop-shadow(0 -6px 10px rgba(26,26,26,0.1))" }}>
+          <ZigZag />
+          <div className="bg-white px-5 pb-8 pt-5">
+            <h2 className="mg-display text-[18px] uppercase leading-[1.1] tracking-[0.05em]">Registered office</h2>
+            <p className={`${m} mt-3 text-xs leading-relaxed text-[var(--mg-brown)]`}>{data.registeredOffice}</p>
 
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            className="h-4 w-4 text-[#8B6F5E]"
-          >
-            <path
-              d="M18 6L6 18M6 6l12 12"
-              stroke="currentColor"
-              strokeWidth="2"
-            />
-          </svg>
-
-        </button>
-
-      </div>
-
-      {/* Purchase List */}
-      <div className="max-h-96 overflow-y-auto p-4 space-y-3">
-
-        {transactionHistory.map((transaction) => (
-
-          <button
-            key={transaction.id}
-            onClick={() => {
-              setCurrentReceiptId(transaction.id)
-              setShowTransactionHistory(false)
-              window.scrollTo({ top: 0, behavior: "smooth" })
-            }}
-            className="w-full flex items-center p-4 bg-[#F8F8F8] border border-[#ECECEC] rounded-2xl hover:border-[#C8A882] transition-all"
-          >
-
-            <div className="w-11 h-11 rounded-xl bg-white border border-[#ECECEC] flex items-center justify-center mr-4 flex-shrink-0">
-
-              <FileText className="h-5 w-5 text-[#8B6F5E]" />
-
-            </div>
-
-            <div className="flex-grow text-left">
-
-              <div className="text-[14px] font-medium text-[#1A1A1A]">
-                MANGO
-              </div>
-
-              <div className="text-[11px] text-[#8B6F5E] mt-1">
-                {transaction.date}
-              </div>
-
-            </div>
-
-            <div className="text-right">
-
-              <div className="text-[15px] font-medium text-[#1A1A1A]">
-                ₹{transaction.amount.toLocaleString("en-IN")}
-              </div>
-
-            </div>
-
-          </button>
-
-        ))}
-
-      </div>
-
-      {/* Footer */}
-      <div className="px-5 py-4 border-t border-[#ECECEC] bg-[#FAFAFA]">
-
-        <p className="text-[10px] text-center text-[#8B6F5E]">
-          Select a purchase to view the full receipt.
-        </p>
-
-      </div>
-
-    </div>
-
-  </div>
-)}
-        {/* Refer & Earn Modal */}
-        {showReferModal && (
-          <div
-            style={getModalPositionRelativeToContainer(referButtonRef)}
-            className="bg-white rounded-lg w-full overflow-hidden shadow-xl z-[9999] max-w-sm"
-          >
-            <div className="flex justify-between items-center p-4 border-b bg-blue-700 text-white">
-              <h3 className="text-lg font-semibold flex items-center">
-                <Share2 className="h-5 w-5 mr-2" />
-                Refer & Earn
-              </h3>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-white hover:bg-blue-600"
-                onClick={() => setShowReferModal(false)}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-4 w-4"
-                >
-                  <path d="M18 6 6 18"></path>
-                  <path d="m6 6 12 12"></path>
-                </svg>
-              </Button>
-            </div>
-            <div className="p-4 space-y-4">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Share2 className="h-8 w-8 text-blue-700" />
-                </div>
-                <h4 className="text-lg font-semibold text-blue-700 mb-2">Share & Earn RM50!</h4>
-                <p className="text-sm text-gray-600 mb-4">
-                  Refer friends to Skechers and both of you get RM50 off your next purchase!
-                </p>
-              </div>
-              <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                <div className="text-xs font-medium text-blue-800 mb-1">Your Referral Code</div>
-                <div className="text-lg font-bold text-blue-700 text-center">SKECH{customerName.toUpperCase()}50</div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <Button
-                  variant="outline"
-                  className="border-blue-300 text-blue-700 hover:bg-blue-50 bg-transparent"
-                  onClick={() => {
-                    navigator.clipboard.writeText(
-                      `Try Skechers! Use code SKECH${customerName.toUpperCase()}50 for RM50 off!`,
-                    )
-                    setShowReferModal(false)
-                  }}
-                >
-                  Copy Code
-                </Button>
-                <Button
-                  className="bg-blue-700 hover:bg-blue-800 text-white"
-                  onClick={() => {
-                    window.open(
-                      `https://wa.me/60362032728?text=Try Skechers Malaysia! Use my code SKECH${customerName.toUpperCase()}50 for RM50 off your next purchase!`,
-                    )
-                    setShowReferModal(false)
-                  }}
-                >
-                  Share Now
-                </Button>
-              </div>
+            <div className="mt-6 flex items-center justify-center gap-3 border-t border-dashed border-black/40 pt-6 text-[13px] text-[var(--mg-brown)]">
+              <span>Powered by</span>
+              <BrandImage
+                src={rdepLogoSrc}
+                alt="rdep"
+                width={240}
+                height={80}
+                className="h-8 w-auto"
+                fallbackClassName="text-xl font-bold tracking-tight text-[var(--mg-ink)]"
+              />
             </div>
           </div>
-        )}
-      </div>
+        </footer>
+      </main>
+
+      {/* ---------------------------- Popups: white slips ---------------------------- */}
+      {modal === "history" && (
+        <Modal title="Transaction history" onClose={closeModal} scale={scale}>
+          <ul className="divide-y divide-black/15">
+            {history.map((h) => (
+              <li key={h.invoiceNo}>
+                <button
+                  type="button"
+                  disabled={h.current}
+                  onClick={() => {
+                    closeModal();
+                    onSelect(h.invoiceNo);
+                  }}
+                  className={`flex w-full items-center justify-between gap-3 rounded py-3.5 text-left transition-colors motion-reduce:transition-none ${onPaper} ${
+                    h.current ? "cursor-default" : "active:bg-[var(--mg-wash)] [@media(hover:hover)]:hover:bg-[var(--mg-wash)]"
+                  }`}
+                >
+                  <span className="min-w-0">
+                    <span className="block text-[14px] font-bold text-[var(--mg-ink)]">
+                      Invoice no: <span className={`${m} break-all text-[13px]`}>{h.invoiceNo}</span>
+                    </span>
+                    <span className="mt-0.5 block text-[13px]">
+                      {h.date}, {h.items} {h.items === 1 ? "item" : "items"}
+                    </span>
+                  </span>
+                  <span className="flex shrink-0 items-center gap-2">
+                    <span className="text-right">
+                      <span className={`${m} block text-[15px] font-bold tabular-nums text-[var(--mg-ink)]`}>₹{inr(h.amount)}</span>
+                      {h.current && (
+                        <span className="mt-1 inline-block rounded-full bg-[var(--mg-ink)] px-2.5 py-0.5 text-[11px] font-bold text-white">This receipt</span>
+                      )}
+                    </span>
+                    {!h.current && <Icon name="arrow" className="h-4 w-4 text-[var(--mg-brown)]" />}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </Modal>
+      )}
+
+      {modal === "email" && (
+        <Modal title="Email this receipt" onClose={closeModal} scale={scale}>
+          <form
+            className="space-y-5"
+            noValidate
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!emailOk(email)) {
+                setEmailErr("Enter a valid email address, like name@example.com.");
+                return;
+              }
+              setEmailErr("");
+              onSendEmail?.(email, data);
+              setSentTo(email);
+            }}
+          >
+            <label className="block">
+              <span className={fieldLabel}>Email address</span>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => {
+                  setSentTo("");
+                  setEmailErr("");
+                  setEmail(e.target.value);
+                }}
+                className={fieldInput}
+                autoComplete="email"
+                aria-invalid={!!emailErr}
+              />
+              {emailErr && (
+                <span role="alert" className="mt-1.5 block text-[13px] font-bold text-[var(--mg-ink)]">
+                  {emailErr}
+                </span>
+              )}
+            </label>
+            <button type="submit" className={solidBtn}>
+              Send receipt
+            </button>
+            <p aria-live="polite" className="flex min-h-5 items-center justify-center gap-1.5 text-sm font-bold text-[var(--mg-ink)]">
+              {sentTo && (
+                <>
+                  <Icon name="check" className="h-4 w-4 text-[var(--mg-brown)]" /> Receipt sent to {sentTo}
+                </>
+              )}
+            </p>
+          </form>
+        </Modal>
+      )}
     </div>
-  )
+  );
+}
+
+/* --------------------------------- main ------------------------------------------ */
+/** Holds which receipt is open. Each receipt is a keyed ReceiptView, so switching resets the
+ *  open item, popups, ratings and forms instead of carrying them over from the previous receipt. */
+export default function MangoReceipt({ data, receipts, onSelectReceipt, ...rest }: MangoReceiptProps) {
+  const list = useMemo(() => {
+    const base = receipts ?? (data ? [data] : sampleMangoReceipts);
+    const merged = data && !base.some((r) => r.invoiceNo === data.invoiceNo) ? [data, ...base] : base;
+    return [...merged].sort((a, b) => dateValue(b.date) - dateValue(a.date));
+  }, [data, receipts]);
+
+  const [currentId, setCurrentId] = useState(data?.invoiceNo ?? list[0].invoiceNo);
+  const current = list.find((r) => r.invoiceNo === currentId) ?? list[0];
+
+  const history = useMemo(
+    () =>
+      list.map((r) => {
+        const t = totalsOf(r);
+        return { invoiceNo: r.invoiceNo, date: r.date.split(" ")[0], amount: t.total, items: t.pieces, current: r.invoiceNo === current.invoiceNo };
+      }),
+    [list, current.invoiceNo],
+  );
+
+  const select = useCallback(
+    (invoiceNo: string) => {
+      setCurrentId(invoiceNo);
+      onSelectReceipt?.(invoiceNo);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    [onSelectReceipt],
+  );
+
+  return <ReceiptView key={current.invoiceNo} data={current} history={history} onSelect={select} {...rest} />;
 }
