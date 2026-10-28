@@ -65,7 +65,6 @@ const theme = {
   "--mg-sand": "#D2BBAA",
   "--mg-line": "rgba(139,111,94,0.2)",
   "--mg-edge": "rgba(139,111,94,0.75)",
-  "--mg-accent": "#C41E3A",
 } as CSSProperties;
 
 /* Assets + links */
@@ -133,7 +132,7 @@ export interface MangoReceiptProps {
 
 type IconName =
   | "history" | "mail" | "download" | "phone" | "instagram" | "pin" | "store"
-  | "close" | "check" | "arrow" | "chevron" | "user" | "receipt" | "tax";
+  | "close" | "check" | "arrow" | "chevron" | "user" | "receipt" | "tax" | "directions" | "call";
 type ModalId = "history" | "email" | null;
 
 interface HistoryRow {
@@ -382,6 +381,16 @@ const PATHS: Record<IconName, ReactNode> = {
       <path d="M7 8h10M7 12h10M7 16h6" />
     </>
   ),
+  directions: (
+    <>
+      <path d="M9 18l6-6-6-6" />
+    </>
+  ),
+  call: (
+    <>
+      <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z" />
+    </>
+  ),
   close: <path d="M18 6 6 18M6 6l12 12" />,
   check: <path d="m5 12 5 5 9-10" />,
   arrow: <path d="M5 12h14M13 6l6 6-6 6" />,
@@ -533,7 +542,7 @@ function Heading({ children, sub, size = 22 }: { children: ReactNode; sub?: stri
   );
 }
 
-/* Modal redesigned to match sleek style */
+/* Modal with brand aesthetic & matching accent colors */
 function Modal({
   title,
   onClose,
@@ -579,18 +588,18 @@ function Modal({
       >
         <div className="w-full sm:w-[400px]" style={zoomStyle(scale)}>
           <div className="p-6 text-[var(--mg-brown)]">
-            <div className="flex items-center justify-between gap-4 border-b pb-4">
+            <div className="flex items-center justify-between gap-4 border-b border-[var(--mg-line)] pb-4">
               <div className="min-w-0">
-                <h2 id={titleId} className="mg-display text-[20px] font-bold uppercase tracking-[0.02em] text-[var(--mg-ink)]">
+                <h2 id={titleId} className="mg-display text-[20px] font-bold uppercase tracking-[0.05em] text-[var(--mg-ink)]">
                   {title}
                 </h2>
-                <span className="mt-1 block h-1 w-10 bg-[#C41E3A]" />
+                <span className="mt-2 block h-1 w-10 rounded-full bg-[var(--mg-brown)]" />
               </div>
               <button
                 type="button"
                 onClick={onClose}
                 aria-label="Close"
-                className={`grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[var(--mg-ink)] text-white transition-transform active:scale-95 ${onPaper}`}
+                className={`grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[var(--mg-wash)] text-[var(--mg-ink)] transition-colors active:bg-[var(--mg-press)] ${onPaper}`}
               >
                 <Icon name="close" className="h-4 w-4" />
               </button>
@@ -1196,135 +1205,157 @@ function ReceiptView({
             </a>
           </section>
 
-          {/* ---------- Store Card (Improved with compact toggle & GST icon) ---------- */}
-          <section aria-label="Store" className={`rounded-3xl bg-white p-5 text-[var(--mg-ink)] ${lift}`}>
-            <div className="flex items-center gap-3.5">
-              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[var(--mg-ink)] text-white">
-                <Icon name="store" className="h-6 w-6" />
-              </span>
-              <div className="min-w-0">
-                <p className="mg-display text-[11px] uppercase tracking-[0.2em] text-[var(--mg-brown)]">Bought at</p>
-                <h2 className="mg-display mt-0.5 text-[18px] uppercase leading-[1.15] tracking-[0.04em]">{store.name}</h2>
+          {/* ---------- Store Card (Completely reimagined for elevated boutique feel) ---------- */}
+          <section aria-label="Store" className={`rounded-3xl bg-white p-6 text-[var(--mg-ink)] ${lift}`}>
+            <div className="flex items-center justify-between border-b border-[var(--mg-line)] pb-5">
+              <div className="flex items-center gap-3">
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[var(--mg-ink)] text-white shadow-sm">
+                  <Icon name="store" className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="mg-display text-[10px] uppercase tracking-[0.2em] text-[var(--mg-brown)]">Purchased at</p>
+                  <h2 className="mg-display text-[16px] uppercase leading-tight tracking-[0.04em] text-[var(--mg-ink)]">{store.name}</h2>
+                </div>
               </div>
             </div>
 
-            <div className="mt-4 flex items-start gap-3 rounded-2xl bg-[var(--mg-wash)] p-4">
-              <Icon name="pin" className="mt-0.5 h-5 w-5 shrink-0 text-[var(--mg-brown)]" />
-              <p className="text-[14px] font-medium leading-snug text-[var(--mg-ink)]">{store.address}</p>
+            <div className="mt-5 space-y-3">
+              <div className="flex items-start gap-3 rounded-2xl bg-[var(--mg-wash)] p-4 border border-black/5">
+                <Icon name="pin" className="mt-0.5 h-4 w-4 shrink-0 text-[var(--mg-brown)]" />
+                <p className="text-[13px] font-medium leading-relaxed text-[var(--mg-ink)]">{store.address}</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${store.name}, ${store.address}`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 rounded-xl bg-[var(--mg-wash)] py-3 text-[12px] font-bold uppercase tracking-[0.05em] text-[var(--mg-ink)] border border-black/5 transition-colors active:bg-[var(--mg-press)]"
+                >
+                  <Icon name="directions" className="h-4 w-4 text-[var(--mg-brown)]" />
+                  Directions
+                </a>
+                <a 
+                  href={`tel:${store.phone}`} 
+                  className="flex items-center justify-center gap-2 rounded-xl bg-[var(--mg-wash)] py-3 text-[12px] font-bold uppercase tracking-[0.05em] text-[var(--mg-ink)] border border-black/5 transition-colors active:bg-[var(--mg-press)]"
+                >
+                  <Icon name="call" className="h-4 w-4 text-[var(--mg-brown)]" />
+                  Call store
+                </a>
+              </div>
             </div>
 
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${store.name}, ${store.address}`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`${outlineBtn} !py-3 !text-[12px]`}
+            <div className="mt-5 pt-4 border-t border-[var(--mg-line)]">
+              <button
+                type="button"
+                onClick={() => setContactOpen((o) => !o)}
+                aria-expanded={contactOpen}
+                aria-controls={contactId}
+                className={`flex w-full items-center justify-between gap-2 rounded-xl p-2 -mx-2 transition-colors active:bg-[var(--mg-wash)] ${onPaper}`}
               >
-                <Icon name="pin" className="h-4 w-4" />
-                Directions
-              </a>
-              <a href={`tel:${store.phone}`} className={`${outlineBtn} !py-3 !text-[12px]`}>
-                <Icon name="phone" className="h-4 w-4" />
-                Call store
-              </a>
+                <div className="flex items-center gap-2">
+                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[var(--mg-ink)] text-white">
+                    <Icon name="chevron" className={`h-3.5 w-3.5 transition-transform duration-300 ${contactOpen ? "rotate-180" : ""}`} />
+                  </span>
+                  <span className="mg-display text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--mg-ink)]">
+                    {contactOpen ? "Hide contact & tax info" : "View contact & tax info"}
+                  </span>
+                </div>
+                <span className="text-[11px] text-[var(--mg-brown)] font-medium">
+                  {contactOpen ? "Less" : "Details"}
+                </span>
+              </button>
             </div>
-
-            <button
-              type="button"
-              onClick={() => setContactOpen((o) => !o)}
-              aria-expanded={contactOpen}
-              aria-controls={contactId}
-              className={`mt-4 flex w-full items-center justify-between gap-2 border-t border-[var(--mg-line)] pt-3 text-left ${onPaper}`}
-            >
-              <span className="mg-display text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--mg-ink)]">
-                {contactOpen ? "HIDE CONTACT DETAILS" : "SHOW CONTACT DETAILS"}
-              </span>
-              <span aria-hidden="true" className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-[var(--mg-ink)] text-[var(--mg-ink)]">
-                <Icon name="chevron" className={`h-3.5 w-3.5 transition-transform duration-300 motion-reduce:transition-none ${contactOpen ? "rotate-180" : ""}`} />
-              </span>
-            </button>
 
             <Collapse open={contactOpen} id={contactId}>
-              <ul className="divide-y divide-[var(--mg-line)] pt-1">
-                {(
-                  [
-                    { icon: "mail", label: "Email", value: store.email, href: `mailto:${store.email}` },
-                    { icon: "phone", label: "Phone", value: store.phone, href: `tel:${store.phone}` },
-                  ] as { icon: IconName; label: string; value: string; href: string }[]
-                ).map((r) => (
-                  <li key={r.label}>
-                    <a href={r.href} className={`flex items-center gap-3 rounded-xl py-3 active:bg-[var(--mg-wash)] ${onPaper}`}>
-                      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[var(--mg-line)] text-[var(--mg-brown)]">
-                        <Icon name={r.icon} className="h-4 w-4" />
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block text-[11px] text-[var(--mg-brown)]">{r.label}</span>
-                        <span className={`${m} mt-0.5 block truncate text-[13px] font-bold text-[var(--mg-ink)]`}>{r.value}</span>
-                      </span>
-                      <Icon name="arrow" className="h-4 w-4 shrink-0 text-[var(--mg-brown)]" />
-                    </a>
-                  </li>
-                ))}
+              <div className="mt-3 pt-3 border-t border-dashed border-[var(--mg-line)] space-y-2.5">
+                <a href={`mailto:${store.email}`} className="flex items-center justify-between rounded-xl p-3 bg-[var(--mg-wash)] border border-black/5 active:bg-[var(--mg-press)]">
+                  <div className="flex items-center gap-3">
+                    <span className="grid h-8 w-8 place-items-center rounded-lg bg-white text-[var(--mg-brown)] shadow-sm">
+                      <Icon name="mail" className="h-4 w-4" />
+                    </span>
+                    <div>
+                      <p className="text-[10px] uppercase text-[var(--mg-brown)] font-bold">Email support</p>
+                      <p className={`${m} text-[12px] font-bold text-[var(--mg-ink)]`}>{store.email}</p>
+                    </div>
+                  </div>
+                  <Icon name="arrow" className="h-3.5 w-3.5 text-[var(--mg-brown)]" />
+                </a>
 
-                <li className="flex items-center gap-3 py-3">
-                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[var(--mg-line)] text-[var(--mg-brown)]">
-                    <Icon name="user" className="h-4 w-4" />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-[11px] text-[var(--mg-brown)]">Sales associate</span>
-                    <span className="mg-display mt-0.5 block text-[14px] text-[var(--mg-ink)]">{store.associate}</span>
-                  </span>
-                </li>
+                <a href={`tel:${store.phone}`} className="flex items-center justify-between rounded-xl p-3 bg-[var(--mg-wash)] border border-black/5 active:bg-[var(--mg-press)]">
+                  <div className="flex items-center gap-3">
+                    <span className="grid h-8 w-8 place-items-center rounded-lg bg-white text-[var(--mg-brown)] shadow-sm">
+                      <Icon name="phone" className="h-4 w-4" />
+                    </span>
+                    <div>
+                      <p className="text-[10px] uppercase text-[var(--mg-brown)] font-bold">Store phone</p>
+                      <p className={`${m} text-[12px] font-bold text-[var(--mg-ink)]`}>{store.phone}</p>
+                    </div>
+                  </div>
+                  <Icon name="arrow" className="h-3.5 w-3.5 text-[var(--mg-brown)]" />
+                </a>
 
-                <li className="flex items-center gap-3 py-3">
-                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[var(--mg-line)] text-[var(--mg-brown)]">
-                    <Icon name="tax" className="h-4 w-4" />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-[11px] text-[var(--mg-brown)]">Goods & Service Tax (GSTIN)</span>
-                    <span className={`${m} mt-0.5 block break-all text-[13px] font-bold text-[var(--mg-ink)]`}>{store.gstin}</span>
-                  </span>
-                </li>
-              </ul>
+                <div className="grid grid-cols-2 gap-2 pt-1">
+                  <div className="rounded-xl p-3 bg-[var(--mg-wash)] border border-black/5">
+                    <div className="flex items-center gap-1.5 text-[var(--mg-brown)] mb-1">
+                      <Icon name="user" className="h-3.5 w-3.5" />
+                      <p className="text-[10px] uppercase font-bold">Associate</p>
+                    </div>
+                    <p className="mg-display text-[13px] text-[var(--mg-ink)]">{store.associate}</p>
+                  </div>
+
+                  <div className="rounded-xl p-3 bg-[var(--mg-wash)] border border-black/5">
+                    <div className="flex items-center gap-1.5 text-[var(--mg-brown)] mb-1">
+                      <Icon name="tax" className="h-3.5 w-3.5" />
+                      <p className="text-[10px] uppercase font-bold">GSTIN</p>
+                    </div>
+                    <p className={`${m} text-[11px] font-bold truncate text-[var(--mg-ink)]`} title={store.gstin}>{store.gstin}</p>
+                  </div>
+                </div>
+              </div>
             </Collapse>
           </section>
 
-          {/* ---------- Light Closing Card (Matching the rest of the style) ---------- */}
+          {/* ---------- Light Closing Card (Refined, fully visible original logo & clean aesthetic) ---------- */}
           <section className={`rounded-3xl bg-white p-6 text-[var(--mg-ink)] ${lift}`}>
-            <BrandImage
-              src={logoSrc}
-              alt="MANGO"
-              width={320}
-              height={80}
-              className="h-9 w-auto max-w-[60%] object-contain object-left"
-              fallbackClassName="mg-display inline-block text-[28px] uppercase leading-none tracking-[0.12em] text-[var(--mg-ink)]"
-            />
+            <div className="flex items-center justify-between">
+              <BrandImage
+                src={logoSrc}
+                alt="MANGO"
+                width={320}
+                height={80}
+                className="h-8 w-auto max-w-[55%] object-contain object-left"
+                fallbackClassName="mg-display inline-block text-[24px] uppercase leading-none tracking-[0.12em] text-[var(--mg-ink)]"
+              />
+              <span className="rounded-full bg-[var(--mg-wash)] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[var(--mg-brown)] border border-black/5">
+                Official Receipt
+              </span>
+            </div>
 
-            <h2 className="mg-display mt-6 text-[22px] uppercase leading-[1.12] tracking-[0.04em] text-[var(--mg-ink)]">
-              Thank you
-              <span className="block text-[var(--mg-brown)]">for shopping with us</span>
-            </h2>
-            <p className="mt-2 text-[14px] text-[var(--mg-brown)]">See you in store soon.</p>
+            <div className="mt-6">
+              <h2 className="mg-display text-[20px] uppercase leading-[1.1] tracking-[0.04em] text-[var(--mg-ink)]">
+                Thank you
+              </h2>
+              <p className="mt-1 text-[14px] text-[var(--mg-brown)] font-medium">For shopping with us. See you in store soon.</p>
+            </div>
 
-            <div className="mt-6 flex items-center justify-between gap-4 border-t border-[var(--mg-line)] pt-4">
-              <p className={`${m} text-[11px] leading-relaxed text-[var(--mg-brown)]`}>
-                Invoice {data.invoiceNo}
-                <br />
-                {data.date.split(" ")[0]}
+            <div className="mt-6 rounded-2xl bg-[var(--mg-wash)] p-4 border border-black/5">
+              <h3 className="mg-display text-[10px] uppercase tracking-[0.18em] text-[var(--mg-brown)]">Registered office</h3>
+              <p className={`${m} mt-1.5 text-[11px] leading-relaxed text-[var(--mg-ink)]`}>{data.registeredOffice}</p>
+            </div>
+
+            <div className="mt-5 flex items-center justify-between border-t border-[var(--mg-line)] pt-4">
+              <p className={`${m} text-[11px] text-[var(--mg-brown)]`}>
+                Invoice: <strong className="text-[var(--mg-ink)]">{data.invoiceNo}</strong>
               </p>
               <button
                 type="button"
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                 aria-label="Back to top"
-                className={`grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[var(--mg-ink)] text-white active:bg-[var(--mg-brown)] ${onPaper}`}
+                className={`flex items-center gap-1.5 rounded-full bg-[var(--mg-ink)] px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-white active:bg-[var(--mg-brown)] ${onPaper}`}
               >
-                <Icon name="arrow" className="h-4 w-4 -rotate-90" />
+                Top <Icon name="arrow" className="h-3.5 w-3.5 -rotate-90" />
               </button>
-            </div>
-
-            <div className="mt-4 rounded-2xl bg-[var(--mg-wash)] p-4">
-              <h3 className="mg-display text-[11px] uppercase tracking-[0.15em] text-[var(--mg-brown)]">Registered office</h3>
-              <p className={`${m} mt-2 text-[11px] leading-relaxed text-[var(--mg-ink)]`}>{data.registeredOffice}</p>
             </div>
           </section>
         </div>
@@ -1343,42 +1374,65 @@ function ReceiptView({
         </footer>
       </main>
 
-      {/* ---------------------------- Levi's Style History Popup ---------------------------- */}
+      {/* ---------------------------- Transaction History Popup (With receipt-matching accent colors) ---------------------------- */}
       {modal === "history" && (
         <Modal title="TRANSACTION HISTORY" onClose={closeModal} scale={scale}>
-          <ol className="divide-y divide-black/10">
+          <div className="mb-4 flex items-center justify-between rounded-2xl bg-[var(--mg-wash)] p-4 border border-black/5">
+            <div>
+              <p className="text-[11px] uppercase tracking-wider text-[var(--mg-brown)] font-bold">Total receipts</p>
+              <p className="mg-display text-[18px] text-[var(--mg-ink)]">{history.length} recorded</p>
+            </div>
+            <div className="text-right">
+              <p className="text-[11px] uppercase tracking-wider text-[var(--mg-brown)] font-bold">Active view</p>
+              <p className={`${m} text-[12px] font-bold text-[var(--mg-ink)]`}>#{data.invoiceNo.slice(-4)}</p>
+            </div>
+          </div>
+
+          <ol className="space-y-3">
             {history.map((h) => (
-              <li key={h.invoiceNo} className="py-4 first:pt-0 last:pb-0">
-                <div className="flex items-start justify-between gap-3">
+              <li key={h.invoiceNo}>
+                <div className={`flex items-center justify-between gap-3 rounded-2xl p-4 transition-colors border ${
+                  h.current 
+                    ? "bg-[var(--mg-ink)] text-white border-[var(--mg-ink)] shadow-md" 
+                    : "bg-[var(--mg-wash)] text-[var(--mg-ink)] border-black/5 hover:border-[var(--mg-brown)]"
+                }`}>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[15px] font-bold text-[var(--mg-ink)]">
-                      Invoice no: <span className="font-normal">{h.invoiceNo.slice(-4)}</span>
-                    </p>
-                    <p className="mt-1 text-[13px] text-black/60">
-                      {h.date}, {h.storeName}
+                    <div className="flex items-center gap-2">
+                      <span className={`mg-display text-[13px] uppercase ${h.current ? "text-white" : "text-[var(--mg-ink)]"}`}>
+                        No. {h.invoiceNo}
+                      </span>
+                      {h.current && (
+                        <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                          Current
+                        </span>
+                      )}
+                    </div>
+                    <p className={`mt-1 text-[12px] truncate ${h.current ? "text-white/80" : "text-[var(--mg-brown)]"}`}>
+                      {h.date} &middot; {h.storeName}
                     </p>
                   </div>
 
-                  <div className="flex shrink-0 flex-col items-end gap-1.5">
-                    <span className="text-[18px] font-bold text-[var(--mg-ink)]">
-                      ₹{inr(h.amount)}
-                    </span>
-
-                    {h.current ? (
-                      <span className="rounded-full bg-[#C41E3A] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white">
-                        This receipt
+                  <div className="flex shrink-0 items-center gap-3">
+                    <div className="text-right">
+                      <span className={`${m} text-[15px] font-bold tabular-nums block ${h.current ? "text-white" : "text-[var(--mg-ink)]"}`}>
+                        ₹{inr(h.amount)}
                       </span>
-                    ) : (
+                      <span className={`text-[10px] block ${h.current ? "text-white/70" : "text-[var(--mg-brown)]"}`}>
+                        {h.items} {h.items === 1 ? "pc" : "pcs"}
+                      </span>
+                    </div>
+
+                    {!h.current && (
                       <button
                         type="button"
                         onClick={() => {
                           closeModal();
                           onSelect(h.invoiceNo);
                         }}
-                        className="mt-1 text-[#C41E3A] transition-transform active:scale-110"
                         aria-label={`Open receipt ${h.invoiceNo}`}
+                        className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white text-[var(--mg-ink)] shadow-sm transition-transform active:scale-95 border border-black/10"
                       >
-                        <Icon name="arrow" className="h-5 w-5" />
+                        <Icon name="arrow" className="h-4 w-4 text-[var(--mg-brown)]" />
                       </button>
                     )}
                   </div>
