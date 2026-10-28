@@ -711,25 +711,35 @@ function SleekRateCard({ data, onSubmit }: { data: MangoReceiptData; onSubmit?: 
   };
 
   return (
-    <section aria-label="Rate your visit" className={`rounded-3xl bg-white p-6 text-[var(--mg-brown)] ${lift} relative overflow-hidden`}>
+    <section   aria-label="Rate your visit"   className={`relative overflow-hidden rounded-2xl border border-black/[0.06] bg-white p-4 text-[var(--mg-brown)] shadow-[0_4px_16px_-8px_rgba(26,26,26,0.18)]`} >
       <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--mg-wash)] rounded-full -mr-10 -mt-10 pointer-events-none opacity-60" />
 
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <span className="mg-display text-[10px] uppercase tracking-[0.2em] text-[var(--mg-brown)]">Quick Feedback</span>
-          <h2 className="mg-display text-[18px] uppercase leading-tight tracking-[0.04em] text-[var(--mg-ink)] mt-0.5">
-            How was your visit?
-          </h2>
-        </div>
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[var(--mg-wash)] text-[var(--mg-ink)] border border-black/5">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5 text-[var(--mg-brown)]">
-            <path d={STAR_PATH} />
-          </svg>
-        </span>
-      </div>
+      <div className="flex items-center justify-between gap-3">
+  <div className="min-w-0">
+    <span className="mg-display block text-[9px] uppercase tracking-[0.18em] text-[var(--mg-brown)]">
+      Quick Feedback
+    </span>
+
+    <h2 className="mg-display mt-0.5 text-[16px] uppercase leading-tight tracking-[0.02em] text-[var(--mg-ink)]">
+      How was your visit?
+    </h2>
+  </div>
+
+  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-[var(--mg-line)] bg-[var(--mg-wash)] text-[var(--mg-brown)]">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      className="h-4 w-4"
+    >
+      <path d={STAR_PATH} />
+    </svg>
+  </span>
+</div>
 
       {submitted ? (
-        <div className="mt-5 flex items-start gap-3 rounded-2xl bg-[var(--mg-wash)] p-4 border border-black/5" aria-live="polite">
+        <div className="mt-3 flex items-start gap-2.5 rounded-xl border border-black/5 bg-[var(--mg-wash)] p-3" aria-live="polite">
           <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[var(--mg-ink)] text-white">
             <Icon name="check" className="h-4 w-4" />
           </span>
@@ -748,7 +758,7 @@ function SleekRateCard({ data, onSubmit }: { data: MangoReceiptData; onSubmit?: 
           </div>
         </div>
       ) : (
-        <div className="mt-5">
+        <div className="mt-3">
           <div className="flex items-center justify-between bg-[var(--mg-wash)] px-4 py-3.5 rounded-2xl border border-black/5">
             <div role="radiogroup" aria-label="Overall rating" className="flex gap-1.5" onMouseLeave={() => setHover(0)}>
               {[1, 2, 3, 4, 5].map((n) => (
@@ -766,7 +776,7 @@ function SleekRateCard({ data, onSubmit }: { data: MangoReceiptData; onSubmit?: 
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     strokeLinejoin="round"
-                    className={`h-7 w-7 stroke-[var(--mg-brown)] transition-colors ${
+                    className={`h-6 w-6 stroke-[var(--mg-brown)] transition-colors ${
                       n <= shown ? "fill-[var(--mg-brown)]" : "fill-white"
                     } ${!overall && !hover ? "mg-star-flash" : ""}`}
                     style={!overall && !hover ? { animationDelay: `${(n - 1) * 0.18}s` } : undefined}
@@ -777,17 +787,17 @@ function SleekRateCard({ data, onSubmit }: { data: MangoReceiptData; onSubmit?: 
               ))}
             </div>
             <div className="text-right pl-2">
-              <p className="mg-display text-[12px] uppercase text-[var(--mg-ink)] tracking-wider">
+              <p className="mg-display text-[11px] uppercase tracking-wide text-[var(--mg-ink)]">
                 {overall ? RATING_WORDS[overall - 1] : "Tap to rate"}
               </p>
-              <p className="text-[10px] text-[var(--mg-brown)] font-medium">
+              <p className="text-[9px] font-medium text-[var(--mg-brown)]">
                 {overall ? `${overall}/5 stars` : "Instant feedback"}
               </p>
             </div>
           </div>
 
           <Collapse open={expanded} id={detailId}>
-            <form onSubmit={submit} noValidate className="mt-4 pt-4 border-t border-[var(--mg-line)] space-y-4">
+            <form onSubmit={submit} noValidate className="mt-3 space-y-3 border-t border-[var(--mg-line)] pt-3">
               <div>
                 <p className={`${m} text-[11px] uppercase tracking-wider text-[var(--mg-brown)] mb-2.5 font-bold`}>Rate specific categories</p>
                 <div className="space-y-2">
@@ -1093,10 +1103,10 @@ function ReceiptView({
           </h1>
         </header>
 
-        {/* ---------- Sleek Top Rating Card (Placed right below header where total paid card used to be) ---------- */}
-        <div className="px-4 mb-5">
-          <SleekRateCard data={data} onSubmit={onSubmitFeedback} />
-        </div>
+        {/* ---------- Compact Top Rating Card ---------- */}
+<div className="mb-3 px-4">
+  <SleekRateCard data={data} onSubmit={onSubmitFeedback} />
+</div>
 
         {/* ---------- Total paid card summary with quick QR popup trigger ---------- */}
         <div className="px-4">
