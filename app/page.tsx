@@ -6,12 +6,17 @@
  * Concept: a poster on a light canvas. Logo + greeting, a "total paid" card, then the actual
  * receipt as torn thermal paper (mono lines, dotted leaders, [+] / [−] toggles). White cards with
  * soft shadows pop off the canvas; Mango brown is used for emphasis, black for the main actions.
- * After the receipt: rate your visit, profile, exchange, "Reach us" and a Mango brand card for the
- * store (brown header band, address always visible, details expand). The page closes with a dark
- * panel carrying a large white Mango wordmark, the registered office and the "Powered by" logo.
- * Popups are rounded white sheets with a grab handle; the history popup lists purchases as date tiles.
+ * After the receipt: rate your visit (stars flash until the first tap), profile, exchange,
+ * "Reach us" and a Mango brand card for the store (brown header band, address always visible,
+ * contact rows / associate / GSTIN copy expand). The page closes with a dark panel carrying a large
+ * white Mango wordmark, a two-tone thank-you, the registered office, a back-to-top button and a
+ * single "Powered by [RDEP]" line. Popups are rounded white sheets with a grab handle; the history
+ * popup lists purchases as date tiles.
  *
  * Mango allows curves, so cards, buttons, chips and switches are rounded.
+ *
+ * Phone first: hover styles only apply on devices that can hover. On touch screens every button and
+ * link dips slightly while pressed and uses `active:` colours instead.
  *
  * Fixed layout: designed at 400px wide. On phones (<= 520px) it is scaled with CSS `zoom` to fill
  * the screen, on larger screens it stays a centred 400px column, so it looks identical everywhere.
@@ -72,6 +77,21 @@ const FONT_FACES = `
 @font-face{font-family:"MangoSans";font-weight:700;font-style:normal;font-display:swap;src:url("/fonts/MangoSans-Bold.ttf") format("truetype")}
 .mg-root{font-family:${BRAND_STACK}}
 .mg-display{font-family:${BRAND_STACK};font-weight:700}
+
+/* Phone press feedback: every button and link dips slightly while touched */
+.mg-root a,.mg-root button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.mg-root a,.mg-root button:not(:disabled){transition:transform .12s ease,background-color .2s ease,color .2s ease,border-color .2s ease}
+.mg-root a:active,.mg-root button:not(:disabled):active{transform:scale(.97)}
+
+/* Rating stars flash in a wave until the first tap */
+@keyframes mg-star-flash{0%,100%{fill:var(--mg-wash);transform:scale(1)}45%{fill:var(--mg-brown);transform:scale(1.2)}}
+.mg-star-flash{animation:mg-star-flash 1.6s ease-in-out infinite}
+
+@media (prefers-reduced-motion:reduce){
+  .mg-star-flash{animation:none}
+  .mg-root a,.mg-root button:not(:disabled){transition:none}
+  .mg-root a:active,.mg-root button:not(:disabled):active{transform:none}
+}
 `;
 
 /* Brand tokens. Tints are variables (Tailwind cannot apply opacity modifiers to var() colours). */
@@ -84,6 +104,7 @@ const theme = {
   "--mg-wash": "#F3EEEA", // tiles and hovers inside white cards
   "--mg-line": "rgba(139,111,94,0.3)", // hairlines
   "--mg-edge": "rgba(139,111,94,0.75)", // input underlines
+  "--mg-sand": "#D8C3B4", // light brown accent on dark panels
 } as CSSProperties;
 
 /* Assets + links */
@@ -679,9 +700,14 @@ function PaperItem({ item, open, onToggle }: { item: MangoItem; open: boolean; o
 /* ------------------------------- star rating ------------------------------------- */
 const RATING_WORDS = ["Poor", "Fair", "Good", "Very good", "Excellent"];
 
-function StarRow({ value, onChange, label, size = "lg" }: { value: number; onChange: (v: number) => void; label: string; size?: "lg" | "sm" }) {
+function StarRow({
+  value, onChange, label, size = "lg", pulse = false,
+}: {
+  value: number; onChange: (v: number) => void; label: string; size?: "lg" | "sm"; pulse?: boolean;
+}) {
   const [hover, setHover] = useState(0);
   const shown = hover || value;
+  const flashing = pulse && !hover && value === 0;
   return (
     <div role="radiogroup" aria-label={label} className={`flex ${size === "lg" ? "gap-1" : "gap-0"}`} onMouseLeave={() => setHover(0)}>
       {[1, 2, 3, 4, 5].map((n) => (
@@ -699,9 +725,10 @@ function StarRow({ value, onChange, label, size = "lg" }: { value: number; onCha
             viewBox="0 0 24 24"
             strokeWidth="1.5"
             strokeLinejoin="round"
+            style={flashing ? { animationDelay: `${(n - 1) * 0.18}s` } : undefined}
             className={`${size === "lg" ? "h-9 w-9" : "h-6 w-6"} stroke-[var(--mg-brown)] transition-colors motion-reduce:transition-none ${
               n <= shown ? "fill-[var(--mg-brown)]" : "fill-[var(--mg-wash)]"
-            }`}
+            } ${flashing ? "mg-star-flash" : ""}`}
           >
             <path d={STAR_PATH} />
           </svg>
@@ -760,7 +787,7 @@ function RateVisit({ data, onSubmit }: { data: MangoReceiptData; onSubmit?: (v: 
         <form onSubmit={submit} noValidate>
           <div className="mt-4 flex flex-col items-start">
             <div className="-ml-1.5">
-              <StarRow value={overall} onChange={setOverall} label="Overall rating" />
+              <StarRow value={overall} onChange={setOverall} label="Overall rating" pulse={overall === 0} />
             </div>
             <p aria-live="polite" className="mt-1 h-5 text-[15px]">
               {overall ? RATING_WORDS[overall - 1] : "Tap a star to rate"}
@@ -902,7 +929,7 @@ function ProfileCard({ data, onSave }: { data: MangoReceiptData; onSave?: (v: Pr
                   className={`rounded-full border-2 px-4 py-2 text-[14px] transition-colors motion-reduce:transition-none ${onPaper} ${
                     on
                       ? "border-[var(--mg-ink)] bg-[var(--mg-ink)] text-white"
-                      : "border-[var(--mg-edge)] bg-white text-[var(--mg-brown-dark)] [@media(hover:hover)]:hover:border-[var(--mg-ink)]"
+                      : "border-[var(--mg-edge)] bg-white text-[var(--mg-brown-dark)] active:border-[var(--mg-ink)] [@media(hover:hover)]:hover:border-[var(--mg-ink)]"
                   }`}
                 >
                   {g}
@@ -991,6 +1018,7 @@ function ReceiptView({
   const [email, setEmail] = useState("");
   const [sentTo, setSentTo] = useState("");
   const [emailErr, setEmailErr] = useState("");
+  const [copied, setCopied] = useState(false);
   const closeModal = useCallback(() => setModal(null), []);
   const exchangeId = useId();
   const storeId = useId();
@@ -1003,6 +1031,16 @@ function ReceiptView({
   /* MangoSans is wide: ~0.72em per uppercase character. Fits ~180px next to the logo. */
   const nameSize = Math.min(30, Math.max(18, Math.floor(180 / (0.72 * (firstName.length + 1)))));
   const handleDownload = () => (onDownload ? onDownload(data) : downloadReceipt(data, logoSrc, rdepLogoSrc));
+
+  const copyGstin = async () => {
+    try {
+      await navigator.clipboard.writeText(store.gstin);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      /* clipboard blocked: ignore */
+    }
+  };
 
   return (
     <div
@@ -1147,7 +1185,7 @@ function ReceiptView({
                 onClick={() => setExchangeOpen((o) => !o)}
                 aria-expanded={exchangeOpen}
                 aria-controls={exchangeId}
-                className={`flex w-full items-center justify-between gap-4 rounded-3xl p-5 text-left ${onPaper}`}
+                className={`flex w-full items-center justify-between gap-4 rounded-3xl p-5 text-left active:bg-[var(--mg-wash)] ${onPaper}`}
               >
                 <span>
                   <span className="mg-display block text-[22px] uppercase leading-[1.1] tracking-[0.05em] text-[var(--mg-ink)]">Exchange</span>
@@ -1240,65 +1278,131 @@ function ReceiptView({
                 onClick={() => setStoreOpen((o) => !o)}
                 aria-expanded={storeOpen}
                 aria-controls={storeId}
-                className={`mt-4 flex w-full items-center justify-between rounded-2xl bg-[var(--mg-wash)] px-4 py-3.5 text-left ${onPaper}`}
+                className={`mt-4 flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3.5 text-left ${onPaper} ${
+                  storeOpen ? "bg-[var(--mg-ink)] text-white" : "bg-[var(--mg-wash)] text-[var(--mg-ink)] active:bg-[#E9DFD7]"
+                }`}
               >
-                <span className="mg-display text-[13px] uppercase tracking-[0.08em]">More store details</span>
-                <span aria-hidden="true" className="grid h-6 w-6 place-items-center rounded-full bg-[var(--mg-ink)] text-base leading-none text-white">
-                  {storeOpen ? "−" : "+"}
+                <span className="mg-display text-[13px] uppercase tracking-[0.08em]">
+                  {storeOpen ? "Hide store details" : "Contact and store details"}
+                </span>
+                <span
+                  aria-hidden="true"
+                  className={`grid h-7 w-7 shrink-0 place-items-center rounded-full ${storeOpen ? "bg-white text-[var(--mg-ink)]" : "bg-[var(--mg-ink)] text-white"}`}
+                >
+                  <Icon name="close" className={`h-3.5 w-3.5 transition-transform duration-300 motion-reduce:transition-none ${storeOpen ? "rotate-0" : "rotate-45"}`} />
                 </span>
               </button>
 
               <Collapse open={storeOpen} id={storeId}>
-                <dl className="grid grid-cols-2 gap-2 pt-2">
+                <ul className="space-y-2 pt-3">
                   {(
                     [
-                      ["Email", store.email, true],
-                      ["Phone", store.phone, false],
-                      ["Sales associate", store.associate, false],
-                      ["GSTIN", store.gstin, true],
-                    ] as [string, string, boolean][]
-                  ).map(([k, v, wide]) => (
-                    <div key={k} className={`rounded-xl bg-[var(--mg-wash)] px-3.5 py-3 ${wide ? "col-span-2" : ""}`}>
-                      <dt className="text-[12px] text-[var(--mg-brown)]">{k}</dt>
-                      <dd className={`${m} mt-1 break-all text-[13px] font-bold`}>{v}</dd>
-                    </div>
+                      { icon: "mail", label: "Email", value: store.email, href: `mailto:${store.email}` },
+                      { icon: "phone", label: "Phone", value: store.phone, href: `tel:${store.phone}` },
+                    ] as { icon: IconName; label: string; value: string; href: string }[]
+                  ).map((r) => (
+                    <li key={r.label}>
+                      <a
+                        href={r.href}
+                        className={`flex items-center gap-3 rounded-2xl bg-[var(--mg-wash)] p-3 active:bg-[#E9DFD7] [@media(hover:hover)]:hover:bg-[#E9DFD7] ${onPaper}`}
+                      >
+                        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-[var(--mg-brown)]">
+                          <Icon name={r.icon} className="h-[18px] w-[18px]" />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-[12px] text-[var(--mg-brown)]">{r.label}</span>
+                          <span className={`${m} mt-0.5 block truncate text-[13px] font-bold text-[var(--mg-ink)]`}>{r.value}</span>
+                        </span>
+                        <Icon name="arrow" className="h-4 w-4 shrink-0 text-[var(--mg-brown)]" />
+                      </a>
+                    </li>
                   ))}
-                </dl>
+
+                  <li className="flex items-center gap-3 rounded-2xl bg-[var(--mg-wash)] p-3">
+                    <span className="mg-display grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[var(--mg-ink)] text-[16px] uppercase text-white">
+                      {store.associate.charAt(0)}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[12px] text-[var(--mg-brown)]">Sales associate</span>
+                      <span className="mg-display mt-0.5 block text-[15px] text-[var(--mg-ink)]">{store.associate}</span>
+                    </span>
+                  </li>
+
+                  <li className="flex items-center gap-3 rounded-2xl bg-[var(--mg-wash)] p-3">
+                    <span className="min-w-0 flex-1 pl-1">
+                      <span className="block text-[12px] text-[var(--mg-brown)]">GSTIN</span>
+                      <span className={`${m} mt-0.5 block break-all text-[13px] font-bold text-[var(--mg-ink)]`}>{store.gstin}</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={copyGstin}
+                      aria-live="polite"
+                      className={`shrink-0 rounded-full border-2 border-[var(--mg-ink)] bg-white px-3.5 py-1.5 text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--mg-ink)] active:bg-[var(--mg-ink)] active:text-white ${onPaper}`}
+                    >
+                      {copied ? "Copied" : "Copy"}
+                    </button>
+                  </li>
+                </ul>
               </Collapse>
             </div>
           </section>
         </div>
 
-        {/* ---------- Closing panel: dark, big wordmark ---------- */}
-        <footer className="mt-10 rounded-t-[36px] bg-[var(--mg-ink)] px-6 pb-9 pt-10 text-white">
-          <BrandImage
-            src={logoSrc}
-            alt="MANGO"
-            width={320}
-            height={80}
-            className="h-12 w-auto max-w-full object-contain object-left brightness-0 invert"
-            fallbackClassName="mg-display inline-block text-[40px] uppercase leading-none tracking-[0.14em] text-white"
-          />
-          <p className="mg-display mt-6 text-[18px] uppercase leading-[1.2] tracking-[0.05em]">Thank you for shopping with us</p>
-          <p className="mt-2 text-[14px] text-white/70">See you in store soon.</p>
+        {/* ---------- Closing panel ---------- */}
+        <footer className="relative mt-10 overflow-hidden rounded-t-[40px] bg-[var(--mg-ink)] px-6 pb-10 pt-11 text-white">
+          <span aria-hidden="true" className="pointer-events-none absolute -right-16 -top-16 h-52 w-52 rounded-full border-[26px]" style={{ borderColor: "rgba(139,111,94,0.35)" }} />
+          <span aria-hidden="true" className="pointer-events-none absolute -right-3 top-24 h-20 w-20 rounded-full border-[10px]" style={{ borderColor: "rgba(139,111,94,0.35)" }} />
 
-          <div className="mt-8 border-t border-white/20 pt-6">
-            <h2 className="mg-display text-[12px] uppercase tracking-[0.2em] text-white/60">Registered office</h2>
-            <p className={`${m} mt-2.5 text-xs leading-relaxed text-white/80`}>{data.registeredOffice}</p>
-          </div>
+          <div className="relative">
+            <BrandImage
+              src={logoSrc}
+              alt="MANGO"
+              width={320}
+              height={80}
+              className="h-12 w-auto max-w-full object-contain object-left brightness-0 invert"
+              fallbackClassName="mg-display inline-block text-[40px] uppercase leading-none tracking-[0.14em] text-white"
+            />
 
-          <div className="mt-7 flex items-center justify-between gap-3">
-            <span className="text-[13px] text-white/60">Powered by</span>
-            <span className="rounded-full bg-white px-4 py-2">
-              <BrandImage
-                src={rdepLogoSrc}
-                alt="rdep"
-                width={240}
-                height={80}
-                className="h-6 w-auto"
-                fallbackClassName="text-lg font-bold tracking-tight text-[var(--mg-ink)]"
-              />
-            </span>
+            <h2 className="mg-display mt-8 text-[24px] uppercase leading-[1.1] tracking-[0.04em]">
+              Thank you
+              <span className="block text-[var(--mg-sand)]">for shopping with us</span>
+            </h2>
+            <p className="mt-3 text-[14px] text-white/70">See you in store soon.</p>
+
+            <div className="mt-8 flex items-center justify-between gap-4">
+              <p className={`${m} text-[11px] leading-relaxed text-white/60`}>
+                Invoice {data.invoiceNo}
+                <br />
+                {data.date.split(" ")[0]}
+              </p>
+              <button
+                type="button"
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                aria-label="Back to top"
+                className={`grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white text-[var(--mg-ink)] active:bg-[var(--mg-sand)] ${onDark}`}
+              >
+                <Icon name="arrow" className="h-5 w-5 -rotate-90" />
+              </button>
+            </div>
+
+            <div className="mt-7 rounded-2xl border border-white/15 bg-white/5 p-4">
+              <h3 className="mg-display text-[11px] uppercase tracking-[0.2em] text-[var(--mg-sand)]">Registered office</h3>
+              <p className={`${m} mt-2 text-xs leading-relaxed text-white/75`}>{data.registeredOffice}</p>
+            </div>
+
+            <div className="mt-8 flex items-center justify-center gap-2.5 border-t border-white/15 pt-7 text-[13px] text-white/70">
+              <span>Powered by</span>
+              <span className="inline-flex items-center rounded-full bg-white px-3.5 py-1.5">
+                <BrandImage
+                  src={rdepLogoSrc}
+                  alt="rdep"
+                  width={240}
+                  height={80}
+                  className="h-5 w-auto"
+                  fallbackClassName="text-base font-bold tracking-tight text-[var(--mg-ink)]"
+                />
+              </span>
+            </div>
           </div>
         </footer>
       </main>
