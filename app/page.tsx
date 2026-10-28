@@ -5,14 +5,18 @@
  *
  * Concept: a poster on a light canvas. Logo + greeting, a "total paid" card, then the actual
  * receipt as torn thermal paper (mono lines, dotted leaders, [+] / [−] toggles). White cards with
- * soft shadows pop off the canvas; Mango brown is used for emphasis, black for the main actions.
- * After the receipt: rate your visit (stars flash until the first tap), profile, exchange,
- * "Reach us" and a Mango brand card for the store (brown header band, address always visible,
- * contact rows / associate / GSTIN copy expand). The page closes with a light warm-tint panel:
- * the Mango wordmark, a two-tone thank-you, the registered office in a white card, a back-to-top
- * button and a single "Powered by [RDEP]" line. Popups are light rounded sheets with a grab
- * handle; the history popup shows two summary tiles and the purchases as date tiles, with the
- * open receipt outlined in brown.
+ * soft shadows pop off the canvas. After the receipt: rate your visit (stars flash until the first
+ * tap), profile, exchange, "Reach us" and a store card (address always visible, one toggle shows /
+ * hides only the contact details). The page closes with a black panel (logo, two-tone thank-you,
+ * registered office) and a white "Powered by [RDEP]" strip. Popups are rounded sheets with a grab
+ * handle; the history popup is a black total card plus a list of ticket-style receipts with a
+ * perforated date stub, the open receipt outlined in black.
+ *
+ * Colour system (kept deliberately small so backgrounds never clash):
+ *   - Backgrounds are neutral only: #F5F5F5 canvas, white cards, #1A1A1A for the strong panels.
+ *   - Brand brown #8B6F5E is for text, icons, hairlines, toggles and small accents. It is never
+ *     used as a big background, and there are no beige tints.
+ *   - On black, small text is white and the accent line uses a light sand tone (--mg-sand).
  *
  * Mango allows curves, so cards, buttons, chips and switches are rounded.
  *
@@ -33,7 +37,7 @@
  *   No italics are used anywhere.
  *
  * ASSETS (in /public/images/design-mode)
- *   mango.png       the Mango logo
+ *   mango.png       the Mango logo (shown white on the black closing panel via a CSS filter)
  *   RDEP-logo.png   the RDEP logo
  *
  * Stack: Next.js (app router) + Tailwind. No other dependencies.
@@ -97,13 +101,14 @@ const FONT_FACES = `
 
 /* Brand tokens. Tints are variables (Tailwind cannot apply opacity modifiers to var() colours). */
 const theme = {
-  "--mg-brown": "#8B6F5E", // text, accents
-  "--mg-brown-dark": "#6E5445", // hover / pressed, small captions on the canvas
-  "--mg-ink": "#1A1A1A", // headings, outlines, main buttons
+  "--mg-brown": "#8B6F5E", // text, icons, hairlines, small accents
+  "--mg-brown-dark": "#6E5445", // small captions on the canvas
+  "--mg-ink": "#1A1A1A", // headings, outlines, main buttons, strong panels
   "--mg-canvas": "#F5F5F5", // the receipt column background
-  "--mg-page": "#E8E5E2", // page behind the column on desktop
-  "--mg-wash": "#F3EEEA", // tiles and hovers inside white cards
-  "--mg-tint": "#E9DFD7", // pressed tiles, closing panel background
+  "--mg-page": "#EAEAEA", // page behind the column on desktop
+  "--mg-wash": "#F5F5F5", // neutral tiles inside white cards
+  "--mg-press": "#EBEBEB", // pressed / hover state of neutral tiles
+  "--mg-sand": "#D2BBAA", // brand accent on black (text only)
   "--mg-line": "rgba(139,111,94,0.3)", // hairlines
   "--mg-edge": "rgba(139,111,94,0.75)", // input underlines
 } as CSSProperties;
@@ -181,8 +186,21 @@ export interface MangoReceiptProps {
   onSelectReceipt?: (invoiceNo: string) => void;
 }
 
-type IconName = "history" | "mail" | "download" | "phone" | "instagram" | "pin" | "close" | "check" | "arrow";
+type IconName =
+  | "history" | "mail" | "download" | "phone" | "instagram" | "pin" | "store"
+  | "close" | "check" | "arrow" | "chevron";
 type ModalId = "history" | "email" | null;
+
+interface HistoryRow {
+  invoiceNo: string;
+  date: string;
+  amount: number;
+  items: number;
+  /** Name of the first item, and how many more items are on the receipt */
+  title: string;
+  more: number;
+  current: boolean;
+}
 
 /* ------------------------------- helpers ----------------------------------------- */
 const inr = (n: number): string => n.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -398,9 +416,18 @@ const PATHS: Record<IconName, ReactNode> = {
       <circle cx="12" cy="10" r="3" />
     </>
   ),
+  store: (
+    <>
+      <path d="M3 9 4.5 4h15L21 9" />
+      <path d="M4 9v11h16V9" />
+      <path d="M3 9c0 1.7 1.3 3 3 3s3-1.3 3-3c0 1.7 1.3 3 3 3s3-1.3 3-3c0 1.7 1.3 3 3 3s3-1.3 3-3" />
+      <path d="M10 20v-5h4v5" />
+    </>
+  ),
   close: <path d="M18 6 6 18M6 6l12 12" />,
   check: <path d="m5 12 5 5 9-10" />,
   arrow: <path d="M5 12h14M13 6l6 6-6 6" />,
+  chevron: <path d="m6 9 6 6 6-6" />,
 };
 
 function Icon({ name, className = "h-5 w-5" }: { name: IconName; className?: string }) {
@@ -560,7 +587,7 @@ function Heading({ children, sub, size = 22 }: { children: ReactNode; sub?: stri
   );
 }
 
-/** Popups are light rounded sheets with a grab handle. */
+/** Popups are white rounded sheets with a grab handle. */
 function Modal({
   title,
   subtitle,
@@ -595,7 +622,7 @@ function Modal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-[#1A1A1A]/45 backdrop-blur-[2px] sm:items-center sm:p-4"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-[#1A1A1A]/50 backdrop-blur-[2px] sm:items-center sm:p-4"
       onMouseDown={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
@@ -621,7 +648,7 @@ function Modal({
                 type="button"
                 onClick={onClose}
                 aria-label="Close"
-                className={`grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[var(--mg-wash)] text-[var(--mg-ink)] transition-colors active:bg-[var(--mg-tint)] [@media(hover:hover)]:hover:bg-[var(--mg-tint)] motion-reduce:transition-none ${onPaper}`}
+                className={`grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[var(--mg-wash)] text-[var(--mg-ink)] transition-colors active:bg-[var(--mg-press)] [@media(hover:hover)]:hover:bg-[var(--mg-press)] motion-reduce:transition-none ${onPaper}`}
               >
                 <Icon name="close" className="h-4 w-4" />
               </button>
@@ -995,7 +1022,7 @@ function ProfileCard({ data, onSave }: { data: MangoReceiptData; onSave?: (v: Pr
 /* ------------------------------ receipt view ------------------------------------- */
 interface ReceiptViewProps extends Omit<MangoReceiptProps, "data" | "receipts" | "onSelectReceipt"> {
   data: MangoReceiptData;
-  history: { invoiceNo: string; date: string; amount: number; items: number; current: boolean }[];
+  history: HistoryRow[];
   onSelect: (invoiceNo: string) => void;
 }
 
@@ -1016,34 +1043,23 @@ function ReceiptView({
   const [openItem, setOpenItem] = useState(-1);
   const [modal, setModal] = useState<ModalId>(null);
   const [exchangeOpen, setExchangeOpen] = useState(false);
-  const [storeOpen, setStoreOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [sentTo, setSentTo] = useState("");
   const [emailErr, setEmailErr] = useState("");
-  const [copied, setCopied] = useState(false);
   const closeModal = useCallback(() => setModal(null), []);
   const exchangeId = useId();
-  const storeId = useId();
+  const contactId = useId();
   const scale = useFitScale();
   const m = monoClass;
 
   const { store, exchange } = data;
   const t = useMemo(() => totalsOf(data), [data]);
-  const historyTotal = useMemo(() => history.reduce((a, h) => a + h.amount, 0), [history]);
+  const historyTotal = useMemo(() => round2(history.reduce((a, h) => a + h.amount, 0)), [history]);
   const firstName = data.customer.name.trim().split(/\s+/)[0] || data.customer.name;
   /* MangoSans is wide: ~0.72em per uppercase character. Fits ~180px next to the logo. */
   const nameSize = Math.min(30, Math.max(18, Math.floor(180 / (0.72 * (firstName.length + 1)))));
   const handleDownload = () => (onDownload ? onDownload(data) : downloadReceipt(data, logoSrc, rdepLogoSrc));
-
-  const copyGstin = async () => {
-    try {
-      await navigator.clipboard.writeText(store.gstin);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
-    } catch {
-      /* clipboard blocked: ignore */
-    }
-  };
 
   return (
     <div
@@ -1243,187 +1259,169 @@ function ReceiptView({
             </a>
           </section>
 
-          {/* ---------- Store: brand card ---------- */}
-          <section aria-label="Store" className={`overflow-hidden rounded-3xl bg-white ${lift}`}>
-            <div className="relative overflow-hidden bg-[var(--mg-brown)] px-5 pb-5 pt-5 text-white">
-              <span aria-hidden="true" className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full border-[16px] border-white/10" />
-              <span aria-hidden="true" className="pointer-events-none absolute -right-2 top-10 h-14 w-14 rounded-full border-[8px] border-white/10" />
-              <p className="mg-display text-[11px] uppercase tracking-[0.22em] text-white/75">Bought at</p>
-              <h2 className="mg-display relative mt-2 max-w-[85%] text-[22px] uppercase leading-[1.1] tracking-[0.04em]">{store.name}</h2>
+          {/* ---------- Store card: address always visible, one toggle for the contact details ---------- */}
+          <section aria-label="Store" className={`rounded-3xl bg-white p-5 text-[var(--mg-ink)] ${lift}`}>
+            <div className="flex items-center gap-3.5">
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[var(--mg-ink)] text-white">
+                <Icon name="store" className="h-6 w-6" />
+              </span>
+              <div className="min-w-0">
+                <p className="mg-display text-[11px] uppercase tracking-[0.2em] text-[var(--mg-brown)]">Bought at</p>
+                <h2 className="mg-display mt-1 text-[18px] uppercase leading-[1.15] tracking-[0.04em]">{store.name}</h2>
+              </div>
             </div>
 
-            <div className="p-5 text-[var(--mg-ink)]">
-              <div className="flex items-start gap-3">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[var(--mg-wash)] text-[var(--mg-brown)]">
-                  <Icon name="pin" className="h-[18px] w-[18px]" />
-                </span>
-                <p className="pt-1.5 text-[15px] font-bold leading-snug">{store.address}</p>
-              </div>
+            <div className="mt-5 flex items-start gap-3 rounded-2xl bg-[var(--mg-wash)] p-4">
+              <Icon name="pin" className="mt-0.5 h-5 w-5 shrink-0 text-[var(--mg-brown)]" />
+              <p className="text-[15px] font-bold leading-snug">{store.address}</p>
+            </div>
 
-              <div className="mt-4 grid grid-cols-2 gap-2">
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${store.name}, ${store.address}`)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${outlineBtn} !py-3 !text-[12px]`}
-                >
-                  <Icon name="pin" className="h-4 w-4" />
-                  Directions
-                </a>
-                <a href={`tel:${store.phone}`} className={`${outlineBtn} !py-3 !text-[12px]`}>
-                  <Icon name="phone" className="h-4 w-4" />
-                  Call store
-                </a>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setStoreOpen((o) => !o)}
-                aria-expanded={storeOpen}
-                aria-controls={storeId}
-                className={`mt-4 flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3.5 text-left ${onPaper} ${
-                  storeOpen ? "bg-[var(--mg-brown)] text-white" : "bg-[var(--mg-wash)] text-[var(--mg-ink)] active:bg-[var(--mg-tint)]"
-                }`}
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${store.name}, ${store.address}`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${outlineBtn} !py-3 !text-[12px]`}
               >
-                <span className="mg-display text-[13px] uppercase tracking-[0.08em]">
-                  {storeOpen ? "Hide store details" : "Contact and store details"}
-                </span>
-                <span
-                  aria-hidden="true"
-                  className={`grid h-7 w-7 shrink-0 place-items-center rounded-full ${storeOpen ? "bg-white text-[var(--mg-brown)]" : "bg-[var(--mg-brown)] text-white"}`}
-                >
-                  <Icon name="close" className={`h-3.5 w-3.5 transition-transform duration-300 motion-reduce:transition-none ${storeOpen ? "rotate-0" : "rotate-45"}`} />
-                </span>
-              </button>
-
-              <Collapse open={storeOpen} id={storeId}>
-                <ul className="space-y-2 pt-3">
-                  {(
-                    [
-                      { icon: "mail", label: "Email", value: store.email, href: `mailto:${store.email}` },
-                      { icon: "phone", label: "Phone", value: store.phone, href: `tel:${store.phone}` },
-                    ] as { icon: IconName; label: string; value: string; href: string }[]
-                  ).map((r) => (
-                    <li key={r.label}>
-                      <a
-                        href={r.href}
-                        className={`flex items-center gap-3 rounded-2xl bg-[var(--mg-wash)] p-3 active:bg-[var(--mg-tint)] [@media(hover:hover)]:hover:bg-[var(--mg-tint)] ${onPaper}`}
-                      >
-                        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-[var(--mg-brown)]">
-                          <Icon name={r.icon} className="h-[18px] w-[18px]" />
-                        </span>
-                        <span className="min-w-0 flex-1">
-                          <span className="block text-[12px] text-[var(--mg-brown)]">{r.label}</span>
-                          <span className={`${m} mt-0.5 block truncate text-[13px] font-bold text-[var(--mg-ink)]`}>{r.value}</span>
-                        </span>
-                        <Icon name="arrow" className="h-4 w-4 shrink-0 text-[var(--mg-brown)]" />
-                      </a>
-                    </li>
-                  ))}
-
-                  <li className="flex items-center gap-3 rounded-2xl bg-[var(--mg-wash)] p-3">
-                    <span className="mg-display grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[var(--mg-brown)] text-[16px] uppercase text-white">
-                      {store.associate.charAt(0)}
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-[12px] text-[var(--mg-brown)]">Sales associate</span>
-                      <span className="mg-display mt-0.5 block text-[15px] text-[var(--mg-ink)]">{store.associate}</span>
-                    </span>
-                  </li>
-
-                  <li className="flex items-center gap-3 rounded-2xl bg-[var(--mg-wash)] p-3">
-                    <span className="min-w-0 flex-1 pl-1">
-                      <span className="block text-[12px] text-[var(--mg-brown)]">GSTIN</span>
-                      <span className={`${m} mt-0.5 block break-all text-[13px] font-bold text-[var(--mg-ink)]`}>{store.gstin}</span>
-                    </span>
-                    <button
-                      type="button"
-                      onClick={copyGstin}
-                      aria-live="polite"
-                      className={`shrink-0 rounded-full border-2 border-[var(--mg-ink)] bg-white px-3.5 py-1.5 text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--mg-ink)] active:bg-[var(--mg-ink)] active:text-white ${onPaper}`}
-                    >
-                      {copied ? "Copied" : "Copy"}
-                    </button>
-                  </li>
-                </ul>
-              </Collapse>
+                <Icon name="pin" className="h-4 w-4" />
+                Directions
+              </a>
+              <a href={`tel:${store.phone}`} className={`${outlineBtn} !py-3 !text-[12px]`}>
+                <Icon name="phone" className="h-4 w-4" />
+                Call store
+              </a>
             </div>
+
+            <button
+              type="button"
+              onClick={() => setContactOpen((o) => !o)}
+              aria-expanded={contactOpen}
+              aria-controls={contactId}
+              className={`mt-5 flex w-full items-center justify-between gap-3 border-t border-[var(--mg-line)] pt-4 text-left ${onPaper}`}
+            >
+              <span className="mg-display text-[13px] uppercase tracking-[0.08em]">
+                {contactOpen ? "Hide contact details" : "Show contact details"}
+              </span>
+              <span aria-hidden="true" className="grid h-8 w-8 shrink-0 place-items-center rounded-full border-2 border-[var(--mg-ink)]">
+                <Icon name="chevron" className={`h-4 w-4 transition-transform duration-300 motion-reduce:transition-none ${contactOpen ? "rotate-180" : ""}`} />
+              </span>
+            </button>
+
+            <Collapse open={contactOpen} id={contactId}>
+              <ul className="divide-y divide-[var(--mg-line)] pt-2">
+                {(
+                  [
+                    { icon: "mail", label: "Email", value: store.email, href: `mailto:${store.email}` },
+                    { icon: "phone", label: "Phone", value: store.phone, href: `tel:${store.phone}` },
+                  ] as { icon: IconName; label: string; value: string; href: string }[]
+                ).map((r) => (
+                  <li key={r.label}>
+                    <a href={r.href} className={`flex items-center gap-3 rounded-xl py-3.5 active:bg-[var(--mg-wash)] ${onPaper}`}>
+                      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-[var(--mg-line)] text-[var(--mg-brown)]">
+                        <Icon name={r.icon} className="h-[18px] w-[18px]" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-[12px] text-[var(--mg-brown)]">{r.label}</span>
+                        <span className={`${m} mt-0.5 block truncate text-[13px] font-bold`}>{r.value}</span>
+                      </span>
+                      <Icon name="arrow" className="h-4 w-4 shrink-0 text-[var(--mg-brown)]" />
+                    </a>
+                  </li>
+                ))}
+
+                <li className="flex items-center gap-3 py-3.5">
+                  <span className="mg-display grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[var(--mg-ink)] text-[15px] uppercase text-white">
+                    {store.associate.charAt(0)}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[12px] text-[var(--mg-brown)]">Sales associate</span>
+                    <span className="mg-display mt-0.5 block text-[15px]">{store.associate}</span>
+                  </span>
+                </li>
+
+                <li className="py-3.5 pl-[52px]">
+                  <span className="block text-[12px] text-[var(--mg-brown)]">GSTIN</span>
+                  <span className={`${m} mt-0.5 block break-all text-[13px] font-bold`}>{store.gstin}</span>
+                </li>
+              </ul>
+            </Collapse>
           </section>
         </div>
 
-        {/* ---------- Closing panel: light warm tint, rounded top ---------- */}
-        <footer className="relative mt-10 overflow-hidden rounded-t-[40px] bg-[var(--mg-tint)] px-5 pb-10 pt-10 text-[var(--mg-ink)]">
-          <span aria-hidden="true" className="pointer-events-none absolute -right-14 -top-14 h-48 w-48 rounded-full border-[22px] border-[var(--mg-brown)]/15" />
-          <span aria-hidden="true" className="pointer-events-none absolute -right-2 top-24 h-16 w-16 rounded-full border-[9px] border-[var(--mg-brown)]/15" />
+        {/* ---------- Closing: black panel + white "Powered by" strip ---------- */}
+        <footer className="mt-10">
+          <div className="relative overflow-hidden rounded-t-[40px] bg-[var(--mg-ink)] px-6 pb-9 pt-10 text-white">
+            <span aria-hidden="true" className="pointer-events-none absolute -right-14 -top-14 h-48 w-48 rounded-full border-[22px] border-white/[0.06]" />
+            <span aria-hidden="true" className="pointer-events-none absolute -right-2 top-24 h-16 w-16 rounded-full border-[9px] border-white/[0.06]" />
 
-          <div className="relative">
-            <BrandImage
-              src={logoSrc}
-              alt="MANGO"
-              width={320}
-              height={80}
-              className="h-12 w-auto max-w-[80%] object-contain object-left"
-              fallbackClassName="mg-display inline-block text-[40px] uppercase leading-none tracking-[0.14em] text-[var(--mg-ink)]"
-            />
-
-            <h2 className="mg-display mt-7 text-[24px] uppercase leading-[1.1] tracking-[0.04em] text-[var(--mg-ink)]">
-              Thank you
-              <span className="block text-[var(--mg-brown)]">for shopping with us</span>
-            </h2>
-            <span aria-hidden="true" className="mt-4 block h-1 w-10 rounded-full bg-[var(--mg-brown)]" />
-            <p className="mt-4 text-[15px] text-[var(--mg-brown-dark)]">See you in store soon.</p>
-
-            <div className="mt-7 flex items-center justify-between gap-4">
-              <p className={`${m} text-[11px] leading-relaxed text-[var(--mg-brown-dark)]`}>
-                Invoice {data.invoiceNo}
-                <br />
-                {data.date.split(" ")[0]}
-              </p>
-              <button
-                type="button"
-                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                aria-label="Back to top"
-                className={`grid h-11 w-11 shrink-0 place-items-center rounded-full border-2 border-[var(--mg-ink)] bg-white text-[var(--mg-ink)] active:bg-[var(--mg-ink)] active:text-white [@media(hover:hover)]:hover:bg-[var(--mg-ink)] [@media(hover:hover)]:hover:text-white ${onPaper}`}
-              >
-                <Icon name="arrow" className="h-5 w-5 -rotate-90" />
-              </button>
-            </div>
-
-            <div className={`mt-6 rounded-3xl bg-white p-5 ${lift}`}>
-              <h3 className="mg-display text-[12px] uppercase tracking-[0.2em] text-[var(--mg-ink)]">Registered office</h3>
-              <p className={`${m} mt-2.5 text-xs leading-relaxed text-[var(--mg-brown)]`}>{data.registeredOffice}</p>
-            </div>
-
-            <div className="mt-8 flex items-center justify-center gap-2.5 border-t border-[var(--mg-line)] pt-7 text-[13px] text-[var(--mg-brown-dark)]">
-              <span>Powered by</span>
+            <div className="relative">
               <BrandImage
-                src={rdepLogoSrc}
-                alt="rdep"
-                width={240}
+                src={logoSrc}
+                alt="MANGO"
+                width={320}
                 height={80}
-                className="h-7 w-auto"
-                fallbackClassName="text-lg font-bold tracking-tight text-[var(--mg-ink)]"
+                className="h-11 w-auto max-w-[75%] object-contain object-left brightness-0 invert"
+                fallbackClassName="mg-display inline-block text-[36px] uppercase leading-none tracking-[0.14em] text-white"
               />
+
+              <h2 className="mg-display mt-8 text-[24px] uppercase leading-[1.12] tracking-[0.04em]">
+                Thank you
+                <span className="block text-[var(--mg-sand)]">for shopping with us</span>
+              </h2>
+              <p className="mt-3 text-[15px] text-white/75">See you in store soon.</p>
+
+              <div className="mt-8 flex items-center justify-between gap-4 border-t border-white/15 pt-5">
+                <p className={`${m} text-[11px] leading-relaxed text-white/70`}>
+                  Invoice {data.invoiceNo}
+                  <br />
+                  {data.date.split(" ")[0]}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                  aria-label="Back to top"
+                  className={`grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white text-[var(--mg-ink)] active:bg-[var(--mg-sand)] [@media(hover:hover)]:hover:bg-[var(--mg-sand)] ${onDark}`}
+                >
+                  <Icon name="arrow" className="h-5 w-5 -rotate-90" />
+                </button>
+              </div>
+
+              <div className="mt-5 rounded-3xl border border-white/15 bg-white/[0.06] p-5">
+                <h3 className="mg-display text-[11px] uppercase tracking-[0.2em] text-[var(--mg-sand)]">Registered office</h3>
+                <p className={`${m} mt-2.5 text-xs leading-relaxed text-white/80`}>{data.registeredOffice}</p>
+              </div>
             </div>
+          </div>
+
+          <div className="flex items-center justify-center gap-2.5 bg-white px-5 py-5 text-[13px] text-[var(--mg-brown)]">
+            <span>Powered by</span>
+            <BrandImage
+              src={rdepLogoSrc}
+              alt="rdep"
+              width={240}
+              height={80}
+              className="h-7 w-auto"
+              fallbackClassName="text-lg font-bold tracking-tight text-[var(--mg-ink)]"
+            />
           </div>
         </footer>
       </main>
 
-      {/* ---------------------------- Popups: light rounded sheets ---------------------------- */}
+      {/* ---------------------------- Popups ---------------------------- */}
       {modal === "history" && (
-        <Modal title="Your purchases" onClose={closeModal} scale={scale}>
-          <div className="grid grid-cols-2 gap-2">
-            <div className="rounded-2xl bg-[var(--mg-wash)] px-4 py-3.5">
-              <p className="text-[12px] text-[var(--mg-brown)]">Receipts</p>
-              <p className="mg-display mt-1 text-[24px] leading-none tabular-nums text-[var(--mg-ink)]">{history.length}</p>
+        <Modal title="Your purchases" subtitle="Tap a receipt to open it." onClose={closeModal} scale={scale}>
+          <div className="flex items-end justify-between gap-4 rounded-3xl bg-[var(--mg-ink)] px-5 py-4 text-white">
+            <div className="min-w-0">
+              <p className="text-[12px] text-white/70">Total spent</p>
+              <p className="mg-display mt-1 text-[26px] leading-none tabular-nums">₹{inr(historyTotal)}</p>
             </div>
-            <div className="rounded-2xl bg-[var(--mg-wash)] px-4 py-3.5">
-              <p className="text-[12px] text-[var(--mg-brown)]">Total spent</p>
-              <p className="mg-display mt-1 text-[20px] leading-[1.2] tabular-nums text-[var(--mg-ink)]">₹{inr(historyTotal)}</p>
-            </div>
+            <p className="shrink-0 text-right text-[12px] leading-tight text-white/70">
+              <span className="mg-display block text-[24px] leading-none text-white">{history.length}</span>
+              {history.length === 1 ? "receipt" : "receipts"}
+            </p>
           </div>
 
-          <ol className="mt-4 space-y-3">
+          <ol className="mt-4 space-y-2.5">
             {history.map((h) => {
               const d = splitDate(h.date);
               return (
@@ -1436,42 +1434,36 @@ function ReceiptView({
                       closeModal();
                       onSelect(h.invoiceNo);
                     }}
-                    className={`flex w-full items-center gap-3.5 rounded-2xl p-3 text-left transition-colors motion-reduce:transition-none ${onPaper} ${
+                    className={`flex w-full items-stretch overflow-hidden rounded-2xl border-2 bg-white text-left text-[var(--mg-ink)] transition-colors motion-reduce:transition-none ${onPaper} ${
                       h.current
-                        ? "cursor-default bg-white text-[var(--mg-ink)] shadow-[inset_0_0_0_2px_var(--mg-brown)]"
-                        : "bg-[var(--mg-wash)] text-[var(--mg-ink)] active:bg-[var(--mg-tint)] [@media(hover:hover)]:hover:bg-[var(--mg-tint)]"
+                        ? "cursor-default border-[var(--mg-ink)]"
+                        : "border-[var(--mg-line)] active:bg-[var(--mg-wash)] [@media(hover:hover)]:hover:border-[var(--mg-ink)]"
                     }`}
                   >
-                    <span
-                      className={`grid h-[68px] w-[60px] shrink-0 place-items-center rounded-xl text-center leading-none ${
-                        h.current ? "bg-[var(--mg-brown)] text-white" : "bg-white text-[var(--mg-ink)]"
-                      }`}
-                    >
-                      <span>
-                        <span className="mg-display block text-[24px]">{d.day}</span>
-                        <span className={`mg-display mt-1.5 block text-[11px] uppercase tracking-[0.14em] ${h.current ? "text-white/85" : "text-[var(--mg-brown)]"}`}>
-                          {d.mon}
-                        </span>
-                        <span className={`mt-0.5 block text-[10px] ${h.current ? "text-white/75" : "text-[var(--mg-brown)]"}`}>{d.year}</span>
-                      </span>
+                    {/* date stub, separated by a perforation like the receipt paper */}
+                    <span className="flex w-[66px] shrink-0 flex-col items-center justify-center border-r-2 border-dashed border-[var(--mg-line)] py-3.5 text-center leading-none">
+                      <span className="mg-display text-[24px] tabular-nums">{d.day}</span>
+                      <span className="mg-display mt-1.5 text-[11px] uppercase tracking-[0.14em] text-[var(--mg-brown)]">{d.mon}</span>
+                      <span className="mt-1 text-[10px] text-[var(--mg-brown)]">{d.year}</span>
                     </span>
 
-                    <span className="min-w-0 flex-1">
-                      <span className="mg-display block text-[13px] uppercase tracking-[0.06em]">
-                        {h.items} {h.items === 1 ? "item" : "items"}
-                      </span>
-                      <span className={`${m} mt-1.5 block truncate text-[11px] text-[var(--mg-brown)]`}>No. {h.invoiceNo}</span>
-                    </span>
-
-                    <span className="flex shrink-0 flex-col items-end gap-1.5">
-                      <span className={`${m} text-[15px] font-bold tabular-nums`}>₹{inr(h.amount)}</span>
-                      {h.current ? (
-                        <span className="rounded-full bg-[var(--mg-brown)] px-2.5 py-0.5 text-[11px] font-bold text-white">Viewing</span>
-                      ) : (
-                        <span className="grid h-6 w-6 place-items-center rounded-full bg-white text-[var(--mg-ink)]">
-                          <Icon name="arrow" className="h-3.5 w-3.5" />
+                    <span className="flex min-w-0 flex-1 items-center justify-between gap-3 px-3.5 py-3">
+                      <span className="min-w-0">
+                        <span className="mg-display block truncate text-[12px] uppercase leading-snug tracking-[0.04em]">{h.title}</span>
+                        <span className="mt-1 block text-[12px] text-[var(--mg-brown)]">
+                          {h.more > 0 ? `+${h.more} more · ` : ""}
+                          {h.items} {h.items === 1 ? "piece" : "pieces"}
                         </span>
-                      )}
+                        <span className={`${m} mt-1 block truncate text-[10px] text-[var(--mg-brown)]`}>No. {h.invoiceNo}</span>
+                      </span>
+                      <span className="flex shrink-0 flex-col items-end gap-2">
+                        <span className={`${m} text-[14px] font-bold tabular-nums`}>₹{inr(h.amount)}</span>
+                        {h.current ? (
+                          <span className="rounded-full bg-[var(--mg-ink)] px-2.5 py-0.5 text-[11px] font-bold text-white">Viewing</span>
+                        ) : (
+                          <Icon name="arrow" className="h-4 w-4 text-[var(--mg-brown)]" />
+                        )}
+                      </span>
                     </span>
                   </button>
                 </li>
@@ -1547,11 +1539,19 @@ export default function MangoReceipt({ data, receipts, onSelectReceipt, ...rest 
   const [currentId, setCurrentId] = useState(data?.invoiceNo ?? list[0].invoiceNo);
   const current = list.find((r) => r.invoiceNo === currentId) ?? list[0];
 
-  const history = useMemo(
+  const history = useMemo<HistoryRow[]>(
     () =>
       list.map((r) => {
         const t = totalsOf(r);
-        return { invoiceNo: r.invoiceNo, date: r.date.split(" ")[0], amount: t.total, items: t.pieces, current: r.invoiceNo === current.invoiceNo };
+        return {
+          invoiceNo: r.invoiceNo,
+          date: r.date.split(" ")[0],
+          amount: t.total,
+          items: t.pieces,
+          title: r.items[0]?.name ?? "Purchase",
+          more: Math.max(0, r.items.length - 1),
+          current: r.invoiceNo === current.invoiceNo,
+        };
       }),
     [list, current.invoiceNo],
   );
