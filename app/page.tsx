@@ -712,7 +712,6 @@ function SleekRateCard({ data, onSubmit }: { data: MangoReceiptData; onSubmit?: 
 
   return (
     <section   aria-label="Rate your visit"   className={`relative overflow-hidden rounded-2xl border border-black/[0.06] bg-white p-4 text-[var(--mg-brown)] shadow-[0_4px_16px_-8px_rgba(26,26,26,0.18)]`} >
-      <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--mg-wash)] rounded-full -mr-10 -mt-10 pointer-events-none opacity-60" />
 
       <div className="flex items-center justify-between gap-3">
   <div className="min-w-0">
@@ -724,6 +723,17 @@ function SleekRateCard({ data, onSubmit }: { data: MangoReceiptData; onSubmit?: 
       How was your visit?
     </h2>
   </div>
+        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-[var(--mg-line)] bg-[var(--mg-wash)] text-[var(--mg-brown)]">
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    className="h-4 w-4"
+  >
+    <path d={STAR_PATH} />
+  </svg>
+</span>
 </div>
 
       {submitted ? (
